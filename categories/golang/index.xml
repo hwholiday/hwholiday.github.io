@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Golang on hwholiday</title>
+    <link>https://hwholiday.github.io/categories/golang/</link>
+    <description>Recent content in Golang on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 01 Mar 2021 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://hwholiday.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Golang （V2）分布式ID生成系统，高性能、高可用、易扩展的id生成服务</title>
+      <link>https://hwholiday.github.io/2021/gidv2/</link>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2021/gidv2/</guid>
+      <description>简介 gid 是使用golang开发的生成分布式Id系统，基于数据库号段算法实现
+gid V2版本实现了高可用，主从架构，简化了调用逻辑 GRPC 对外服务 性能  id 从内存生成，如果(step)步长设置的足够大,qps可达到千万+  可用性  id 分配依赖mysql ,当mysql不可用的,如果内存上还有的可以继续分配  特性  全局唯一的int64型id 分配ID只访问内存 可无限横向扩展 依赖mysql恢复服务迅速 依赖etcd实现服务的高可用 &amp;hellip;&amp;hellip;  高可用  server 基于 ETCD Lease 实现了自动抢主，主节点挂了，从节点自动申请为主节点  简化调用逻辑 go get github.com/hwholiday/gid/v2@gidV2 //go mod 内 //github.com/hwholiday/gid/v2 v2.0.6   封住了 client 实现了自动识别服务主节点 只需要实现 client 并调用 GetId(GRPC方法)，无需其他接口，自动创建BizTag，并预加载  package main import ( &amp;quot;context&amp;quot; &amp;quot;fmt&amp;quot; gidSrv &amp;quot;github.com/hwholiday/gid/v2/api&amp;quot; ) func main() { cli, err := InitGrpc([]string{&amp;quot;127.</description>
+    </item>
+    
+    <item>
+      <title>通过 istio 部署ws,grpc服务并链接外部redis集群</title>
+      <link>https://hwholiday.github.io/2021/istio/</link>
+      <pubDate>Tue, 19 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2021/istio/</guid>
+      <description>安装 docker  https://docs.docker.com/engine/install/  安装单节点 k8s 环境 sudo docker run --privileged -d --restart=unless-stopped -p 88:80 -p 433:443 rancher/rancher 访问 https://宿主机IP:433 新建集群单结点要把 etcd ， control plane ，worker 都给勾选上 复制命令启动，等待就好了  软件架构 准备镜像  网关：ws 服务  在目录 gateway 下  服务 V1:grpc 服务  在目录 logic_v1 下  服务 V2:grpc 服务  在目录 logic_v2 下  服务 V3:grpc 服务  在目录 logic_v3 下 链接了 Reids 集群  关于k8s和istio的配置文件
+ 在目录 kube 下</description>
+    </item>
+    
+    <item>
+      <title>一键安装 K8s 以及在K8s上部署Go服务</title>
+      <link>https://hwholiday.github.io/2020/k8s_v1/</link>
+      <pubDate>Fri, 13 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/k8s_v1/</guid>
+      <description>通过Rancher一键部署k8s服务  地址: https://rancher.com/quick-start/ 命令  sudo docker run --privileged -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher   然后访问你的docker机器的IP地址就可以看到一个叫local的k8s环境，不过不知道是不是我操作不对,我不能使用这个集群 点击添加集群,自定义一通默认到最后给你一个docker命令执行后我们就又得到一个自定义的k8s集群了（弄一个单节点集群的话最后一步把3个都要勾选上） 下载kubectl https://kubernetes.io/docs/tasks/tools/install-kubectl/ 创建一个～/.kube/config文件，把https://k8s集群部署IP/c/local/monitoring 里面的Kubeconfig File按钮里面的文本拷贝进去OK
+部署一个 nginx nginx.yaml
+  apiVersion: apps/v1 kind: Deployment metadata: name: nginx-deployment labels: app: nginx spec: selector: matchLabels: app: nginx replicas: 1 template: metadata: labels: app: nginx spec: containers: - name: nginx image: nginx ports: - containerPort: 80  运行 &amp;gt;kubectl apply -f nginx.</description>
+    </item>
+    
+    <item>
+      <title>领域驱动设计(DDD)战术上一些实践</title>
+      <link>https://hwholiday.github.io/2020/go_ddd_v1/</link>
+      <pubDate>Mon, 09 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/go_ddd_v1/</guid>
+      <description>领域驱动设计(DDD)战术上一些实践 个人能力有限,如有问题欢迎指导 程序设计谈不上什么最好,无论是面向过程编程,还是面向对象编程，我们都是在追求完美的道路上 不设计和过度设计都会对我们产生一些影响,最合适自己的设计才是最好的设计 DDD（Domain-Driven Design）领域驱动设计  领域驱动设计并不是什么银弹，简单的项目并不需要 DDD，引入后反而增加项目难度 DDD 更加适合解决复杂的业务问题，并不是说DDD设计模式有什么压倒性的优势也不是说它就是完美无缺的只是说它更适合干这事
+要不要DDD 在业务刚开始的时候,我们的功能都相对于比较简单，就通过CRUD大法就能满足我们的业务需求， 随着产品的各种需求加入，业务逻辑变的越来越复杂，各个模块相互依赖，修改一个功能时需要花大量的时候去理解当时为什么这些写后，然后再编写代码，甚至开发者自己都不知道这样写会不会影响其他模块，这里我想对测试人员说一句你们辛苦了！
+ 产生这些问题的原因就是在于系统架构不清晰，划分出来的模块内*聚度低、高耦合*项目到达这个地步的时候我们就可以考虑要不要引入 DDD 来解决一些问题
+  贫血模型 VS 充血模型  贫血模型: 比如在用户类中我们定义了User的实体，但是操作User的并不是用户类，而是 UserService,这样的设计就是贫血模型简单来说就是（只包含数据，不包含业务逻辑的类） ,就好比我们大学老师说的你有一个车但是不能开只能其他人去开破坏了面向对象的特性，是一种典型的面向过程的编程风格。
+ 充血模型: 我们知道了贫血模型是（只包含数据，不包含业务逻辑的类），那我们把数据和对应的业务逻辑被封装到同一个类中是不是就是充血模型，Bingo 回答正确,你现在不仅拥有了车还可以开这就是面向对象编程风格
+  面向过程 VS 面向对象 需求把东西全部放到柜子你里面  面向过程: 我们把整个东西放到一个大柜子里面堆在一起。如果修改了那个部分，可以需要修改其他部分，如果放的东西太多还不知道是否会产生一些不可以预知的错误,有可能就会出现祖传bug！ 面向对象: 我们把整个东西分类到一个一个的放在小柜子里面然后再放入一个大柜子，如果要修改也是修改需要修改的那个柜子，不会影响其他柜子
+  实体 用于个性特征或区分不同对象，判断是不是同一个实体主要依据身份标识（identity），唯一身份标识和可变性（mutability）特征将实体对象和值对象（Value Object）区分开来。 - 总结下来就是,实体是一个唯一的东西，可以在一段时间内持续变化
+值对象 值对象用于度量和描述事务，当我们只关心某个对象的属性时，该对象就可以作为一个值对象 - 比如在快递单的上的地址，你的地址可以和其他人的地址相同我们只需要关注地址的属性就可以,并不需要给地址一个唯一标识 - 值对象具有不变性,如果要修改的话直接替换整个值对象就行
+聚合 将实体和值对象在一致性边界内组成聚合,不变性和一致性边界即是聚合的设计依据 - 不变性: 不变性表示的是一个业务规则,该规则应该总是保持一致 - 一致性边界:单个事务只修改一个聚合实例
+领域服务 领域中的服务表示一个无状态的操作,它用于实现特定于某个领域的任务。当某个操作不适合放在聚合、值对象、实体上时,最好的方式便是使用领域服务 - 在我的理解中上面那一句话就是，需要调用多个模型进行处理的就放在领域服务 - eg:</description>
+    </item>
+    
+    <item>
+      <title>Golang 文件服务器支持多线程上传下载</title>
+      <link>https://hwholiday.github.io/2020/file_storage/</link>
+      <pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/file_storage/</guid>
+      <description>简介 参照 Telegram Uploading and Downloading Files
+写的文件服务器（断点续传，分片上传下载,自动生成缩略图等）
+申请上传文件 请求 - 文件名 - 文件大小 （字节） - 文件扩展名 - 是否需要缩略图 - 文件MD5
+返回 - 文件id - 上传过期时间，到时间未上传完，自动清理
+取消上传文件 请求 - 文件ID
+返回 - 成功 or 失败
+获取文件信息 请求 - 文件ID
+返回 - 文件信息
+上传文件 请求
+ 文件ID 文件分片ID file_part 文件MD5 文件内容 part_size 是否是最后一片
+所有分片必须具有相同的大小（part_size），并且必须满足以下条件：part_size % 1024 = 0 （可被1KB整除524288 % part_size = 0（512KB必须可以被part_size整除）如果最后一部分的大小小于part_size，则不必满足这些条件。每个部分都应具有序列号file_part，其值的范围为1到3000。  服务器处理
+ 每个分片接收完毕的时候都检查下服务器接受文件MD5是否相等 检查该分片是否已经上传，是则不做任何处理,不是则把文件存入内存，再将已上传文件大小累加 判断已上传文件大小是否等于文件总大小 （标记文件已经完成） 按照文件分片顺序拼接文件 检查文件MD5是否相等，上传到文件服务器,文件上传结束  返回 - 成功 or 失败</description>
+    </item>
+    
+    <item>
+      <title>Golang 分布式ID生成系统，高性能、高可用、易扩展的id生成服务</title>
+      <link>https://hwholiday.github.io/2020/gid/</link>
+      <pubDate>Wed, 10 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/gid/</guid>
+      <description>简介 gid 是使用golang开发的生成分布式Id系统，基于数据库号段算法实现
+性能  id 从内存生成，如果(step)步长设置的足够大,qps可达到千万+
+可用性 id 分配依赖mysql ,当mysql不可用的,如果内存上还有的可以继续分配
+特性 全局唯一的int64型id
+ 分配ID只访问内存
+ 可无限横向扩展
+ 依赖mysql恢复服务迅速
+&amp;hellip;&amp;hellip;
+安装 初始化 mysql
+  create database gid; use gid; create table segments ( biz_tag varchar(128) not null, max_id bigint null, step int null, remark varchar(200) null, create_time bigint null, update_time bigint null, constraint segments_pk primary key (biz_tag) ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin; INSERT INTO segments(`biz_tag`, `max_id`, `step`, `remark`, `create_time`, `update_time`) VALUES (&#39;test&#39;, 0, 100000, &#39;test&#39;, 1591706686, 1591706686);   编译运行项目</description>
+    </item>
+    
+    <item>
+      <title>golang 解决 protobuf 因为 XXX 插入数据库报错的情况</title>
+      <link>https://hwholiday.github.io/2020/go_protoc_gen_go/</link>
+      <pubDate>Tue, 17 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/go_protoc_gen_go/</guid>
+      <description>起因  在一个老项目里面直接用的 protobuf 生成的结构体与数据库交互 在 protoc 2 生成的 protobuf 没有 XXX 这些东西生成故能正常运行 因为版本升级到 protoc 3 后编译的 protobuf 就不能正常运行了，会出现数据库找不到 XXX_ 这些字段的情况  解决方案  把每张表单独生成 struct 放在 models 层里面，这样的话老服务改动太大我肯定是不能接受的 因为我们使用的 orm ,在xorm 中如果 struct 某个字段不需要映射的话就可以用 xorm:&amp;ldquo;-&amp;rdquo; gorm 也可以这样操作 gorm:&amp;ldquo;-&amp;rdquo;
+ 那我们就可以在 XXX_ 这些字段后面的 tag 中添加忽略，就可以实现我们的目表  开始搞事情 获取代码 go get github.com/golang/protobuf/protoc-gen-go  修改代码  在路径 github.com/golang/protobuf/protoc-gen-go/generator/generator.go 下找到 generateInternalStructFields 方法 在XXX_ 后添加 xorm:\&amp;ldquo;-\&amp;rdquo; or gorm:\&amp;ldquo;-\&amp;rdquo;  // generateInternalStructFields just adds the XXX_&amp;lt;something&amp;gt; fields to the message struct.</description>
+    </item>
+    
+    <item>
+      <title>golang 通过 Redis GEO 实现 LBS 功能</title>
+      <link>https://hwholiday.github.io/2020/redis_geo/</link>
+      <pubDate>Tue, 17 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/redis_geo/</guid>
+      <description>LBS  基于位置的服务（Location Based Services，LBS），是利用各类型的定位技术来获取定位设备当前的所在位置，通过移动互联网向定位设备提供信息资源和基础服务。LBS首先读者可利用定位技术确定自身的空间位置，随后读者便可通过移动互联网来获取与位置相关资源和信息。LBS服务中融合了移动通讯、互联网络、空间定位、位置信息、大数据等多种信息技术，利用移动互联网络服务平台进行数据更新和交互，使用户可以通过空间定位来获取相应的服务。  redis 中关于 GEO 的方法  geoadd：增加某个位置的坐标。 geopos：获取某个位置的坐标。 geohash：获取某个位置的geohash值。 geodist：获取两个位置的距离。 georadius：根据给定位置坐标获取指定范围内的位置集合。 georadiusbymember：根据给定位置获取指定范围内的位置集合。  geoadd 使用方法 res, err := GlobalClient.GeoAdd(&amp;quot;geo_hash_test&amp;quot;, &amp;amp;redis.GeoLocation{ Name: &amp;quot;天府广场&amp;quot;, Longitude: 104.072833, Latitude: 30.663422, }, &amp;amp;redis.GeoLocation{ Name: &amp;quot;四川大剧院&amp;quot;, Longitude: 104.074378, Latitude: 30.664804, }, &amp;amp;redis.GeoLocation{ Name: &amp;quot;新华文轩&amp;quot;, Longitude: 104.070084, Latitude: 30.664649, }, &amp;amp;redis.GeoLocation{ Name: &amp;quot;手工茶&amp;quot;, Longitude: 104.072402, Latitude: 30.664121, }, &amp;amp;redis.GeoLocation{ Name: &amp;quot;宽窄巷子&amp;quot;, Longitude: 104.059826, Latitude: 30.669883, }, &amp;amp;redis.GeoLocation{ Name: &amp;quot;奶茶&amp;quot;, Longitude: 104.06085, Latitude: 30.</description>
+    </item>
+    
+    <item>
+      <title>go-kit 微服务 日志分析管理 （ELK &#43; Filebeat）</title>
+      <link>https://hwholiday.github.io/2020/go_kit_v12/</link>
+      <pubDate>Fri, 13 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/go_kit_v12/</guid>
+      <description>ELK  ELK 不是一款软件，而是 Elasticsearch、Logstash 和 Kibana 三种软件产品的首字母缩写  Elasticsearch：分布式搜索和分析引擎，具有高可伸缩、高可靠和易管理等特点 Logstash：数据收集引擎,它支持动态的从各种数据源搜集数据并处理数据 Kibana：数据分析，可视化平台   Filebeat  Filebeat 是一个轻量型的服务对服务器压力比较小，用于采集数据，并上报到Logstash或Elasticsearch  Beats  Packetbeat =&amp;gt; 搜集网络流量数据 Topbeat =&amp;gt; 搜集系统、进程和文件系统级别的 CPU 和内存使用情况等数据 Filebeat =&amp;gt; 搜集文件数据 Winlogbeat =&amp;gt; 搜集 Windows 事件日志数据 Metricbeat =&amp;gt; Ship and analyze metrics. Heartbeat =&amp;gt; Ping your Infrastructure. Auditbeat =&amp;gt; Send audit data to Elasticsearch. Functionbeat =&amp;gt; Ship cloud data with serverless infrastructure. Journalbeat =&amp;gt; Analyze Journald logs.  架构 Filebeat -&amp;gt; -&amp;gt; Filebeat -&amp;gt; -&amp;gt; -&amp;gt; -&amp;gt; Logstash -&amp;gt; Elasticsearch -&amp;gt; Kibana -&amp;gt; Filebeat -&amp;gt;  安装  elasticsearch 下载 地址</description>
+    </item>
+    
+    <item>
+      <title>golang 消息推送系统</title>
+      <link>https://hwholiday.github.io/2020/go_push/</link>
+      <pubDate>Mon, 09 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/go_push/</guid>
+      <description>Golang 消息推送系统  使用 websocket 协议，实现全局推送，和分房间推送,实现用户加入房间，退出房间 gateway 长连接网关服务器，管理全部的链接，以及房间等相关操作 logic 逻辑服务器 管理发送全局推送，单个房间推送，加入房间，离开房间等相关操作
+ 代码目录详情
+  ├── gateway // 长连接网关服务器 │ ├── push_job.go // 分发任务 │ ├── room.go // 房间，可作为某一类型的推送管理中心 │ ├── room_manage.go // 房间管理 │ ├── ws_conn.go // 简单封装的websocket方法 │ ├── ws_handle.go // 处理websocket协议方法 │ └── ws_server.go // websocket服务 ├── logic //逻辑服务器 │ ├── http_handle.go // 推送，房间相关 │ └── http_server.go // http服务 └── main.go  websocket相关  定义WsConnection结构体  type WsConnection struct { mu sync.</description>
+    </item>
+    
+    <item>
+      <title>go-kit 微服务 系列文章归档</title>
+      <link>https://hwholiday.github.io/2020/go_kit_11/</link>
+      <pubDate>Tue, 14 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/go_kit_11/</guid>
+      <description>go-kit 微服务 系列文章归档  go-kit 里面核心的东西有三层分别是：Transport、Endpoint、Service  Transport 层主要负责与网络层相关逻辑 Endpoint 层主要负责请求数据与返回数据格式的转换，以及公用中间件逻辑 Service 层业务逻辑   go-kit 更像是一个微服务的工具集，而不是一个完整的框架，里面包含了限流，日志，服务注册与发现，熔断，服务监控，链路追踪等相关工具方法 归档  go-kit 微服务 基础使用 （HTTP）
+ go-kit 微服务 添加日志（user/zap ,并为每个请求添加UUID）
+ go-kit 微服务 身份认证 （JWT）
+ go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）
+ go-kit 微服务 使用GRPC（并为每个请求添加UUID）
+ go-kit 微服务 服务注册与发现（etcd实现）
+ go-kit 微服务 服务监控（prometheus 实现）
+ go-kit 微服务 服务熔断（hystrix-go 实现）
+ go-kit 微服务 服务链路追踪（jaeger 实现）(1)
+ go-kit 微服务 服务链路追踪（jaeger 实现）(2)</description>
+    </item>
+    
+    <item>
+      <title>go-kit 微服务 服务链路追踪（jaeger 实现）（2）</title>
+      <link>https://hwholiday.github.io/2020/go_kit_v10/</link>
+      <pubDate>Mon, 13 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/go_kit_v10/</guid>
+      <description>go-kit 微服务 服务链路追踪（jaeger 实现）（2）  《go-kit 微服务 服务链路追踪（jaeger 实现）（1）》 中实现了grpc服务端，客户端的链路追踪 在以前的1.0版本的基础上我们加上对service,endpoint层的链路追踪  endpoint层  中间件  func NewTracerEndpointMiddleware(tracer opentracing.Tracer) endpoint.Middleware { return func(next endpoint.Endpoint) endpoint.Endpoint { return func(ctx context.Context, request interface{}) (response interface{}, err error) { span, ctxContext := opentracing.StartSpanFromContextWithTracer(ctx, tracer, &amp;quot;endpoint&amp;quot;, opentracing.Tag{ Key: string(ext.Component), Value: &amp;quot;NewTracerEndpointMiddleware&amp;quot;, }) defer span.Finish() return next(ctxContext, request) } } }   添加到登录EndPoint中  func NewEndPointServer(svc Service, limit *rate.Limiter,tracer opentracing.Tracer) EndPointServer { var loginEndPoint endpoint.</description>
+    </item>
+    
+    <item>
+      <title>go-kit 微服务 服务熔断（hystrix-go 实现）</title>
+      <link>https://hwholiday.github.io/2020/go_kit_v8/</link>
+      <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/go_kit_v8/</guid>
+      <description>go-kit 微服务 服务熔断（hystrix-go 实现）  对客户端请求login方法添加熔断  Hystrix  在微服务架构中，每个服务都是相互关联的，比如我们下单服务和扣钱服务是分开的，现在扣钱服务出现的bug不能正常服务 Hystrix可以让我们在在微服务架构中对服务间的调用进行控制，加入一些调用延迟或者服务降级的容错机制。  Hystrix的设计原则  对依赖服务调用时出现的调用延迟和调用失败进行控制和容错保护 在复杂的分布式系统中，阻止某一个依赖服务的故障在整个系统中蔓延 提供fail-fast（快速失败）和快速恢复的支持 提供fallback优雅降级的支持 支持近实时的监控、报警以及运维操作
+  编写Hystrix类 import ( &amp;quot;errors&amp;quot; &amp;quot;github.com/afex/hystrix-go/hystrix&amp;quot; &amp;quot;sync&amp;quot; ) var config = hystrix.CommandConfig{ Timeout: 5000, //执行command的超时时间(毫秒) MaxConcurrentRequests: 8, //command的最大并发量 SleepWindow: 1000, //过多长时间，熔断器再次检测是否开启。单位毫秒 ErrorPercentThreshold: 30, //错误率 请求数量大于等于RequestVolumeThreshold并且错误率到达这个百分比后就会启动 RequestVolumeThreshold: 5, //请求阈值(一个统计窗口10秒内请求数量) 熔断器是否打开首先要满足这个条件；这里的设置表示至少有5个请求才进行ErrorPercentThreshold错误百分比计算 } type runFunc func() error type Hystrix struct { loadMap *sync.Map //储存每个调用函数对应的 Hystrix fallback string //降级信息 } func NewHystrix(msg string) *Hystrix { return &amp;amp;Hystrix{ loadMap: new(sync.</description>
+    </item>
+    
+    <item>
+      <title>go-kit 微服务 服务链路追踪（jaeger 实现）（1）</title>
+      <link>https://hwholiday.github.io/2020/go_kit_v9/</link>
+      <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/go_kit_v9/</guid>
+      <description>go-kit 微服务 服务链路追踪（jaeger 实现）（1）  对grpc调用添加链路追踪  部署 jaeger  生产环境部署  Docker Hub 中有官方打好的 Image https://hub.docker.com/u/jaegertracing/  本地测试
+ 可以直接用 Jaeger 的 all-in-one
+sudo docker pull jaegertracing/all-in-one sudo docker run -d -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 -p5775:5775/udp -p6831:6831/udp -p6832:6832/udp -p5778:5778 -p16686:16686 -p14268:14268 -p9411:9411 jaegertracing/all-in-one:latest  能正常访问 http://127.0.0.1:16686/ 则安装成功
+   编写jaeger 关于grpc代码 初始化客户端 func NewJaegerTracer(serviceName string) (tracer opentracing.Tracer, closer io.Closer, err error) { cfg := &amp;amp;jaegerConfig.Configuration{ Sampler: &amp;amp;jaegerConfig.SamplerConfig{ Type: &amp;quot;const&amp;quot;, //固定采样 Param: 1, //1=全采样、0=不采样 }, Reporter: &amp;amp;jaegerConfig.</description>
+    </item>
+    
+    <item>
+      <title>go-kit 微服务 服务监控（prometheus 实现）</title>
+      <link>https://hwholiday.github.io/2020/go_kit_v7/</link>
+      <pubDate>Thu, 09 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/go_kit_v7/</guid>
+      <description>go-kit 微服务 服务监控（prometheus 实现）  实现对登录方法的请求次数,与请求耗时进行监控  prometheus  相关介绍使用请看文章《docker安装prometheus（普罗米修斯）》 Prometheus 的四种数据类型  Counter(计数器) 它是一个只能递增的数值,重启进程后会被重置 (例如记录：请求次数、任务完成数、错误发生次数) Gauge(测量器) 它表示一个既可以递增, 又可以递减的值,重启进程后，会被重置 (例如 温度变化、CPU,内存,网络使用变化) Histogram(柱状图)  每个采样点进行统计，打到各个分类值中(bucket) 对每个采样点值累计和(sum) 对采样点的次数累计和(count) 例如：请求耗时、响应大小。  Summary 类似histogram柱状图，summary是采样点分位图统计  有一个quantiles的功能，可以按%比划分跟踪的结果。例如：quantile取值0.85，表示取采样值里面的85%数据。 例如：请求耗时、响应大小。   具体区别可看文档histogram和summaries
+  定义统计服务中间件  创建metricsMiddlewareServer结构体  type metricsMiddlewareServer struct { next Service counter metrics.Counter histogram metrics.Histogram }   创建NewMetricsMiddlewareServer把统计对象嵌入中间件（其实就是对Service添加了一层装饰）  func NewMetricsMiddlewareServer(counter metrics.Counter, histogram metrics.Histogram) NewMiddlewareServer { return func(service Service) Service { return metricsMiddlewareServer{ next: service, counter: counter, histogram: histogram, } } }   让metricsMiddlewareServer实现Service中的全部方法  func (l metricsMiddlewareServer) Login(ctx context.</description>
+    </item>
+    
+    <item>
+      <title>go-kit 微服务 服务注册与发现（etcd实现）</title>
+      <link>https://hwholiday.github.io/2020/go_kit_v6/</link>
+      <pubDate>Wed, 08 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/go_kit_v6/</guid>
+      <description>go-kit 微服务 服务注册与发现 (etcd 实现 ) etcd  相关介绍使用请看文章《Golang etcd 服务发现与负载均衡》 对服务注册，发现，与负载均衡提供了思路  简介  通过grpc实现一个用户中心实现简单的鉴权中心并返回用户token 上篇文章《go-kit 微服务 使用Grpc（并传递请求ID）》，我们已经实现了一个grpc的服务 我们这次主要是添加基于 go-kit 服务注册,发现,负载均衡  服务注册  使用go-kit初始化一个etcdV3客户端  options := etcdv3.ClientOptions{ DialTimeout: ttl, DialKeepAlive: ttl, } etcdClient, err := etcdv3.NewClient(context.Background(), etcdAddrs, options) if err != nil { utils.GetLogger().Error(&amp;quot;[user_agent] NewClient&amp;quot;, zap.Error(err)) return } Registar := etcdv3.NewRegistrar(etcdClient, etcdv3.Service{ Key: fmt.Sprintf(&amp;quot;%s/%s&amp;quot;,serName,grpcAddr), Value: grpcAddr, }, log.NewNopLogger())   将节点注册到服务器  Registar.Register()   将节点注销  Registar.</description>
+    </item>
+    
+    <item>
+      <title>go-kit 微服务 使用GRPC（并为每个请求添加UUID） </title>
+      <link>https://hwholiday.github.io/2020/go_kit_v5/</link>
+      <pubDate>Tue, 07 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/go_kit_v5/</guid>
+      <description>go-kit 微服务 使用Grpc（并传递请求ID） grpc  gRPC是一个高性能、通用的开源RPC框架，其由Google主要面向移动应用开发并基于HTTP/2协议标准而设计，基于ProtoBuf(Protocol Buffers)序列化协议开发 grpc使用 案例  简介  通过grpc实现一个用户中心实现简单的鉴权中心并返回用户token 上篇文章《go-kit 微服务 身份认证（JWT）》已经实现的一个http的鉴权中心，所以我们只需要改变transport层逻辑 编写ProtoBuf  //service.proto syntax = &amp;quot;proto3&amp;quot;; package pb; import &amp;quot;user.proto&amp;quot;; service User { rpc RpcUserLogin (Login) returns (LoginAck) { } } //user.proto message Login { string Account = 1; string Password = 2; } message LoginAck { string Token = 1; }   编译ProtoBuf  protoc --go_out=plugins=grpc:. *.proto  transport层修改  定义grpcServer结构体  type grpcServer struct { login grpctransport.</description>
+    </item>
+    
+    <item>
+      <title>Golang etcd 服务发现与负载均衡</title>
+      <link>https://hwholiday.github.io/2020/etcd_registry_selector/</link>
+      <pubDate>Mon, 06 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/etcd_registry_selector/</guid>
+      <description>Golang etcd 服务发现与负载均衡  注册： 同一服务下的所有节点注册到相同目录下，节点启动后将自己的信息注册到所属服务的目录中。 健康： 服务节点定时发送心跳，注册到服务目录中的信息设置一个较短的 TTL，运行正常的服务节点每隔一段时间会去更新信息的 TTL。 发现： 通过名称能查询到服务提供外部访问的 IP 和端口号。比如网关代理服务时能够及时的发现服务中新增节点、丢弃不可用的服务节点，同时各个服务间也能感知对方的存在。  etcd  是由CoreOS开发，用于可靠地存储集群的配置数据的一种持久性，轻量型的，分布式的键-值数据存储组件。该组件可表示在任何给定时间点处的集群的整体状态。其他组件在注意到存储的变化之后，会变成相应的状态。采用raft协议作为一致性算法，etcd基于Go语言实现。  服务注册  下载依赖  go get go.etcd.io/etcd/clientv3   创建注册接口  type Registry interface { RegistryNode(node PutNode) error UnRegistry() }   具体代码实现  var prefix = &amp;quot;/registry/server/&amp;quot; type Registry interface { RegistryNode(node PutNode) error UnRegistry() } type registryServer struct { cli *clientv3.Client stop chan bool isRegistry bool options Options leaseID clientv3.</description>
+    </item>
+    
+    <item>
+      <title>go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）</title>
+      <link>https://hwholiday.github.io/2020/go_kit_v4/</link>
+      <pubDate>Sat, 04 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/go_kit_v4/</guid>
+      <description>go-kit 微服务 限流 (uber/ratelimit 和 golang/rate 实现) golang/rate 简介（golang.org/x/time/rate）  golang 标准库中就自带的限流算法 该限流器是基于 Token Bucket(令牌桶) 实现的  //第一个参数是 r Limit。代表每秒可以向 Token 桶中产生多少 token //第二个参数是 b int。b 代表 Token 桶的容量大小 golangLimit := rate.NewLimiter(10, 1) //golangLimit 其令牌桶大小为 1, 以每秒 10 个 Token 的速率向桶中放置 Token。   Wait/WaitN  Wait 实际上就是 WaitN(ctx,1) 当使用 Wait 方法时，如果令牌桶内Token（大于or等于 N）直接返回，如果当时令牌桶内 Token 不足(小于 N)，那么 Wait 方法将会阻塞，直到能从令牌桶内获得 Token  Allow/AllowN  Allow 实际上就是 AllowN(time.Now(),1)。 当使用使用 AllowN 方法时，截止到time.Now()这一时刻(time可以自己传入)令牌桶中数目必须（大于or等于 N），满足则返回正确，同时从令牌桶中消费 N 个 Token 应用场景请求速度太快就直接丢掉一些请求  Reserve/ReserveN  Reserve 相当于 ReserveN(time.</description>
+    </item>
+    
+    <item>
+      <title>go-kit 微服务 身份认证 （JWT）</title>
+      <link>https://hwholiday.github.io/2020/go_kit_v3/</link>
+      <pubDate>Fri, 03 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/go_kit_v3/</guid>
+      <description>go-kit 微服务 身份认证（JWT） Jwt官网介绍  JSON Web令牌（JWT）是一个开放标准（RFC 7519），它定义了一种紧凑且自包含的方式，用于在各方之间作为JSON对象安全地传输信息。由于此信息是经过数字签名的，因此可以被验证和信任。可以使用秘密（使用HMAC算法）或使用RSA或ECDSA的公钥/私钥对对JWT进行签名。  简介  在上篇文章中go-kit 微服务 添加日志（并为每个请求添加UUID）中我们学会了如何使用中间件 这次我们在程序中加入jwt身份验证 使sum接口需要传入token才能实现访问  开始 下载依赖
+ jwt库 go get github.com/dgrijalva/jwt-go  jwt编写  jwtSecret 生成token的密钥 CreateJwtToken 生成token ParseToken 解析token  var jwtSecret = []byte(&amp;quot;jwtSecret_v3&amp;quot;) const JWT_CONTEXT_KEY = &amp;quot;jwt_context_key&amp;quot; type Token struct { Name string DcId int jwt.StandardClaims } func CreateJwtToken(name string, dcId int) (string, error) { var token Token token.StandardClaims = jwt.StandardClaims{ Audience: &amp;quot;&amp;quot;, // 受众群体 ExpiresAt: time.</description>
+    </item>
+    
+    <item>
+      <title>go-kit 微服务 添加日志（user/zap ,并为每个请求添加UUID） </title>
+      <link>https://hwholiday.github.io/2020/git_kit_v2/</link>
+      <pubDate>Thu, 02 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/git_kit_v2/</guid>
+      <description>go-kit 微服务 添加日志（并为每个请求添加UUID）  通过日志我们可以了解到我们关心的数据在软件内的执行情况，同时出问题时可以分析与定位系统故障 用户的每个请求都添加请求ID(我使用的UUID)，我们可以更好的了解到每个请求的执行过程，更利于分析与定位问题  简介  在上篇文章中go-kit 微服务 基础使用（HTTP）我们实现了使用go-kit 构建一个简单的加法的http服务 这篇文章中我们将实现使用go-kit中间件机制为其增加日志功能  开始 下载依赖
+ uuid库 go get github.com/satori/go. 日志库使用的是以前文章 Golang 高性能日志库 zap 封装工具类的日志工具  Server层修改 在Server层文件夹中创建middleware.go文件  定义服务中间件  type NewMiddlewareServer func(Service) Service   创建logMiddlewareServer结构体  type logMiddlewareServer struct { logger *zap.Logger next Service }   创建NewLogMiddlewareServer把日志记录对象嵌入中间件（其实就是对Service添加了一层装饰）  func NewLogMiddlewareServer(log *zap.Logger) NewMiddlewareServer { return func(service Service) Service { return logMiddlewareServer{ logger: log, next: service, } } }   让logMiddlewareServer实现Service中的全部方法  func (l logMiddlewareServer) TestAdd(ctx context.</description>
+    </item>
+    
+    <item>
+      <title>go-kit 微服务 基础使用 （HTTP）</title>
+      <link>https://hwholiday.github.io/2019/go_kit_v1/</link>
+      <pubDate>Mon, 30 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/go_kit_v1/</guid>
+      <description>使用go-kit 构建一个简单的加法，对方暴露一个请求接口  URL格式为：http://127.0.0.1:8888/sum?a=参数&amp;amp;b=参数 请求方法为 GET  开始  go-kit 安装：go get github.com/go-kit/kit
+  创建Service 定义接口 type Service interface { TestAdd(ctx context.Context,in Add) AddAck }  定义model type Add struct { A int `json:&amp;quot;a&amp;quot;` B int `json:&amp;quot;b&amp;quot;` } type AddAck struct { Res int `json:&amp;quot;res&amp;quot;` }  创建结构体baseServer来实现Service接口 type baseServer struct { } func NewService() Service { return &amp;amp;baseServer{} } func (s baseServer) TestAdd(ctx context.Context,in Add) AddAck { return AddAck{Res:in.</description>
+    </item>
+    
+    <item>
+      <title>trie_tree原理及Golang实现(模糊查询)</title>
+      <link>https://hwholiday.github.io/2019/trie_tree/</link>
+      <pubDate>Fri, 27 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/trie_tree/</guid>
+      <description>Trie Tree 在计算机科学中，trie，又称前缀树或字典树，是一种有序树，用于保存关联数组，其中的键通常是字符串。与二叉查找树不同，键不是直接保存在节点中，而是由节点在树中的位置决定。一个节点的所有子孙都有相同的前缀，也就是这个节点对应的字符串，而根节点对应空字符串。一般情况下，不是所有的节点都有对应的值，只有叶子节点和部分内部节点所对应的键才有相关的值。
+实现 type Trie struct { node map[rune]*Trie val string isLast bool } func Constructor() Trie { return Trie{node: make(map[rune]*Trie, 26), isLast: false} } func (t *Trie) Insert(word string) { for _, v := range word { if t.node[v] == nil { //没找到该节点 vt := &amp;amp;Trie{node: make(map[rune]*Trie, 26), isLast: false} t.node[v] = vt } t = t.node[v] //找到节点，跳到下一个节点 } t.val = word t.isLast = true } func (t *Trie) Search(word string) bool { for _, v := range word { if t.</description>
+    </item>
+    
+    <item>
+      <title>Golang 基于interface 实现中间件(middleware)</title>
+      <link>https://hwholiday.github.io/2019/middleware/</link>
+      <pubDate>Wed, 25 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/middleware/</guid>
+      <description>背景 我们在开发接口时会写大量的interface Service,但是有时候需要提供一个功能对已经写好的接口提供一个中间件进行业务处理
+我们已经写好的接口 type Service interface { Add(a, b int) int } type baseServer struct{} func NewBaseServer() Service { return baseServer{} } func (s baseServer) Add(a, b int) int { return a + b }  添加中间件1 type logServer struct { next Service log string } func LogMiddleware(name string) ServiceMiddleware { return func(next Service) Service { return logServer{ next: next, log: &amp;quot;日志中间件V1&amp;quot;, } } }  添加中间件2 type logV2Server struct { next Service log string } func LogV2Middleware(name string) ServiceMiddleware { return func(next Service) Service { return logV2Server{ next: next, log: &amp;quot;日志中间件V2&amp;quot;, } } }  结果 svc := NewService(&amp;quot;&amp;quot;) fmt.</description>
+    </item>
+    
+    <item>
+      <title>Golang 实现时间轮</title>
+      <link>https://hwholiday.github.io/2019/simple_timing_wheel/</link>
+      <pubDate>Wed, 25 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/simple_timing_wheel/</guid>
+      <description>简单时间轮(simple_timing_wheel)  一个 简单时间轮 就是一个循环列表，列表中的每一格包含一个定时任务列表（双向链表）。一个时间单位为 u、大小为 n 的简单时间轮，可以包含的定时任务的最大到期间隔为 n*u。 以 u 为 1ms、n 为 3 的简单时间轮为例，可以包含的定时任务的最大到期间隔为 3ms。 初始时，假设当前时间指向第 1 格（此时：到期间隔为 [0ms, 1ms) 的定时任务放第 1 格，[1ms, 2ms) 的放第 2 格，[2ms, 3ms) 的放第 3 格）。 此时我们创建一个到期间隔为 1ms 的定时任务 task1，按规则该任务会被插入到第 2 格。 随着时间的流逝，过了 1ms 后当前时间指向第 2 格，这一格包含的定时任务 task1 会被删除并执行。 当前时间指向第 2 格（此时：到期间隔为 [0ms, 1ms) 的定时任务放第 2 格，[1ms, 2ms) 的放第 3 格，[2ms, 3ms) 的放第 1 格），我们继续创建一个到期间隔为 2ms 的定时任务 task2，按规则该任务被插入到第 1 格。  简单时间轮的优点是实现简单，缺点是：  选定 n 后，就不能包含到期间隔超过 n*u 的定时任务。 如果定时任务的到期时间跨度较大，就会选择较大的 n，在定时任务较少时会造成很大的空间浪费。 变体实现，它们通过在定时任务中增加记录 round 轮次信息，可以有效弥补上述两个缺点。同样以上面 u 为 1ms、n 为 3 的简单时间轮为例，初始时间指向第 1 格；此时如果要创建到期时间为 4ms 的定时任务，可以在该任务中设置 round 为 1（4/3 取整），剩余到期时间用 4ms 减去 round*3ms 等于 1ms，因此放到第 2 格；等到当前时间指向第 2 格时，判断任务中的 round 大于 0，所以不会删除并执行该任务，而是对其 round 减一（于是 round 变为 0）；等到再过 3ms 后，当前时间再次指向第 2 格，判断任务中的 round 为 0，进而删除并执行该任务。</description>
+    </item>
+    
+    <item>
+      <title>Golang 实践归档</title>
+      <link>https://hwholiday.github.io/2019/archive/</link>
+      <pubDate>Tue, 24 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/archive/</guid>
+      <description>learning_tools 源码地址 go-kit 微服务实践，从入门到精通系列 go-kit (go-kit微服务) 1: v1 go-kit 微服务 基础使用 （HTTP） 2: v2 go-kit 微服务 添加日志（user/zap ,并为每个请求添加UUID） 3: v3 go-kit 微服务 身份认证 （JWT） 4: v4 go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现） 5: v5 go-kit 微服务 使用GRPC（并为每个请求添加UUID） 6: v6 go-kit 微服务 服务注册与发现（etcd实现） 7: v7 go-kit 微服务 服务监控（prometheus 实现） 8: v8 go-kit 微服务 服务熔断（hystrix-go 实现） 9: v9 go-kit 微服务 服务链路追踪（jaeger 实现）(1) 10: v9 go-kit 微服务 服务链路追踪（jaeger 实现）(2) 11: v11 go-kit 微服务 添加一个简单网关  go_push 一个实用的消息推送服务 go_push (推送服务) ├── gateway // 长连接网关服务器 │ ├── push_job.</description>
+    </item>
+    
+    <item>
+      <title>Golang 高性能日志库 zap 封装工具类</title>
+      <link>https://hwholiday.github.io/2019/how_user_zap/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/how_user_zap/</guid>
+      <description>zap是uber开源的Go高性能日志库 //安装 go get -u go.uber.org/zap  封装日志库  支持日志文件分等级存放 支付日志文件自动分割 支持日志文件自动压缩 支持日志文件自定义目录  type Options struct { LogFileDir string //文件保存地方 AppName string //日志文件前缀 ErrorFileName string WarnFileName string InfoFileName string DebugFileName string Level zapcore.Level //日志等级 MaxSize int //日志文件小大（M） MaxBackups int // 最多存在多少个切片文件 MaxAge int //保存的最大天数 Development bool //是否是开发模式 zap.Config }  使用 lg := NewLogger(SetAppName(&amp;quot;test_app&amp;quot;), SetDevelopment(true), SetLevel(zap.DebugLevel), SetErrorFileName(&amp;quot;error_e_e_e_e.log&amp;quot;)) lg.Debug(fmt.Sprint(&amp;quot;debug log &amp;quot;, 1), zap.Int(&amp;quot;line&amp;quot;, 47)) lg.Info(fmt.Sprint(&amp;quot;Info log &amp;quot;, 2), zap.Any(&amp;quot;level&amp;quot;, &amp;quot;1231231231&amp;quot;)) lg.</description>
+    </item>
+    
+    <item>
+      <title>Golang 实现向量空间余弦相似度(Cosine Similarity)</title>
+      <link>https://hwholiday.github.io/2019/cosine_similarity/</link>
+      <pubDate>Tue, 03 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/cosine_similarity/</guid>
+      <description>什么是向量空间余弦相似度 余弦相似性通过测量两个向量的夹角的余弦值来度量它们之间的相似性。0度角的余弦值是1，而其他任何角度的余弦值都不大于1；并且其最小值是-1。从而两个向量之间的角度的余弦值确定两个向量是否大致指向相同的方向。两个向量有相同的指向时，余弦相似度的值为1；两个向量夹角为90°时，余弦相似度的值为0；两个向量指向完全相反的方向时，余弦相似度的值为-1。这结果是与向量的长度无关的，仅仅与向量的指向方向相关。余弦相似度通常用于正空间，因此给出的值为-1到1之间。
+代码实现 func Cosine(a []float64, b []float64) float64 { var ( aLen = len(a) bLen = len(b) s = 0.0 sa = 0.0 sb = 0.0 count = 0 ) if aLen &amp;gt; bLen { count = aLen } else { count = bLen } for i := 0; i &amp;lt; count; i++ { if i &amp;gt;= bLen { sa += math.Pow(a[i], 2) continue } if i &amp;gt;= aLen { sb += math.</description>
+    </item>
+    
+    <item>
+      <title>Golang 实现LRU算法</title>
+      <link>https://hwholiday.github.io/2019/lru/</link>
+      <pubDate>Sun, 01 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/lru/</guid>
+      <description>缓存文件置换机制是计算机处理缓存存储器的一种机制。 计算机存储器空间的大小固定，无法容纳服务器上所有的文件，所以当有新的文件要被置换入缓存时，必须根据一定的原则来取代掉适当的文件。此原则即所谓缓存文件置换机制。
+缓存文件置换方法有：
+ 先进先出算法（FIFO）：最先进入的内容作为替换对象 最近最少使用算法（LFU）：最近最少使用的内容作为替换对象 最久未使用算法（LRU）：最久没有访问的内容作为替换对象 非最近使用算法（NMRU）：在最近没有使用的内容中随机选择一个作为替换对象  代码实现 type Lru struct { max int l *list.List Call func(key interface{}, value interface{}) cache map[interface{}]*list.Element mu *sync.Mutex } type Node struct { Key interface{} Val interface{} } func NewLru(len int) *Lru { return &amp;amp;Lru{ max: len, l: list.New(), cache: make(map[interface{}]*list.Element), mu: new(sync.Mutex), } } func (l *Lru) Add(key interface{}, val interface{}) error { if l.l == nil { return errors.</description>
+    </item>
+    
+    <item>
+      <title>一致性hash算法原理及Golang实现</title>
+      <link>https://hwholiday.github.io/2019/consistency_hash/</link>
+      <pubDate>Tue, 26 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/consistency_hash/</guid>
+      <description>需求 当集群提供缓存服务时，key应该路由到哪一个服务.这里假如采用最通用的方式key%N(N为服务器数目)，看上去是没问题的但是一旦服务器数目发生增加或减少时, 分配方式则变为key%(N+1)或key%(N-1).这里将会有大量的key失效, 为了解决类问题,一致性hash算法应运而生.
+一致性hash算法特点  均衡性(Balance) 单调性(Monotonicity) 分散性(Spread) 负载(Load)  一致性hash详解  一致哈希 是一种特殊的哈希算法。在使用一致哈希算法后，哈希表槽位数（大小）的改变平均只需要对 K/n个关键字重新映射，其中 K是关键字的数量，n是槽位数量。然而在传统的哈希表中，添加或删除一个槽位的几乎需要对所有关键字进行重新映射。 一致性哈希算法将整个哈希值空间映射成一个虚拟的圆环，整个哈希空间的取值范围为0~2的32次方-1。整个空间按顺时针方向组织。0~2的32次方-1在零点中方向重合。接下来使用如下算法对服务请求进行映射，将服务请求使用哈希算法算出对应的hash值，然后根据hash值的位置沿圆环顺时针查找，第一台遇到的服务器就是所对应的处理请求服务器。当增加一台新的服务器，受影响的数据仅仅是新添加的服务器到其环空间中前一台的服务器（也就是顺着逆时针方向遇到的第一台服务器）之间的数据，其他都不会受到影响。综上所述，一致性哈希算法对于节点的增减都只需重定位环空间中的一小部分数据，具有较好的容错性和可扩展性   改进 如果服务器节点较少，存在某些节点所在位置周围有大量的hash点从而导致分配到这些节点到key要比其他节点多的多，这样会导致集群中各节点负载不均衡，为解决这个问题，引入虚拟节点， 即一个实节点对应多个虚拟节点。缓存的key作映射时，先找到对应的虚拟节点，再对应到实节点
+代码实现 type Consistent struct { nodesReplicas int //添加虚拟节点数量 hashSortNodes []uint32 //所有节点的排序数组 circle map[uint32]string //所有节点对应的node nodes map[string]bool //node是否存在 } func NewConsistent() *Consistent { return &amp;amp;Consistent{ nodesReplicas: 20, circle: make(map[uint32]string), nodes: make(map[string]bool), } } func (c *Consistent) Add(node string) error { if _, ok := c.nodes[node]; ok { //判断新加节点是否存在 return fmt.</description>
+    </item>
+    
+    <item>
+      <title>Golang 实现Google 内购以及订阅代码</title>
+      <link>https://hwholiday.github.io/2019/google_py/</link>
+      <pubDate>Thu, 24 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/google_py/</guid>
+      <description>内购  先检查签名是否正确 再查询google该订单信息是否正确 具体细节请联系我的QQ  func VerifyGoogleSign(data, id string, sign string) (bool, error) { decodePublic, err := base64.StdEncoding.DecodeString(publicKey) if err != nil { return false, err } pubInterface, err := x509.ParsePKIXPublicKey(decodePublic) if err != nil { return false, err } pub := pubInterface.(*rsa.PublicKey) decodeSign, err := base64.StdEncoding.DecodeString(sign) if err != nil { return false, err } sh1 := sha1.New() sh1.Write([]byte(data)) hashData := sh1.Sum(nil) result := rsa.VerifyPKCS1v15(pub, crypto.SHA1, hashData, decodeSign) if result !</description>
+    </item>
+    
+    <item>
+      <title>Golang 双棘轮算法</title>
+      <link>https://hwholiday.github.io/2019/signal_prorocol/</link>
+      <pubDate>Wed, 03 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/signal_prorocol/</guid>
+      <description>什么是双棘轮算法 双棘轮算法用于通信双方基于共享密钥交换加密消息。通常，通信双方将先使用某种密钥协商协议（例如 X3DH1）以协商共享密钥。此后，通信双方即可使用双棘轮算法发送接收加密消息了。
+通信双方将为每一个双棘轮消息派生出新的密钥，使得旧的密钥不能从新的密钥计算得到。通信双方还将在消息中附上迪菲-赫尔曼公钥值。迪菲-赫尔曼计算的结果将被混入派生出的密钥中，使得新的密钥不能从旧的密钥计算得到。这些特性将在某一方的密钥泄漏后保护此前或此后的加密消息。
+代码实现 var a PseronA a.IdentityPri, a.IdentityPub = GetCurve25519KeypPair() a.SignedPri, a.SignedPub = GetCurve25519KeypPair() a.OneTimePri, a.OneTimePub = GetCurve25519KeypPair() a.EphemeralPri, a.EphemeralPub = GetCurve25519KeypPair() var b PseronB b.IdentityPri, b.IdentityPub = GetCurve25519KeypPair() b.SignedPri, b.SignedPub = GetCurve25519KeypPair() b.OneTimePri, b.OneTimePub = GetCurve25519KeypPair() b.EphemeralPri, b.EphemeralPub = GetCurve25519KeypPair() //DH1 = DH(IPK-A私钥, SPK-B公钥) //DH2 = DH(EPK-A私钥, IPK-B公钥) //DH3= DH(EPK-A私钥, SPK-B公钥) //DH4 = DH(IPK-A私钥, OPK--B公钥) a.DH1 = GetCurve25519Key(a.IdentityPri, b.SignedPub) a.DH2 = GetCurve25519Key(a.EphemeralPri, b.IdentityPub) a.DH3 = GetCurve25519Key(a.EphemeralPri, b.</description>
+    </item>
+    
+    <item>
+      <title>Golang 椭圆加密算法实现</title>
+      <link>https://hwholiday.github.io/2019/ecc/</link>
+      <pubDate>Wed, 03 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/ecc/</guid>
+      <description>什么是椭圆加密算法 椭圆曲线密码学（英语：Elliptic Curve Cryptography，缩写：ECC）是一种基于椭圆曲线数学的公开密钥加密算法。椭圆曲线在密码学中的使用是在1985年由Neal Koblitz和Victor Miller分别独立提出的。
+ECC的主要优势是在某些情况下它比其他的算法（比如RSA加密算法）使用更小的密钥并提供相当的或更高等级的安全。ECC的另一个优势是可以定义群之间的双线性映射，基于Weil对或是Tate对；双线性映射已经在密码学中发现了大量的应用，例如基于身份的加密。
+不过一个缺点是加密和解密操作的实现比其他机制花费的时间长。
+代码实现 var Aprivate, Apublic [32]byte //产生随机数 if _, err := io.ReadFull(rand.Reader, Aprivate[:]); err != nil { os.Exit(0) } curve25519.ScalarBaseMult(&amp;amp;Apublic, &amp;amp;Aprivate) fmt.Println(&amp;quot;A私钥&amp;quot;, base64.StdEncoding.EncodeToString(Aprivate[:])) fmt.Println(&amp;quot;A公钥&amp;quot;, base64.StdEncoding.EncodeToString(Apublic[:])) //作为椭圆起点 var Bprivate, Bpublic [32]byte //产生随机数 if _, err := io.ReadFull(rand.Reader, Bprivate[:]); err != nil { os.Exit(0) } curve25519.ScalarBaseMult(&amp;amp;Bpublic, &amp;amp;Bprivate) fmt.Println(&amp;quot;B私钥&amp;quot;, base64.StdEncoding.EncodeToString(Bprivate[:])) fmt.Println(&amp;quot;B公钥&amp;quot;, base64.StdEncoding.EncodeToString(Bpublic[:])) //作为椭圆起点 var Akey, Bkey [32]byte //A的私钥加上Ｂ的公钥计算A的key curve25519.ScalarMult(&amp;amp;Akey, &amp;amp;Aprivate, &amp;amp;Bpublic) //B的私钥加上A的公钥计算B的key curve25519.ScalarMult(&amp;amp;Bkey, &amp;amp;Bprivate, &amp;amp;Apublic) fmt.</description>
+    </item>
+    
+    <item>
+      <title>Golang 生成短链接服务</title>
+      <link>https://hwholiday.github.io/2019/short_url/</link>
+      <pubDate>Tue, 02 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/short_url/</guid>
+      <description>什么是短链接 就是把普通网址，转换成比较短的网址。比如：https://dwz.cn/XzhYJMkZ
+原理解析 当我们在浏览器里输入 https://dwz.cn/XzhYJMkZ
+DNS首先解析获得 https://dwz.cn/ 的 IP 地址
+当 DNS 获得 IP 地址以后，会向这个地址发送 HTTP请求，查询短码 XzhYJMkZ
+https://dwz.cn/ 服务器会通过短码 XzhYJMkZ 获取对应的长 URL
+请求通过 HTTP 301 转到对应的长 URL http://www.baidu.com
+本文采用 自增序列算法 + 用户自定义短码 设置 id 自增，一个 10进制 id 对应一个 62进制的数值，1对1，也就不会出现重复的情况。
+这个利用的就是低进制转化为高进制时，字符数会减少的特性。
+可使用redis Incr 实现id自增。
+数据表设计 CREATE TABLE `links` ( `id` int(11) NOT NULL AUTO_INCREMENT, `url` varchar(200) COLLATE utf8mb4_bin NOT NULL COMMENT &#39;长连接&#39;, `keyword` varchar(50) COLLATE utf8mb4_bin NOT NULL COMMENT &#39;短链接码&#39;, `status` tinyint(1) NOT NULL COMMENT &#39;1系统分配 2用户自定义&#39;, `create_time` bigint(20) NOT NULL, `update_time` bigint(20) NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `links_UN` (`url`), UNIQUE KEY `links_keyword` (`keyword`) ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;  服务使用 生成短链接  post http://127.</description>
+    </item>
+    
+    <item>
+      <title>Golang Time包的方法解析</title>
+      <link>https://hwholiday.github.io/2019/how_use_time/</link>
+      <pubDate>Mon, 20 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/how_use_time/</guid>
+      <description>基础使用 //获取秒级时间戳 time.Now().Unix() //获取毫秒级时间戳 time.Now().UnixNano()/1e6 //格式化时间 time.Now().Format(&amp;quot;2006-01-02 15:04&amp;quot;) //字符串转时间格式 t, err := time.Parse(&amp;quot;2006-01-02 15:04:05&amp;quot;, &amp;quot;2019-05-20 18:30:50&amp;quot;) //时间戳转为字符串 t := time.Unix(&amp;quot;1558348250&amp;quot;, 0).Format(&amp;quot;2006-01-02 15:04&amp;quot;)  设置时区(中国) //在windows系统上，没有安装go语言环境的情况下，time.LoadLocation会加载失败。 var sh, _ = time.LoadLocation(&amp;quot;Asia/Shanghai&amp;quot;) time.Now().In(sh).Format(&amp;quot;2006-01-02 15:04:05&amp;quot;) //time.FixedZone各个系统都能很好的设置时区 time.Now().In(time.FixedZone(&amp;quot;CST&amp;quot;, 8*3600)).Format(&amp;quot;2006-01-02 15:04:05&amp;quot;))  time 时间的加减法  Add方法 Add用于计算某个时间之前和之后的时间点  //h -- &amp;gt; 时 //m -- &amp;gt; 分 //s -- &amp;gt; 秒 //ms -- &amp;gt; 毫秒 //us -- &amp;gt; 纳秒 //µs -- &amp;gt; 纳秒 //ns -- &amp;gt; 微秒 //10分钟前的时间 m, _ := time.</description>
+    </item>
+    
+    <item>
+      <title>mongodb官方的golang驱动基础使用</title>
+      <link>https://hwholiday.github.io/2018/how_use_mongo-go-driver/</link>
+      <pubDate>Tue, 11 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/how_use_mongo-go-driver/</guid>
+      <description>导入 go get github.com/mongodb/mongo-go-driver/mongo  struct里面获取ObjectID 点击这里 链接mongo服务 if client, err = mongo.Connect(getContext(), url); err != nil { checkErr(err) }  判断服务是否可用 if err = client.Ping(getContext(), readpref.Primary()); err != nil { checkErr(err) }  选择数据库和集合 collection = client.Database(&amp;quot;testing_base&amp;quot;).Collection(&amp;quot;howie&amp;quot;)  设置集合内数据过期时间 k := mongo.IndexModel{ Keys: bsonx.Doc{{&amp;quot;expiredtime&amp;quot;, bsonx.Int32(1)}}, Options: options.Index().SetExpireAfterSeconds(1 * 60),//60秒后过期，详细请查询完整的代码演示 } _, err = collection.Indexes().CreateOne(getContext(), k)  删除这个集合 collection.Drop(getContext())  插入一条数据 if insertOneRes, err = collection.InsertOne(getContext(), howieArray[0]); err != nil { checkErr(err) } fmt.</description>
+    </item>
+    
+    <item>
+      <title>Golang 中的并发限制与超时控制</title>
+      <link>https://hwholiday.github.io/2018/golang_limit_req/</link>
+      <pubDate>Mon, 10 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/golang_limit_req/</guid>
+      <description>代码地址 点击这里 并发限制(一种常见的做法就是利用 channel 的缓冲机制) var limitChan = make(chan bool, n) 如果 channel 没有缓冲，或者缓冲区满了。goroutine 会自动阻塞，直到 channel 里的数据被读走为止  代码演示 var addr = flag.String(&amp;quot;p&amp;quot;, &amp;quot;192.168.2.28:8099&amp;quot;, &amp;quot;port&amp;quot;) func main() { flag.Parse() perf.StartPprof([]string{&amp;quot;192.168.2.28:9022&amp;quot;}) logtool.InitZapLogger(&amp;quot;ghost.log&amp;quot;, true) //http服务 mux := http.NewServeMux() mux.HandleFunc(&amp;quot;/limit_api&amp;quot;, limitApi) s := &amp;amp;http.Server{ Handler: mux, Addr: *addr, WriteTimeout: 15 * time.Second, ReadTimeout: 15 * time.Second, MaxHeaderBytes: 1 &amp;lt;&amp;lt; 20, } go func() { err := s.ListenAndServe() if err != nil { logtool.</description>
+    </item>
+    
+    <item>
+      <title>使用TCP并解决TCP粘包的问题</title>
+      <link>https://hwholiday.github.io/2018/goang_tcp_use/</link>
+      <pubDate>Thu, 01 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/goang_tcp_use/</guid>
+      <description>最新代码地址(添加head+type+data 解包 并添加心跳) 点击这里 此项目有对应的Android端demo有需求请联系下方QQ TCP粘包和拆包产生的原因  应用程序写入数据的字节大小大于套接字发送缓冲区的大小 进行MSS大小的TCP分段。MSS是最大报文段长度的缩写。MSS是TCP报文段中的数据字段的最大长度。数据字段加上TCP首部才等于整个的TCP报文段。所以MSS并不是TCP报文段的最大长度，而是：MSS=TCP报文段长度-TCP首部长度 以太网的payload大于MTU进行IP分片。MTU指：一种通信协议的某一层上面所能通过的最大数据包大小。如果IP层有一个数据包要传，而且数据的长度比链路层的MTU大，那么IP层就会进行分片，把数据包分成托干片，让每一片都不超过MTU。注意，IP分片可以发生在原始发送端主机上，也可以发生在中间路由器上。  TCP粘包和拆包的解决策略  消息定长。例如100字节。 在包尾部增加回车或者空格符等特殊字符进行分割，典型的如FTP协议 将消息分为消息头和消息尾。(len+data模式) 其它复杂的协议，如RTMP协议等。 将消息分为消息头+消息类型+消息体。(len+type+data 模式)  废话不多说直接上代码 服务端 package network import ( &amp;quot;net&amp;quot; &amp;quot;github.com/hwholiday/libs/logtool&amp;quot; &amp;quot;go.uber.org/zap&amp;quot; &amp;quot;os&amp;quot; &amp;quot;time&amp;quot; &amp;quot;io&amp;quot; &amp;quot;fmt&amp;quot; ) func InitTcp() { addr, err := net.ResolveTCPAddr(&amp;quot;tcp&amp;quot;, &amp;quot;192.168.2.28:8111&amp;quot;) if err != nil { logtool.Zap.Error(&amp;quot;create addr&amp;quot;, zap.Error(err)) os.Exit(0) } listener, err := net.ListenTCP(&amp;quot;tcp&amp;quot;, addr) if err != nil { logtool.Zap.Error(&amp;quot;listen tcp&amp;quot;, zap.Error(err)) os.Exit(0) } logtool.Zap.Info(&amp;quot;listen tcp&amp;quot;, zap.</description>
+    </item>
+    
+    <item>
+      <title>随机生成中国人姓名</title>
+      <link>https://hwholiday.github.io/2018/go_cn_fullname/</link>
+      <pubDate>Mon, 29 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/go_cn_fullname/</guid>
+      <description>package utils import ( &amp;quot;math/rand&amp;quot; &amp;quot;time&amp;quot; &amp;quot;fmt&amp;quot; ) var lastName = []string{ &amp;quot;赵&amp;quot;, &amp;quot;钱&amp;quot;, &amp;quot;孙&amp;quot;, &amp;quot;李&amp;quot;, &amp;quot;周&amp;quot;, &amp;quot;吴&amp;quot;, &amp;quot;郑&amp;quot;, &amp;quot;王&amp;quot;, &amp;quot;冯&amp;quot;, &amp;quot;陈&amp;quot;, &amp;quot;褚&amp;quot;, &amp;quot;卫&amp;quot;, &amp;quot;蒋&amp;quot;, &amp;quot;沈&amp;quot;, &amp;quot;韩&amp;quot;, &amp;quot;杨&amp;quot;, &amp;quot;朱&amp;quot;, &amp;quot;秦&amp;quot;, &amp;quot;尤&amp;quot;, &amp;quot;许&amp;quot;, &amp;quot;何&amp;quot;, &amp;quot;吕&amp;quot;, &amp;quot;施&amp;quot;, &amp;quot;张&amp;quot;, &amp;quot;孔&amp;quot;, &amp;quot;曹&amp;quot;, &amp;quot;严&amp;quot;, &amp;quot;华&amp;quot;, &amp;quot;金&amp;quot;, &amp;quot;魏&amp;quot;, &amp;quot;陶&amp;quot;, &amp;quot;姜&amp;quot;, &amp;quot;戚&amp;quot;, &amp;quot;谢&amp;quot;, &amp;quot;邹&amp;quot;, &amp;quot;喻&amp;quot;, &amp;quot;柏&amp;quot;, &amp;quot;水&amp;quot;, &amp;quot;窦&amp;quot;, &amp;quot;章&amp;quot;, &amp;quot;云&amp;quot;, &amp;quot;苏&amp;quot;, &amp;quot;潘&amp;quot;, &amp;quot;葛&amp;quot;, &amp;quot;奚&amp;quot;, &amp;quot;范&amp;quot;, &amp;quot;彭&amp;quot;, &amp;quot;郎&amp;quot;, &amp;quot;鲁&amp;quot;, &amp;quot;韦&amp;quot;, &amp;quot;昌&amp;quot;, &amp;quot;马&amp;quot;, &amp;quot;苗&amp;quot;, &amp;quot;凤&amp;quot;, &amp;quot;花&amp;quot;, &amp;quot;方&amp;quot;, &amp;quot;任&amp;quot;, &amp;quot;袁&amp;quot;, &amp;quot;柳&amp;quot;, &amp;quot;鲍&amp;quot;, &amp;quot;史&amp;quot;, &amp;quot;唐&amp;quot;, &amp;quot;费&amp;quot;, &amp;quot;薛&amp;quot;, &amp;quot;雷&amp;quot;, &amp;quot;贺&amp;quot;, &amp;quot;倪&amp;quot;, &amp;quot;汤&amp;quot;, &amp;quot;滕&amp;quot;, &amp;quot;殷&amp;quot;, &amp;quot;罗&amp;quot;, &amp;quot;毕&amp;quot;, &amp;quot;郝&amp;quot;, &amp;quot;安&amp;quot;, &amp;quot;常&amp;quot;, &amp;quot;傅&amp;quot;, &amp;quot;卞&amp;quot;, &amp;quot;齐&amp;quot;, &amp;quot;元&amp;quot;, &amp;quot;顾&amp;quot;, &amp;quot;孟&amp;quot;, &amp;quot;平&amp;quot;, &amp;quot;黄&amp;quot;, &amp;quot;穆&amp;quot;, &amp;quot;萧&amp;quot;, &amp;quot;尹&amp;quot;, &amp;quot;姚&amp;quot;, &amp;quot;邵&amp;quot;, &amp;quot;湛&amp;quot;, &amp;quot;汪&amp;quot;, &amp;quot;祁&amp;quot;, &amp;quot;毛&amp;quot;, &amp;quot;狄&amp;quot;, &amp;quot;米&amp;quot;, &amp;quot;伏&amp;quot;, &amp;quot;成&amp;quot;, &amp;quot;戴&amp;quot;, &amp;quot;谈&amp;quot;, &amp;quot;宋&amp;quot;, &amp;quot;茅&amp;quot;, &amp;quot;庞&amp;quot;, &amp;quot;熊&amp;quot;, &amp;quot;纪&amp;quot;, &amp;quot;舒&amp;quot;, &amp;quot;屈&amp;quot;, &amp;quot;项&amp;quot;, &amp;quot;祝&amp;quot;, &amp;quot;董&amp;quot;, &amp;quot;梁&amp;quot;, &amp;quot;杜&amp;quot;, &amp;quot;阮&amp;quot;, &amp;quot;蓝&amp;quot;, &amp;quot;闵&amp;quot;, &amp;quot;季&amp;quot;, &amp;quot;贾&amp;quot;, &amp;quot;路&amp;quot;, &amp;quot;娄&amp;quot;, &amp;quot;江&amp;quot;, &amp;quot;童&amp;quot;, &amp;quot;颜&amp;quot;, &amp;quot;郭&amp;quot;, &amp;quot;梅&amp;quot;, &amp;quot;盛&amp;quot;, &amp;quot;林&amp;quot;, &amp;quot;钟&amp;quot;, &amp;quot;徐&amp;quot;, &amp;quot;邱&amp;quot;, &amp;quot;骆&amp;quot;, &amp;quot;高&amp;quot;, &amp;quot;夏&amp;quot;, &amp;quot;蔡&amp;quot;, &amp;quot;田&amp;quot;, &amp;quot;樊&amp;quot;, &amp;quot;胡&amp;quot;, &amp;quot;凌&amp;quot;, &amp;quot;霍&amp;quot;, &amp;quot;虞&amp;quot;, &amp;quot;万&amp;quot;, &amp;quot;支&amp;quot;, &amp;quot;柯&amp;quot;, &amp;quot;管&amp;quot;, &amp;quot;卢&amp;quot;, &amp;quot;莫&amp;quot;, &amp;quot;柯&amp;quot;, &amp;quot;房&amp;quot;, &amp;quot;裘&amp;quot;, &amp;quot;缪&amp;quot;, &amp;quot;解&amp;quot;, &amp;quot;应&amp;quot;, &amp;quot;宗&amp;quot;, &amp;quot;丁&amp;quot;, &amp;quot;宣&amp;quot;, &amp;quot;邓&amp;quot;, &amp;quot;单&amp;quot;, &amp;quot;杭&amp;quot;, &amp;quot;洪&amp;quot;, &amp;quot;包&amp;quot;, &amp;quot;诸&amp;quot;, &amp;quot;左&amp;quot;, &amp;quot;石&amp;quot;, &amp;quot;崔&amp;quot;, &amp;quot;吉&amp;quot;, &amp;quot;龚&amp;quot;, &amp;quot;程&amp;quot;, &amp;quot;嵇&amp;quot;, &amp;quot;邢&amp;quot;, &amp;quot;裴&amp;quot;, &amp;quot;陆&amp;quot;, &amp;quot;荣&amp;quot;, &amp;quot;翁&amp;quot;, &amp;quot;荀&amp;quot;, &amp;quot;于&amp;quot;, &amp;quot;惠&amp;quot;, &amp;quot;甄&amp;quot;, &amp;quot;曲&amp;quot;, &amp;quot;封&amp;quot;, &amp;quot;储&amp;quot;, &amp;quot;仲&amp;quot;, &amp;quot;伊&amp;quot;, &amp;quot;宁&amp;quot;, &amp;quot;仇&amp;quot;, &amp;quot;甘&amp;quot;, &amp;quot;武&amp;quot;, &amp;quot;符&amp;quot;, &amp;quot;刘&amp;quot;, &amp;quot;景&amp;quot;, &amp;quot;詹&amp;quot;, &amp;quot;龙&amp;quot;, &amp;quot;叶&amp;quot;, &amp;quot;幸&amp;quot;, &amp;quot;司&amp;quot;, &amp;quot;黎&amp;quot;, &amp;quot;溥&amp;quot;, &amp;quot;印&amp;quot;, &amp;quot;怀&amp;quot;, &amp;quot;蒲&amp;quot;, &amp;quot;邰&amp;quot;, &amp;quot;从&amp;quot;, &amp;quot;索&amp;quot;, &amp;quot;赖&amp;quot;, &amp;quot;卓&amp;quot;, &amp;quot;屠&amp;quot;, &amp;quot;池&amp;quot;, &amp;quot;乔&amp;quot;, &amp;quot;胥&amp;quot;, &amp;quot;闻&amp;quot;, &amp;quot;莘&amp;quot;, &amp;quot;党&amp;quot;, &amp;quot;翟&amp;quot;, &amp;quot;谭&amp;quot;, &amp;quot;贡&amp;quot;, &amp;quot;劳&amp;quot;, &amp;quot;逄&amp;quot;, &amp;quot;姬&amp;quot;, &amp;quot;申&amp;quot;, &amp;quot;扶&amp;quot;, &amp;quot;堵&amp;quot;, &amp;quot;冉&amp;quot;, &amp;quot;宰&amp;quot;, &amp;quot;雍&amp;quot;, &amp;quot;桑&amp;quot;, &amp;quot;寿&amp;quot;, &amp;quot;通&amp;quot;, &amp;quot;燕&amp;quot;, &amp;quot;浦&amp;quot;, &amp;quot;尚&amp;quot;, &amp;quot;农&amp;quot;, &amp;quot;温&amp;quot;, &amp;quot;别&amp;quot;, &amp;quot;庄&amp;quot;, &amp;quot;晏&amp;quot;, &amp;quot;柴&amp;quot;, &amp;quot;瞿&amp;quot;, &amp;quot;阎&amp;quot;, &amp;quot;连&amp;quot;, &amp;quot;习&amp;quot;, &amp;quot;容&amp;quot;, &amp;quot;向&amp;quot;, &amp;quot;古&amp;quot;, &amp;quot;易&amp;quot;, &amp;quot;廖&amp;quot;, &amp;quot;庾&amp;quot;, &amp;quot;终&amp;quot;, &amp;quot;步&amp;quot;, &amp;quot;都&amp;quot;, &amp;quot;耿&amp;quot;, &amp;quot;满&amp;quot;, &amp;quot;弘&amp;quot;, &amp;quot;匡&amp;quot;, &amp;quot;国&amp;quot;, &amp;quot;文&amp;quot;, &amp;quot;寇&amp;quot;, &amp;quot;广&amp;quot;, &amp;quot;禄&amp;quot;, &amp;quot;阙&amp;quot;, &amp;quot;东&amp;quot;, &amp;quot;欧&amp;quot;, &amp;quot;利&amp;quot;, &amp;quot;师&amp;quot;, &amp;quot;巩&amp;quot;, &amp;quot;聂&amp;quot;, &amp;quot;关&amp;quot;, &amp;quot;荆&amp;quot;, &amp;quot;司马&amp;quot;, &amp;quot;上官&amp;quot;, &amp;quot;欧阳&amp;quot;, &amp;quot;夏侯&amp;quot;, &amp;quot;诸葛&amp;quot;, &amp;quot;闻人&amp;quot;, &amp;quot;东方&amp;quot;, &amp;quot;赫连&amp;quot;, &amp;quot;皇甫&amp;quot;, &amp;quot;尉迟&amp;quot;, &amp;quot;公羊&amp;quot;, &amp;quot;澹台&amp;quot;, &amp;quot;公冶&amp;quot;, &amp;quot;宗政&amp;quot;, &amp;quot;濮阳&amp;quot;, &amp;quot;淳于&amp;quot;, &amp;quot;单于&amp;quot;, &amp;quot;太叔&amp;quot;, &amp;quot;申屠&amp;quot;, &amp;quot;公孙&amp;quot;, &amp;quot;仲孙&amp;quot;, &amp;quot;轩辕&amp;quot;, &amp;quot;令狐&amp;quot;, &amp;quot;徐离&amp;quot;, &amp;quot;宇文&amp;quot;, &amp;quot;长孙&amp;quot;, &amp;quot;慕容&amp;quot;, &amp;quot;司徒&amp;quot;, &amp;quot;司空&amp;quot;} var firstName = []string{ &amp;quot;伟&amp;quot;, &amp;quot;刚&amp;quot;, &amp;quot;勇&amp;quot;, &amp;quot;毅&amp;quot;, &amp;quot;俊&amp;quot;, &amp;quot;峰&amp;quot;, &amp;quot;强&amp;quot;, &amp;quot;军&amp;quot;, &amp;quot;平&amp;quot;, &amp;quot;保&amp;quot;, &amp;quot;东&amp;quot;, &amp;quot;文&amp;quot;, &amp;quot;辉&amp;quot;, &amp;quot;力&amp;quot;, &amp;quot;明&amp;quot;, &amp;quot;永&amp;quot;, &amp;quot;健&amp;quot;, &amp;quot;世&amp;quot;, &amp;quot;广&amp;quot;, &amp;quot;志&amp;quot;, &amp;quot;义&amp;quot;, &amp;quot;兴&amp;quot;, &amp;quot;良&amp;quot;, &amp;quot;海&amp;quot;, &amp;quot;山&amp;quot;, &amp;quot;仁&amp;quot;, &amp;quot;波&amp;quot;, &amp;quot;宁&amp;quot;, &amp;quot;贵&amp;quot;, &amp;quot;福&amp;quot;, &amp;quot;生&amp;quot;, &amp;quot;龙&amp;quot;, &amp;quot;元&amp;quot;, &amp;quot;全&amp;quot;, &amp;quot;国&amp;quot;, &amp;quot;胜&amp;quot;, &amp;quot;学&amp;quot;, &amp;quot;祥&amp;quot;, &amp;quot;才&amp;quot;, &amp;quot;发&amp;quot;, &amp;quot;武&amp;quot;, &amp;quot;新&amp;quot;, &amp;quot;利&amp;quot;, &amp;quot;清&amp;quot;, &amp;quot;飞&amp;quot;, &amp;quot;彬&amp;quot;, &amp;quot;富&amp;quot;, &amp;quot;顺&amp;quot;, &amp;quot;信&amp;quot;, &amp;quot;子&amp;quot;, &amp;quot;杰&amp;quot;, &amp;quot;涛&amp;quot;, &amp;quot;昌&amp;quot;, &amp;quot;成&amp;quot;, &amp;quot;康&amp;quot;, &amp;quot;星&amp;quot;, &amp;quot;光&amp;quot;, &amp;quot;天&amp;quot;, &amp;quot;达&amp;quot;, &amp;quot;安&amp;quot;, &amp;quot;岩&amp;quot;, &amp;quot;中&amp;quot;, &amp;quot;茂&amp;quot;, &amp;quot;进&amp;quot;, &amp;quot;林&amp;quot;, &amp;quot;有&amp;quot;, &amp;quot;坚&amp;quot;, &amp;quot;和&amp;quot;, &amp;quot;彪&amp;quot;, &amp;quot;博&amp;quot;, &amp;quot;诚&amp;quot;, &amp;quot;先&amp;quot;, &amp;quot;敬&amp;quot;, &amp;quot;震&amp;quot;, &amp;quot;振&amp;quot;, &amp;quot;壮&amp;quot;, &amp;quot;会&amp;quot;, &amp;quot;思&amp;quot;, &amp;quot;群&amp;quot;, &amp;quot;豪&amp;quot;, &amp;quot;心&amp;quot;, &amp;quot;邦&amp;quot;, &amp;quot;承&amp;quot;, &amp;quot;乐&amp;quot;, &amp;quot;绍&amp;quot;, &amp;quot;功&amp;quot;, &amp;quot;松&amp;quot;, &amp;quot;善&amp;quot;, &amp;quot;厚&amp;quot;, &amp;quot;庆&amp;quot;, &amp;quot;磊&amp;quot;, &amp;quot;民&amp;quot;, &amp;quot;友&amp;quot;, &amp;quot;裕&amp;quot;, &amp;quot;河&amp;quot;, &amp;quot;哲&amp;quot;, &amp;quot;江&amp;quot;, &amp;quot;超&amp;quot;, &amp;quot;浩&amp;quot;, &amp;quot;亮&amp;quot;, &amp;quot;政&amp;quot;, &amp;quot;谦&amp;quot;, &amp;quot;亨&amp;quot;, &amp;quot;奇&amp;quot;, &amp;quot;固&amp;quot;, &amp;quot;之&amp;quot;, &amp;quot;轮&amp;quot;, &amp;quot;翰&amp;quot;, &amp;quot;朗&amp;quot;, &amp;quot;伯&amp;quot;, &amp;quot;宏&amp;quot;, &amp;quot;言&amp;quot;, &amp;quot;若&amp;quot;, &amp;quot;鸣&amp;quot;, &amp;quot;朋&amp;quot;, &amp;quot;斌&amp;quot;, &amp;quot;梁&amp;quot;, &amp;quot;栋&amp;quot;, &amp;quot;维&amp;quot;, &amp;quot;启&amp;quot;, &amp;quot;克&amp;quot;, &amp;quot;伦&amp;quot;, &amp;quot;翔&amp;quot;, &amp;quot;旭&amp;quot;, &amp;quot;鹏&amp;quot;, &amp;quot;泽&amp;quot;, &amp;quot;晨&amp;quot;, &amp;quot;辰&amp;quot;, &amp;quot;士&amp;quot;, &amp;quot;以&amp;quot;, &amp;quot;建&amp;quot;, &amp;quot;家&amp;quot;, &amp;quot;致&amp;quot;, &amp;quot;树&amp;quot;, &amp;quot;炎&amp;quot;, &amp;quot;德&amp;quot;, &amp;quot;行&amp;quot;, &amp;quot;时&amp;quot;, &amp;quot;泰&amp;quot;, &amp;quot;盛&amp;quot;, &amp;quot;雄&amp;quot;, &amp;quot;琛&amp;quot;, &amp;quot;钧&amp;quot;, &amp;quot;冠&amp;quot;, &amp;quot;策&amp;quot;, &amp;quot;腾&amp;quot;, &amp;quot;楠&amp;quot;, &amp;quot;榕&amp;quot;, &amp;quot;风&amp;quot;, &amp;quot;航&amp;quot;, &amp;quot;弘&amp;quot;, &amp;quot;秀&amp;quot;, &amp;quot;娟&amp;quot;, &amp;quot;英&amp;quot;, &amp;quot;华&amp;quot;, &amp;quot;慧&amp;quot;, &amp;quot;巧&amp;quot;, &amp;quot;美&amp;quot;, &amp;quot;娜&amp;quot;, &amp;quot;静&amp;quot;, &amp;quot;淑&amp;quot;, &amp;quot;惠&amp;quot;, &amp;quot;珠&amp;quot;, &amp;quot;翠&amp;quot;, &amp;quot;雅&amp;quot;, &amp;quot;芝&amp;quot;, &amp;quot;玉&amp;quot;, &amp;quot;萍&amp;quot;, &amp;quot;红&amp;quot;, &amp;quot;娥&amp;quot;, &amp;quot;玲&amp;quot;, &amp;quot;芬&amp;quot;, &amp;quot;芳&amp;quot;, &amp;quot;燕&amp;quot;, &amp;quot;彩&amp;quot;, &amp;quot;春&amp;quot;, &amp;quot;菊&amp;quot;, &amp;quot;兰&amp;quot;, &amp;quot;凤&amp;quot;, &amp;quot;洁&amp;quot;, &amp;quot;梅&amp;quot;, &amp;quot;琳&amp;quot;, &amp;quot;素&amp;quot;, &amp;quot;云&amp;quot;, &amp;quot;莲&amp;quot;, &amp;quot;真&amp;quot;, &amp;quot;环&amp;quot;, &amp;quot;雪&amp;quot;, &amp;quot;荣&amp;quot;, &amp;quot;爱&amp;quot;, &amp;quot;妹&amp;quot;, &amp;quot;霞&amp;quot;, &amp;quot;香&amp;quot;, &amp;quot;月&amp;quot;, &amp;quot;莺&amp;quot;, &amp;quot;媛&amp;quot;, &amp;quot;艳&amp;quot;, &amp;quot;瑞&amp;quot;, &amp;quot;凡&amp;quot;, &amp;quot;佳&amp;quot;, &amp;quot;嘉&amp;quot;, &amp;quot;琼&amp;quot;, &amp;quot;勤&amp;quot;, &amp;quot;珍&amp;quot;, &amp;quot;贞&amp;quot;, &amp;quot;莉&amp;quot;, &amp;quot;桂&amp;quot;, &amp;quot;娣&amp;quot;, &amp;quot;叶&amp;quot;, &amp;quot;璧&amp;quot;, &amp;quot;璐&amp;quot;, &amp;quot;娅&amp;quot;, &amp;quot;琦&amp;quot;, &amp;quot;晶&amp;quot;, &amp;quot;妍&amp;quot;, &amp;quot;茜&amp;quot;, &amp;quot;秋&amp;quot;, &amp;quot;珊&amp;quot;, &amp;quot;莎&amp;quot;, &amp;quot;锦&amp;quot;, &amp;quot;黛&amp;quot;, &amp;quot;青&amp;quot;, &amp;quot;倩&amp;quot;, &amp;quot;婷&amp;quot;, &amp;quot;姣&amp;quot;, &amp;quot;婉&amp;quot;, &amp;quot;娴&amp;quot;, &amp;quot;瑾&amp;quot;, &amp;quot;颖&amp;quot;, &amp;quot;露&amp;quot;, &amp;quot;瑶&amp;quot;, &amp;quot;怡&amp;quot;, &amp;quot;婵&amp;quot;, &amp;quot;雁&amp;quot;, &amp;quot;蓓&amp;quot;, &amp;quot;纨&amp;quot;, &amp;quot;仪&amp;quot;, &amp;quot;荷&amp;quot;, &amp;quot;丹&amp;quot;, &amp;quot;蓉&amp;quot;, &amp;quot;眉&amp;quot;, &amp;quot;君&amp;quot;, &amp;quot;琴&amp;quot;, &amp;quot;蕊&amp;quot;, &amp;quot;薇&amp;quot;, &amp;quot;菁&amp;quot;, &amp;quot;梦&amp;quot;, &amp;quot;岚&amp;quot;, &amp;quot;苑&amp;quot;, &amp;quot;婕&amp;quot;, &amp;quot;馨&amp;quot;, &amp;quot;瑗&amp;quot;, &amp;quot;琰&amp;quot;, &amp;quot;韵&amp;quot;, &amp;quot;融&amp;quot;, &amp;quot;园&amp;quot;, &amp;quot;艺&amp;quot;, &amp;quot;咏&amp;quot;, &amp;quot;卿&amp;quot;, &amp;quot;聪&amp;quot;, &amp;quot;澜&amp;quot;, &amp;quot;纯&amp;quot;, &amp;quot;毓&amp;quot;, &amp;quot;悦&amp;quot;, &amp;quot;昭&amp;quot;, &amp;quot;冰&amp;quot;, &amp;quot;爽&amp;quot;, &amp;quot;琬&amp;quot;, &amp;quot;茗&amp;quot;, &amp;quot;羽&amp;quot;, &amp;quot;希&amp;quot;, &amp;quot;欣&amp;quot;, &amp;quot;飘&amp;quot;, &amp;quot;育&amp;quot;, &amp;quot;滢&amp;quot;, &amp;quot;馥&amp;quot;, &amp;quot;筠&amp;quot;, &amp;quot;柔&amp;quot;, &amp;quot;竹&amp;quot;, &amp;quot;霭&amp;quot;, &amp;quot;凝&amp;quot;, &amp;quot;晓&amp;quot;, &amp;quot;欢&amp;quot;, &amp;quot;霄&amp;quot;, &amp;quot;枫&amp;quot;, &amp;quot;芸&amp;quot;, &amp;quot;菲&amp;quot;, &amp;quot;寒&amp;quot;, &amp;quot;伊&amp;quot;, &amp;quot;亚&amp;quot;, &amp;quot;宜&amp;quot;, &amp;quot;可&amp;quot;, &amp;quot;姬&amp;quot;, &amp;quot;舒&amp;quot;, &amp;quot;影&amp;quot;, &amp;quot;荔&amp;quot;, &amp;quot;枝&amp;quot;, &amp;quot;丽&amp;quot;, &amp;quot;阳&amp;quot;, &amp;quot;妮&amp;quot;, &amp;quot;宝&amp;quot;, &amp;quot;贝&amp;quot;, &amp;quot;初&amp;quot;, &amp;quot;程&amp;quot;, &amp;quot;梵&amp;quot;, &amp;quot;罡&amp;quot;, &amp;quot;恒&amp;quot;, &amp;quot;鸿&amp;quot;, &amp;quot;桦&amp;quot;, &amp;quot;骅&amp;quot;, &amp;quot;剑&amp;quot;, &amp;quot;娇&amp;quot;, &amp;quot;纪&amp;quot;, &amp;quot;宽&amp;quot;, &amp;quot;苛&amp;quot;, &amp;quot;灵&amp;quot;, &amp;quot;玛&amp;quot;, &amp;quot;媚&amp;quot;, &amp;quot;琪&amp;quot;, &amp;quot;晴&amp;quot;, &amp;quot;容&amp;quot;, &amp;quot;睿&amp;quot;, &amp;quot;烁&amp;quot;, &amp;quot;堂&amp;quot;, &amp;quot;唯&amp;quot;, &amp;quot;威&amp;quot;, &amp;quot;韦&amp;quot;, &amp;quot;雯&amp;quot;, &amp;quot;苇&amp;quot;, &amp;quot;萱&amp;quot;, &amp;quot;阅&amp;quot;, &amp;quot;彦&amp;quot;, &amp;quot;宇&amp;quot;, &amp;quot;雨&amp;quot;, &amp;quot;洋&amp;quot;, &amp;quot;忠&amp;quot;, &amp;quot;宗&amp;quot;, &amp;quot;曼&amp;quot;, &amp;quot;紫&amp;quot;, &amp;quot;逸&amp;quot;, &amp;quot;贤&amp;quot;, &amp;quot;蝶&amp;quot;, &amp;quot;菡&amp;quot;, &amp;quot;绿&amp;quot;, &amp;quot;蓝&amp;quot;, &amp;quot;儿&amp;quot;, &amp;quot;翠&amp;quot;, &amp;quot;烟&amp;quot;, &amp;quot;小&amp;quot;, &amp;quot;轩&amp;quot;} var lastNameLen = len(lastName) var firstNameLen = len(firstName) func GetFullName() string { rand.</description>
+    </item>
+    
+    <item>
+      <title>从零开始微服务构建</title>
+      <link>https://hwholiday.github.io/2018/micro_server/</link>
+      <pubDate>Mon, 22 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/micro_server/</guid>
+      <description> 代码演示地址 点击这里 是使用Micro,etcd,nsq,grpc,gin等相关技术的一个微服务实例
+只有一个gateway服务器，api节点,db节点,log节点都可以自由添加 log节点采用nsq,其他节点采用grpc,网关服务对外默认http #TODO 添加令牌服务器,链路追踪等功能,prometheus  架构图 启动命令 etcd nsqlookupd nsqd --lookupd-tcp-address=127.0.0.1:4160 nsqadmin --lookupd-http-address=127.0.0.1:4161 micro --registry=etcdv3 --broker=nsq api --handler=http 执行conf中的文件将配置信息读取到etcd中 启动api_agent,log_agent,db_agent curl http://127.0.0.1:8080/api/v1/test 查看整个程序的运行情况  log_agent db_agent api_agent 关于 Micro  Micro 是一个微服务工具集。它被用来实现它的特性和接口，同时提供强大的可插拔的架构来保证基础组件可以被替换掉。 Micro 专注于解决构建微服务系统的基础需求。它采用了深思熟虑地富有预见性的方式来实现它的设计。 如果你想深入研究 Micro 工具集请点击这里  联系 QQ: 3355168235 </description>
+    </item>
+    
+    <item>
+      <title>我是如何把聊天数据迁移到mongodb</title>
+      <link>https://hwholiday.github.io/2018/chat_mongodb/</link>
+      <pubDate>Wed, 17 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/chat_mongodb/</guid>
+      <description>背景 目前我在一家IM相关的公司上班，老的项目聊天数据没做相关的数据缓存直接存在的mysql数据库，经常链接数过多服务假死,所以现在我们在重构整个聊天项目 业务场景数据  由于要持久化redis中的用户消息数据，数据量比较大，写频繁。因为MongoDB的底层实现采用内存映射机制，因此非常适合大并发量的写。 由于用户的消息量非常大，因此要很方便的支持水平扩展。MongoDB的对水平扩展的支持非常好，并且支持自动分片　 因为redis和Mongodb都是Nosql其他方面的属性差不多,所以我选择了用Mongodb来储存聊天数据  业务分析  　单聊只会缓存离线数据，拉去一条离线就会删除一条，整体数据量不大 　群聊会缓存全部的聊天数据，对与聊天信息比较多的群会７天新建一个collection同样存３０天的数据，聊天少的３０天为一个collection，超过的数据会导出为文本放在minio搭建的对象存储服务器上面(eg:可以看看我其他文章,了解minio搭建已经介绍) 　其他  mongodb 最大可以创建多少 collection ？ 默认的情况下，MongoDB的每个数据库有24000左右命名空间的限制。 每个命名空间有628字节。.nsfile默认为16MB。 每个collection以及索引都算作namespace。因此如果每个collection有一个索引， 我们能创建12000个collection。 --nssize允许提升这个限制。 小心的是每个collection都会占用一些存储-很少的KB。更近一步说，任何的索引都需要至少8KB的数据空间， 也就意味着每个b-tree page大小为8KB. 如果有很多collection以及元数据经常要页输出，会导致核心的操作速度变慢。 --nssize 如果需要更多的collection，运行mongod --nssize参数。这个参数会让.ns文件更大， 支持更多的collection。注意的是 --nssize 用于最新创建数据库。如果你运行在一个存在的数据库， 希望重新定义大小，那么在运行--nssize之后，要运行db.repairDatabase()命令来调整大小。 .ns 文件最大为 2GB.  应用 collection单聊　名字我设置为single_用户id collection群聊　名字我设置为group_群id_年月日　通过年月日就可以判断是否需要新建或者存档数据 MongoDb 集群(副本集) mongod --nssize 500 --bind_ip 192.168.2.28 --port 27019 --dbpath /data/db_c --replSet howie/192.168.2.28:27017 mongod --nssize 500 --bind_ip 192.168.2.28 --port 27018 --dbpath /data/db_b --replSet howie/192.</description>
+    </item>
+    
+    <item>
+      <title>如何使用mongodb</title>
+      <link>https://hwholiday.github.io/2018/how_use_mongodb/</link>
+      <pubDate>Wed, 10 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/how_use_mongodb/</guid>
+      <description>查找 Find m := bson.M{ &amp;quot;create_time&amp;quot;: bson.M{ &amp;quot;$gte&amp;quot;: start, &amp;quot;$lte&amp;quot;: end, }, &amp;quot;account&amp;quot;: account, &amp;quot;tag&amp;quot;: &amp;quot;tag&amp;quot;, } session.DB(&amp;quot;db&amp;quot;).C(&amp;quot;collect&amp;quot;).Find(m).Count()  这里查找时间戳内，账号为account，标签为tag的数据并统计个数。
+聚合管道在mgo中为Pipe(pipeline interface{}) 这个和bash中使用的管道很像，数据可以被层层处理。一般传入的参数为[]bson.M。这个[]bson.M里如果还有嵌套则还要使用[]bson.M
+- 比如这里首先匹配标签和账号
+- 时间戳在一段时间内
+- 然后根据名字分组统计数量
+- 最后排序取最前面的三个。
+//这个就可以传入Pipe m := []bson.M{ {&amp;quot;$match&amp;quot;: bson.M{&amp;quot;tag&amp;quot;: &amp;quot;tag&amp;quot;, &amp;quot;account&amp;quot;: account, &amp;quot;create_time&amp;quot;: bson.M{&amp;quot;$gte&amp;quot;: start, &amp;quot;$lte&amp;quot;: end}}}, {&amp;quot;$group&amp;quot;: bson.M{&amp;quot;_id&amp;quot;: &amp;quot;$TagName&amp;quot;, &amp;quot;count&amp;quot;: bson.M{&amp;quot;$sum&amp;quot;: 1}}}, {&amp;quot;$sort&amp;quot;: bson.M{&amp;quot;count&amp;quot;: -1}}, {&amp;quot;$limit&amp;quot;: 3}, } //这里就可以取到输出的数据 var values []result session.DB(&amp;quot;db&amp;quot;).C(&amp;quot;collect&amp;quot;).Pipe(m).All(&amp;amp;values)  简单介绍 package main import ( &amp;quot;gopkg.in/mgo.v2&amp;quot; &amp;quot;log&amp;quot; &amp;quot;gopkg.</description>
+    </item>
+    
+    <item>
+      <title>pprof使用</title>
+      <link>https://hwholiday.github.io/2017/use_pprof/</link>
+      <pubDate>Mon, 11 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2017/use_pprof/</guid>
+      <description>来查看正在使用的对象较多的个函数入口 top查看 go tool pprof --inuse_space http://127.0.0.1:8182/debug/pprof/heap  来查看累积分配内存较多的一些函数调用 top查看 go tool pprof --alloc_objects http://127.0.0.1:8182/debug/pprof/heap  查看25S内CPU的使用情况,分析函数耗时 top查看 go tool pprof --seconds 25 http://localhost:9090/debug/pprof/profile  查看svg数据（先安装graphviz） sudo apt-get install graphviz go tool pprof --seconds 25 http://localhost:9090/debug/pprof/profile //输出 Fetching profile over HTTP from http://localhost:9090/debug/pprof/profile profile?seconds=25 Please wait... (25s) Saved profile in /home/howie/pprof/pprof.test.samples.cpu.004.pb.gz File: test Type: cpu Time: Apr 26, 2019 at 3:32pm (CST) Duration: 25.08s, Total samples = 20.88s (83.24%) Entering interactive mode (type &amp;quot;help&amp;quot; for commands, &amp;quot;o&amp;quot; for options) (pprof) web //输入web　就可以在浏览器中看svg图了  当我们不明确这些调用时是被哪些函数引起的时，我们可以输入top -cum来查找，-cum的意思就是，将函数调用关系 中的数据进行累积，比如A函数调用的B函数，则B函数中的内存分配量也会累积到A上面，这样就可以很容易的找出调用链。</description>
+    </item>
+    
+  </channel>
+</rss>

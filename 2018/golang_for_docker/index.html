@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="hwholiday">
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2018/goang_tcp_use/" />
+  <link rel="next" href="https://hwholiday.github.io/2018/golang_limit_req/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2018/golang_for_docker/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           构建一个go程序的docker小镜像 | hwholiday
+       
+  </title>
+  <meta name="title" content="构建一个go程序的docker小镜像 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://hwholiday.github.io/"
+    },
+    "articleSection" : "posts",
+    "name" : "构建一个go程序的docker小镜像",
+    "headline" : "构建一个go程序的docker小镜像",
+    "description" : "构建一个go程序的docker小镜像",
+    "inLanguage" : "en-us",
+    "author" : "hwholiday",
+    "creator" : "hwholiday",
+    "publisher": "hwholiday",
+    "accountablePerson" : "hwholiday",
+    "copyrightHolder" : "hwholiday",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-11-07 00:00:00 &#43;0000 UTC",
+    "dateModified" : "2018-11-07 00:00:00 &#43;0000 UTC",
+    "url" : "https://hwholiday.github.io/2018/golang_for_docker/",
+    "wordCount" : "126",
+    "keywords" : [ "linux","docker", "hwholiday"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="dark-theme">
+    <div class="wrapper">
+        <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">构建一个go程序的docker小镜像</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2018-11-07 itemprop="datePublished">November 7, 2018</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/docker/"> Docker </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h2 id="scratch镜像是一个空的镜像文件-特别适合创建超级小的镜像">scratch镜像是一个空的镜像文件，特别适合创建超级小的镜像。</h2>
+
+<h3 id="生成go可执行程序的方法">生成go可执行程序的方法</h3>
+
+<p>go可执行程序生成的时候依赖的一些库如libc还是动态链接的，但是scratch 镜像完全是空的，什么东西也不包含，所以生成go可执行程序时候要按照下面的方式生成，使生成的go可执行程序静态链接所有的库：</p>
+
+<pre><code class="language-base">CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags &quot;-static&quot;' -o howie_tcp .
+</code></pre>
+
+<h3 id="创建dockerfile">创建dockerfile</h3>
+
+<pre><code class="language-base">FROM scratch
+ADD howie_tcp /var/howie_tcp
+WORKDIR /var
+ENTRYPOINT [&quot;/var/howie_tcp&quot;]
+</code></pre>
+
+<h3 id="build-镜像">build 镜像</h3>
+
+<pre><code class="language-base">docker build -t tcp:v1 .
+</code></pre>
+
+<h3 id="创建一个带配置文件的dockerfile">创建一个带配置文件的dockerfile</h3>
+
+<pre><code class="language-base">FROM scratch
+ADD  main /var/main
+ADD  conf /var/conf/
+WORKDIR /var
+ENTRYPOINT [&quot;/var/main&quot;]
+
+//项目目录
+.
+├── conf
+│   └── app.ini
+├── Dockerfile
+├── main
+└── main.go
+
+//main.go 代码
+package main
+
+import (
+	&quot;os&quot;
+	&quot;path/filepath&quot;
+	&quot;github.com/go-ini/ini&quot;
+	&quot;fmt&quot;
+)
+
+func main() {
+	checkErr := func(err error) {
+		if err != nil {
+			panic(err)
+		}
+	}
+	dir, err := os.Getwd()
+	checkErr(err)
+	appConfigPath := filepath.Join(dir, &quot;conf&quot;, &quot;app.ini&quot;)
+	conf, err := ini.Load(appConfigPath)
+	checkErr(err)
+	user := conf.Section(&quot;admin&quot;).Key(&quot;user&quot;).String()
+	pass := conf.Section(&quot;admin&quot;).Key(&quot;pass&quot;).String()
+	fmt.Println(&quot;user :&quot;, user)
+	fmt.Println(&quot;pass :&quot;, pass)
+}
+</code></pre>
+
+<h3 id="创建dockerfile-1">创建dockerfile</h3>
+
+<pre><code class="language-base">FROM scratch
+ADD howie_tcp /var/howie_tcp
+WORKDIR /var
+ENTRYPOINT [&quot;/var/howie_tcp&quot;]
+</code></pre>
+
+<h2 id="联系-qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+  
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://hwholiday.github.io/2018/golang_for_docker/>https://hwholiday.github.io/2018/golang_for_docker/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/linux/">
+                    #linux</a></span>
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/docker/">
+                    #docker</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2018/goang_tcp_use/" class="prev" rel="prev" title="使用TCP并解决TCP粘包的问题"><i class="iconfont icon-left"></i>&nbsp;使用TCP并解决TCP粘包的问题</a>
+         
+        
+        <a href="https://hwholiday.github.io/2018/golang_limit_req/" class="next" rel="next" title="Golang 中的并发限制与超时控制">Golang 中的并发限制与超时控制&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2021</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

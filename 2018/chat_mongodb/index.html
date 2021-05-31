@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="hwholiday">
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2018/how_use_mongodb/" />
+  <link rel="next" href="https://hwholiday.github.io/2018/micro_server/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2018/chat_mongodb/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           我是如何把聊天数据迁移到mongodb | hwholiday
+       
+  </title>
+  <meta name="title" content="我是如何把聊天数据迁移到mongodb | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://hwholiday.github.io/"
+    },
+    "articleSection" : "posts",
+    "name" : "我是如何把聊天数据迁移到mongodb",
+    "headline" : "我是如何把聊天数据迁移到mongodb",
+    "description" : "我是如何把聊天数据迁移到mongodb",
+    "inLanguage" : "en-us",
+    "author" : "hwholiday",
+    "creator" : "hwholiday",
+    "publisher": "hwholiday",
+    "accountablePerson" : "hwholiday",
+    "copyrightHolder" : "hwholiday",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-10-17 00:00:00 &#43;0000 UTC",
+    "dateModified" : "2018-10-17 00:00:00 &#43;0000 UTC",
+    "url" : "https://hwholiday.github.io/2018/chat_mongodb/",
+    "wordCount" : "267",
+    "keywords" : [ "golang","mongodb", "hwholiday"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="dark-theme">
+    <div class="wrapper">
+        <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">我是如何把聊天数据迁移到mongodb</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2018-10-17 itemprop="datePublished">October 17, 2018</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h2 id="背景">背景</h2>
+
+<h6 id="目前我在一家im相关的公司上班-老的项目聊天数据没做相关的数据缓存直接存在的mysql数据库-经常链接数过多服务假死-所以现在我们在重构整个聊天项目">目前我在一家IM相关的公司上班，老的项目聊天数据没做相关的数据缓存直接存在的mysql数据库，经常链接数过多服务假死,所以现在我们在重构整个聊天项目</h6>
+
+<h2 id="业务场景数据">业务场景数据</h2>
+
+<ol>
+<li>由于要持久化redis中的用户消息数据，数据量比较大，写频繁。因为MongoDB的底层实现采用内存映射机制，因此非常适合大并发量的写。</li>
+<li>由于用户的消息量非常大，因此要很方便的支持水平扩展。MongoDB的对水平扩展的支持非常好，并且支持自动分片　　</li>
+<li>因为redis和Mongodb都是Nosql其他方面的属性差不多,所以我选择了用Mongodb来储存聊天数据</li>
+</ol>
+
+<h2 id="业务分析">业务分析</h2>
+
+<ol>
+<li>　单聊只会缓存离线数据，拉去一条离线就会删除一条，整体数据量不大</li>
+<li>　群聊会缓存全部的聊天数据，对与聊天信息比较多的群会７天新建一个collection同样存３０天的数据，聊天少的３０天为一个collection，超过的数据会导出为文本放在minio搭建的对象存储服务器上面(eg:可以看看我其他文章,了解minio搭建已经介绍)</li>
+<li>　其他</li>
+</ol>
+
+<pre><code class="language-base">mongodb 最大可以创建多少 collection ？
+默认的情况下，MongoDB的每个数据库有24000左右命名空间的限制。
+每个命名空间有628字节。.nsfile默认为16MB。
+每个collection以及索引都算作namespace。因此如果每个collection有一个索引，
+我们能创建12000个collection。
+--nssize允许提升这个限制。
+小心的是每个collection都会占用一些存储-很少的KB。更近一步说，任何的索引都需要至少8KB的数据空间，
+也就意味着每个b-tree page大小为8KB.
+如果有很多collection以及元数据经常要页输出，会导致核心的操作速度变慢。
+--nssize
+如果需要更多的collection，运行mongod --nssize参数。这个参数会让.ns文件更大，
+支持更多的collection。注意的是 --nssize 用于最新创建数据库。如果你运行在一个存在的数据库，
+希望重新定义大小，那么在运行--nssize之后，要运行db.repairDatabase()命令来调整大小。
+.ns 文件最大为 2GB.
+</code></pre>
+
+<h2 id="应用">应用</h2>
+
+<h5 id="collection单聊-名字我设置为single-用户id">collection单聊　名字我设置为single_用户id</h5>
+
+<h5 id="collection群聊-名字我设置为group-群id-年月日-通过年月日就可以判断是否需要新建或者存档数据">collection群聊　名字我设置为group_群id_年月日　　通过年月日就可以判断是否需要新建或者存档数据</h5>
+
+<h2 id="mongodb-集群-副本集">MongoDb 集群(副本集)</h2>
+
+<pre><code class="language-base">mongod --nssize 500  --bind_ip 192.168.2.28  --port 27019 --dbpath /data/db_c   --replSet howie/192.168.2.28:27017
+mongod  --nssize 500  --bind_ip 192.168.2.28  --port 27018 --dbpath /data/db_b   --replSet howie/192.168.2.28:27019
+mongod  --nssize 500  --bind_ip 192.168.2.28  --port 27017 --dbpath /data/db_a   --replSet howie/192.168.2.28:27018
+</code></pre>
+
+<p>随便链接到一个节点执行</p>
+
+<pre><code class="language-base">config = {_id: 'howie', members: [{
+        &quot;_id&quot;:1,
+        &quot;host&quot;:&quot;192.168.2.28:27017&quot;
+    },{
+        &quot;_id&quot;:2,
+        &quot;host&quot;:&quot;192.168.2.28:27018&quot;
+     },{
+        &quot;_id&quot;:3,
+        &quot;host&quot;:&quot;192.168.2.28:27019&quot;
+     }]
+}
+
+rs.initiate(config)
+</code></pre>
+
+<pre><code class="language-base">//链接命令　mongodb://192.168.2.28:27017,192.168.2.28:27018,192.168.2.28:27019/?replicaSet=howie
+</code></pre>
+
+<h2 id="简单介绍">简单介绍</h2>
+
+<pre><code class="language-base">package main
+import (
+	&quot;gopkg.in/mgo.v2&quot;
+	&quot;log&quot;
+	&quot;gopkg.in/mgo.v2/bson&quot;
+)
+type User struct {
+	Id       bson.ObjectId `bson:&quot;_id&quot;`
+	Name     string        `bson:&quot;name&quot;`
+	PassWord string        `bson:&quot;pass_word&quot;`
+	Age      int           `bson:&quot;age&quot;`
+}
+func main() {
+	db, err := mgo.Dial(&quot;mongodb://192.168.2.28:27017,192.168.2.28:27018,192.168.2.28:27019/?replicaSet=howie&quot;)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer db.Close()
+	db.SetMode(mgo.Monotonic, true)
+	c := db.DB(&quot;howie&quot;).C(&quot;person&quot;)
+	//插入
+	/*c.Insert(&amp;User{
+		Id:       bson.NewObjectId(),
+		Name:     &quot;JK_CHENG&quot;,
+		PassWord: &quot;123132&quot;,
+		Age: 2,
+	}, &amp;User{
+		Id:       bson.NewObjectId(),
+		Name:     &quot;JK_WEI&quot;,
+		PassWord: &quot;qwer&quot;,
+		Age: 5,
+	}, &amp;User{
+		Id:       bson.NewObjectId(),
+		Name:     &quot;JK_HE&quot;,
+		PassWord: &quot;6666&quot;,
+		Age: 7,
+	})*/
+	var users []User
+	c.Find(nil).All(&amp;users) //查询全部数据
+	log.Println(users)
+	c.FindId(users[0].Id).All(&amp;users) //通过ID查询
+	log.Println(users)
+	c.Find(bson.M{&quot;name&quot;: &quot;JK_WEI&quot;}).All(&amp;users) //单条件查询(=)
+	log.Println(users)
+	c.Find(bson.M{&quot;name&quot;: bson.M{&quot;$ne&quot;: &quot;JK_WEI&quot;}}).All(&amp;users) //单条件查询(!=)
+	log.Println(users)
+	c.Find(bson.M{&quot;age&quot;: bson.M{&quot;$gt&quot;: 5}}).All(&amp;users) //单条件查询(&gt;)
+	log.Println(users)
+	c.Find(bson.M{&quot;age&quot;: bson.M{&quot;$gte&quot;: 5}}).All(&amp;users) //单条件查询(&gt;=)
+	log.Println(users)
+	c.Find(bson.M{&quot;age&quot;: bson.M{&quot;$lt&quot;: 5}}).All(&amp;users) //单条件查询(&lt;)
+	log.Println(users)
+	c.Find(bson.M{&quot;age&quot;: bson.M{&quot;$lte&quot;: 5}}).All(&amp;users) //单条件查询(&lt;=)
+	log.Println(users)
+	/*c.Find(bson.M{&quot;name&quot;: bson.M{&quot;$in&quot;: []string{&quot;JK_WEI&quot;, &quot;JK_HE&quot;}}}).All(&amp;users) //单条件查询(in)
+	log.Println(users)
+	c.Find(bson.M{&quot;$or&quot;: []bson.M{bson.M{&quot;name&quot;: &quot;JK_WEI&quot;}, bson.M{&quot;age&quot;: 7}}}).All(&amp;users) //多条件查询(or)
+	log.Println(users)
+	c.Update(bson.M{&quot;_id&quot;: users[0].Id}, bson.M{&quot;$set&quot;: bson.M{&quot;name&quot;: &quot;JK_HOWIE&quot;, &quot;age&quot;: 61}}) //修改字段的值($set)
+	c.FindId(users[0].Id).All(&amp;users)
+	log.Println(users)
+	c.Find(bson.M{&quot;name&quot;: &quot;JK_CHENG&quot;, &quot;age&quot;: 66}).All(&amp;users) //多条件查询(and)
+	log.Println(users)
+	c.Update(bson.M{&quot;_id&quot;: users[0].Id}, bson.M{&quot;$inc&quot;: bson.M{&quot;age&quot;: -6,}}) //字段增加值($inc)
+	c.FindId(users[0].Id).All(&amp;users)
+	log.Println(users)*/
+	//c.Update(bson.M{&quot;_id&quot;: users[0].Id}, bson.M{&quot;$push&quot;: bson.M{&quot;interests&quot;: &quot;PHP&quot;}}) //从数组中增加一个元素($push)
+	c.Update(bson.M{&quot;_id&quot;: users[0].Id}, bson.M{&quot;$pull&quot;: bson.M{&quot;interests&quot;: &quot;PHP&quot;}}) //从数组中删除一个元素($pull)
+	c.FindId(users[0].Id).All(&amp;users)
+	log.Println(users)
+	c.Remove(bson.M{&quot;name&quot;: &quot;JK_CHENG&quot;})//删除
+}
+</code></pre>
+
+<h2 id="联系-qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+  
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://hwholiday.github.io/2018/chat_mongodb/>https://hwholiday.github.io/2018/chat_mongodb/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/mongodb/">
+                    #mongodb</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2018/how_use_mongodb/" class="prev" rel="prev" title="如何使用mongodb"><i class="iconfont icon-left"></i>&nbsp;如何使用mongodb</a>
+         
+        
+        <a href="https://hwholiday.github.io/2018/micro_server/" class="next" rel="next" title="从零开始微服务构建">从零开始微服务构建&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2021</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

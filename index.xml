@@ -1,0 +1,2460 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>hwholiday on hwholiday</title>
+    <link>https://hwholiday.github.io/</link>
+    <description>Recent content in hwholiday on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 31 May 2021 00:00:00 +0000</lastBuildDate>
+    <atom:link href="/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Filebeat 收集 K8S 日志</title>
+      <link>https://hwholiday.github.io/2021/k8s-filebeat/</link>
+      <pubDate>Mon, 31 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2021/k8s-filebeat/</guid>
+      <description>
+
+&lt;h2 id=&#34;介绍&#34;&gt;介绍&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;每个Node节点上的容器应用日志，默认都会在/var/log/containers （标准输出）&lt;/li&gt;
+&lt;li&gt;Pod -&amp;gt; /var/log/containers/*.log -&amp;gt; Filebeat -&amp;gt; Logstash -&amp;gt;  其他输出&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;app-*.log 是你的应用日志文件（可在宿主机的/var/log/containers/目录下查看自己的日志格式）&lt;/p&gt;
+
+&lt;h3 id=&#34;使用daemonset安装-filebeat-filebeat-yaml&#34;&gt;使用DaemonSet安装 filebeat （filebeat.yaml）&lt;/h3&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: filebeat
+  name: filebeat-daemonset
+spec:
+  selector:
+    matchLabels:
+      app: filebeat
+  template:
+    metadata:
+      labels:
+        app: filebeat
+    spec:
+      containers:
+        - name: filebeat-daemonset
+          image: docker.elastic.co/beats/filebeat:7.12.1
+          args: [
+            &amp;quot;-c&amp;quot;, &amp;quot;/usr/share/filebeat/filebeat.yml&amp;quot;,
+            &amp;quot;-e&amp;quot;,
+          ]
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /usr/share/filebeat/filebeat.yml
+              name: volume-configmap
+              subPath: filebeat.yml
+              readOnly: true
+            - mountPath: /data/app/docker/containers
+              name: varlibdockercontainers
+              readOnly: true
+            - name: varlog
+              mountPath: /var/log
+              readOnly: true
+      volumes:
+        - name: volume-configmap
+          configMap:
+            defaultMode: 420
+            name: filebeat-configmap
+        - name: varlibdockercontainers
+          hostPath:
+            path: /data/app/docker/containers
+        - name: varlog
+          hostPath:
+            path: /var/log
+---
+apiVersion: v1
+data:
+  filebeat.yml: |-
+    filebeat.inputs:
+    - type: log
+      symlinks: true
+      paths:
+        - /var/log/containers/app-*.log
+    output.logstash:
+      hosts: [&amp;quot;172.12.17.166:5044&amp;quot;]
+kind: ConfigMap
+metadata:
+  name: filebeat-configmap
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;配置-logstash-conf&#34;&gt;配置 logstash.conf&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;input {
+    beats {
+        port =&amp;gt; &amp;quot;5044&amp;quot;
+    }
+}
+filter {
+  if &amp;quot;error&amp;quot; in [message]{
+    mutate{
+      add_field =&amp;gt; {&amp;quot;logtag&amp;quot;=&amp;gt;&amp;quot;error&amp;quot;}
+    }
+  }else if &amp;quot;info&amp;quot; in [message]{
+    mutate{
+      add_field =&amp;gt; {&amp;quot;logtag&amp;quot;=&amp;gt;&amp;quot;info&amp;quot;}
+      }
+  }else{
+    mutate{
+      add_field =&amp;gt; {&amp;quot;logtag&amp;quot;=&amp;gt;&amp;quot;debug&amp;quot;}
+      }
+  }
+}
+output {
+  if [logtag]==&amp;quot;error&amp;quot;{
+    file {
+        path =&amp;gt; &amp;quot;/path/to/k8s-error/%{+yyyy-MM-dd}.log.gz&amp;quot;
+        codec =&amp;gt; line { format =&amp;gt; &amp;quot;%{message}&amp;quot;}
+        gzip =&amp;gt; true
+    }
+  }
+  if [logtag]==&amp;quot;info&amp;quot;{
+    file {
+        path =&amp;gt; &amp;quot;/path/to/k8s-info/%{+yyyy-MM-dd}.log.gz&amp;quot;
+        codec =&amp;gt; line { format =&amp;gt; &amp;quot;%{message}&amp;quot;}
+        gzip =&amp;gt; true
+    }
+  }
+  if [logtag]==&amp;quot;debug&amp;quot;{
+    file {
+        path =&amp;gt; &amp;quot;/path/to/k8s-debug/%{+yyyy-MM}.log.gz&amp;quot;
+        codec =&amp;gt; line { format =&amp;gt; &amp;quot;%{message}&amp;quot;}
+        gzip =&amp;gt; true
+    }
+  }
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Kubernetes 集群挂载高可用 NFS 网络文件存储</title>
+      <link>https://hwholiday.github.io/2021/k8s-nsf/</link>
+      <pubDate>Tue, 18 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2021/k8s-nsf/</guid>
+      <description>
+
+&lt;h2 id=&#34;安装nfs高可用集群-https-www-hwholiday-com-2021-nsf&#34;&gt;&lt;a href=&#34;https://www.hwholiday.com/2021/nsf/&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;安装NFS高可用集群&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h3 id=&#34;安装-nfs-client-provisioner&#34;&gt;安装 nfs-client-provisioner&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+
+chmod 700 get_helm.sh
+
+./get_helm.sh
+
+helm repo add azure http://mirror.azure.cn/kubernetes/charts/
+
+helm install nfs-storage azure/nfs-client-provisioner --set nfs.server=&amp;quot;172.12.17.200&amp;quot; --set nfs.path=/fs/nsf-data --set storageClass.name=nfs-hw
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;创建pvc&#34;&gt;创建PVC&lt;/h3&gt;
+
+&lt;p&gt;kubectl apply -f  nfs-pvc.yaml&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pvc-test
+spec:
+  storageClassName: &amp;quot;nfs-hw&amp;quot;
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;测试&#34;&gt;测试&lt;/h3&gt;
+
+&lt;p&gt;kubectl apply -f nfs-test.yaml&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nfsjob
+spec:
+  template:
+    spec:
+      containers:
+      - name: bbox1
+        image: busybox
+        args:
+        - /bin/sh
+        - -c
+        - echo &amp;quot;1231231231&amp;quot; &amp;gt; /nfs-data/hello
+        volumeMounts:
+        - mountPath: &amp;quot;/nfs-data&amp;quot;
+          name: nfsdata
+      restartPolicy: Never
+      volumes:
+      - name: nfsdata
+        persistentVolumeClaim:
+          claimName: nfs-pvc-test
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;end&#34;&gt;end&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;接下来去看看 NFS 服务器上是否有对应文件文件&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;k8s-集群是-v1-20-在-nfs-provisioner-创建-pvc-时-nfs-provisioner-会报错&#34;&gt;K8S 集群是 v1.20+，在 nfs provisioner 创建 pvc 时，nfs provisioner 会报错&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;selfLink在1.16版本以后已经弃用，在1.20版本停用。&lt;/li&gt;
+&lt;li&gt;要解决这个问题只需要在kube-api添加&amp;ndash;feature-gates=RemoveSelfLink=false 即可，
+ 参考：&lt;a href=&#34;https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/issues/25&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;kubernetes-sigs/nfs-subdir-external-provisioner#25&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>NFS (Kubernetes) 高可用方案（NFS&#43;keepalived&#43;Sersync)</title>
+      <link>https://hwholiday.github.io/2021/nsf/</link>
+      <pubDate>Mon, 17 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2021/nsf/</guid>
+      <description>
+
+&lt;h3 id=&#34;简介&#34;&gt;简介&lt;/h3&gt;
+
+&lt;p&gt;本方案 NFS 的高可用方案，客户端为 k8s集群 ，三台文件服务器分别Master和 Slave，使用 keepalived 生成一个虚拟 IP，使用 Sersync 进行 Master 与 Slave 之间文件相互同步，确保高可用。&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;角色&lt;/th&gt;
+&lt;th&gt;系统&lt;/th&gt;
+&lt;th&gt;IP&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;虚拟IP&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;172.12.17.200&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Client&lt;/td&gt;
+&lt;td&gt;k8s集群&lt;/td&gt;
+&lt;td&gt;172.12.17.163,172.12.17.164,172.12.17.165&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Master&lt;/td&gt;
+&lt;td&gt;centos 7.5&lt;/td&gt;
+&lt;td&gt;172.12.17.166&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Slave&lt;/td&gt;
+&lt;td&gt;centos 7.5&lt;/td&gt;
+&lt;td&gt;172.12.17.167&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h4 id=&#34;查看内核版本&#34;&gt;查看内核版本&lt;/h4&gt;
+
+&lt;p&gt;uname -smr&lt;br /&gt;
+建议升级到最新的长期支持版本  &lt;a href=&#34;https://www.hwholiday.com/2021/centos7/&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;升级内核&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;安装nfs&#34;&gt;安装nfs&lt;/h3&gt;
+
+&lt;h4 id=&#34;在master和slave上面创建共享目录&#34;&gt;在master和slave上面创建共享目录&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;mkdir -p /fs/nsf-data
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;在master和slave上安装nfs服务&#34;&gt;在master和slave上安装nfs服务&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;// 下载nfs
+yum -y install nfs-utils rpcbind
+//写入配置（配置要改动需要reload nfs 服务）
+echo &#39;/fs/nsf-data 172.12.17.163 172.12.17.164 172.12.17.165(rw,sync,all_squash)&#39; &amp;gt;&amp;gt; /etc/exports
+//开启服务
+systemctl start rpcbind &amp;amp;&amp;amp; systemctl start nfs
+//设置开机自启动
+systemctl enable rpcbind &amp;amp;&amp;amp; systemctl enable nfs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;在k8s集群里面找个node-测试是否能链接上nfs服务&#34;&gt;在k8s集群里面找个node 测试是否能链接上nfs服务&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;// 下载nfs
+yum -y install nfs-utils rpcbind
+
+// 挂载目录
+mkdir /test-nsf-data
+
+// 挂载nfs
+mount -t nfs 172.12.17.166:/fs/nsf-data /test-nsf-data
+
+//查看
+df -TH
+输出里面含有  172.12.17.166:/fs/nsf-data nfs4       53G  4.9G   46G  10% /test-nsf-data
+
+//卸载挂载
+umount /test-nsf-data
+
+//检查 nfs 服务器端是否有设置共享目录 showmount -e $(nfs服务器的IP)
+showmount -e 172.12.17.166
+输出 Export list for 172.12.17.166:
+/fs/nsf-data 10.255.22.92,10.255.22.91,10.255.22.90
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;sersync-在-slave-进行同步-master-数据&#34;&gt;Sersync 在 Slave 进行同步 Master 数据&lt;/h3&gt;
+
+&lt;p&gt;Sersync&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;提到数据同步就必然会谈到rsync，一般简单的服务器数据传输会使用ftp/sftp等方式，但是这样的方式效率不高，不支持差异化增量同步也不支持实时传输。针对数据实时同步需求大多数人会选择rsync+inotify-tools的解决方案，但是这样的方案也存在一些缺陷，sersync是国人基于前两者开发的工具，不仅保留了优点同时还强化了实时监控，文件过滤，简化配置等功能，帮助用户提高运行效率，节省时间和网络资源。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;在slave上编辑配置文件&#34;&gt;在Slave上编辑配置文件&lt;/h4&gt;
+
+&lt;p&gt;vim /etc/rsyncd.conf&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;# 设置rsync运行权限为root
+uid = root
+# 设置rsync运行权限为root
+gid = root
+# 默认端口
+port = 873
+# pid文件的存放位置
+pid file = /var/rsyncd.pid
+# 日志文件位置，启动rsync后自动产生这个文件，无需提前创建
+log file = /var/log/rsyncd.log
+# 默认为true，修改为no，增加对目录文件软连接的备份
+use chroot = no
+# 最大连接数
+max connections = 200
+# 设置rsync服务端文件为读写权限
+read only = no
+# 不显示rsync服务端资源列表 
+list = false
+fake super = yes
+ignore errors
+[data]
+# rsync服务端数据目录路径
+path = /fs/nsf-data
+# 执行数据同步的用户名，可以设置多个，用英文状态下逗号隔开
+auth users = root
+# 用户认证配置文件，里面保存用户名称和密码，后面会创建这个文件
+secrets file = /etc/rsync_slave.pass
+# 允许进行数据同步的客户端IP地址，可以设置多个，用英文状态下逗号隔开
+hosts allow = 172.12.17.166
+# 禁止数据同步的客户端IP地址，可以设置多个，用英文状态下逗号隔开
+#hosts deny = 192.168.0.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;在slave上安装启动&#34;&gt;在Slave上安装启动&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;yum install rsync
+echo &#39;root:123456&#39; &amp;gt; /etc/rsync_slave.pass
+chmod 600 /etc/rsync_slave.pass
+chown -R root:root /fs/nsf-data
+rsync --daemon --config=/etc/rsyncd.conf
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;在-master-上测试下&#34;&gt;在 Master 上测试下&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;yum -y install rsync
+chown -R root:root /fs/nsf-data
+echo &amp;quot;123456&amp;quot; &amp;gt; /etc/rsync_slave.pass
+chmod 600 /etc/rsync_slave.pass
+// 创建测试文件,测试推送
+cd /fs/nsf-data
+echo &amp;quot;test&amp;quot; &amp;gt; slave.txt
+rsync -arv /fs/nsf-data/ root@172.12.17.167::data --password-file=/etc/rsync_slave.pass
+#在 slave 上测试
+ls /fs/nsf-data
+# 出现 slave.txt 即可
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;在-master-上配置自动同步安装&#34;&gt;在 Master 上配置自动同步安装&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;// 下载
+wget https://raw.githubusercontent.com/orangle/sersync/master/release/sersync2.5.4_64bit_binary_stable_final.tar.gz
+// 解压
+tar zxvf sersync2.5.4_64bit_binary_stable_final.tar.gz  
+// 移动目录到 /usr/local/sersync
+mv GNU-Linux-x86  /usr/local/sersync   
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;在-master-上配置自动同步配置&#34;&gt;在 Master 上配置自动同步配置&lt;/h4&gt;
+
+&lt;p&gt;cd /usr/local/sersync/ &amp;amp;&amp;amp; vim /usr/local/sersync/confxml.xml&lt;br /&gt;
+修改配置文件里面节点数据&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;&amp;lt;delete start=&amp;quot;flase&amp;quot;/&amp;gt;
+
+#源服务器同步目录
+&amp;lt;localpath watch=&amp;quot;/fs/nsf-data/&amp;quot;&amp;gt;  
+
+#remote ip=&amp;quot;172.12.17.167&amp;quot;  #目标服务器ip，每行一个 
+#name=&amp;quot;data&amp;quot;   目标服务器rsync同步目录模块名称
+&amp;lt;remote ip=&amp;quot;172.12.17.167&amp;quot; name=&amp;quot;data&amp;quot;/&amp;gt; 
+
+#rsync同步认证
+#start=&amp;quot;true&amp;quot;   
+#users=&amp;quot;root&amp;quot; 目标服务器rsync同步用户名
+#passwordfile=&amp;quot;/etc/rsync_slave.pass&amp;quot; 目标服务器rsync同步用户的密码在源服务器的存放路径
+&amp;lt;auth start=&amp;quot;true&amp;quot; users=&amp;quot;root&amp;quot; passwordfile=&amp;quot;/etc/rsync_slave.pass&amp;quot;/&amp;gt;
+
+# 设置rsync远程服务端口，远程非默认端口则需打开自定义
+&amp;lt;userDefinedPort start=&amp;quot;false&amp;quot; port=&amp;quot;873&amp;quot;/&amp;gt;&amp;lt;!-- port=874 --&amp;gt;
+
+#脚本运行失败日志记录
+failLog path=&amp;quot;/tmp/rsync_fail_log.sh&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;启动&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;./sersync2 -r -d -o confxml.xml
+// 测试
+cd /fs/nsf-data
+touch Slave1.txt
+// 在 Slave 里面 /fs/nsf-data 里面去看看数据是否存在
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;在master上的数据可以同步到slave-如何master挂掉后恢复不能同步数据到slave-这里也同样配置master到slave的自动同步&#34;&gt;在Master上的数据可以同步到Slave，如何Master挂掉后恢复不能同步数据到Slave，这里也同样配置Master到Slave的自动同步&lt;/h3&gt;
+
+&lt;h4 id=&#34;在slave上编辑配置文件-1&#34;&gt;在Slave上编辑配置文件&lt;/h4&gt;
+
+&lt;p&gt;vim /etc/rsyncd.conf&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;# 设置rsync运行权限为root
+uid = root
+# 设置rsync运行权限为root
+gid = root
+# 默认端口
+port = 873
+# pid文件的存放位置
+pid file = /var/rsyncd.pid
+# 日志文件位置，启动rsync后自动产生这个文件，无需提前创建
+log file = /var/log/rsyncd.log
+# 默认为true，修改为no，增加对目录文件软连接的备份
+use chroot = no
+# 最大连接数
+max connections = 200
+# 设置rsync服务端文件为读写权限
+read only = no
+# 不显示rsync服务端资源列表 
+list = false
+fake super = yes
+ignore errors
+[data]
+# rsync服务端数据目录路径
+path = /fs/nsf-data
+# 执行数据同步的用户名，可以设置多个，用英文状态下逗号隔开
+auth users = root
+# 用户认证配置文件，里面保存用户名称和密码，后面会创建这个文件
+secrets file = /etc/rsync_slave.pass
+# 允许进行数据同步的客户端IP地址，可以设置多个，用英文状态下逗号隔开
+hosts allow = 172.12.17.167
+# 禁止数据同步的客户端IP地址，可以设置多个，用英文状态下逗号隔开
+#hosts deny = 192.168.0.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;在master上安装启动&#34;&gt;在Master上安装启动&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;yum install rsync
+echo &#39;root:123456&#39; &amp;gt; /etc/rsync_master.pass
+chmod 600 /etc/rsync_master.pass
+chown -R root:root /fs/nsf-data
+rsync --daemon --config=/etc/rsyncd.conf
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;在-slave-上测试下&#34;&gt;在 Slave 上测试下&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;yum -y install rsync
+chown -R root:root /fs/nsf-data
+echo &amp;quot;123456&amp;quot; &amp;gt; /etc/rsync_master.pass
+chmod 600 /etc/rsync_master.pass
+// 创建测试文件,测试推送
+cd /fs/nsf-data
+echo &amp;quot;test&amp;quot; &amp;gt; master.txt
+rsync -arv /fs/nsf-data/ root@172.12.17.166::data --password-file=/etc/rsync_master.pass
+#在 Master 上测试
+ls /fs/nsf-data
+# 出现 master.txt 即可
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;在-slave-上配置自动同步安装&#34;&gt;在 Slave 上配置自动同步安装&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;// 下载
+wget https://raw.githubusercontent.com/orangle/sersync/master/release/sersync2.5.4_64bit_binary_stable_final.tar.gz
+// 解压
+tar zxvf sersync2.5.4_64bit_binary_stable_final.tar.gz  
+// 移动目录到 /usr/local/sersync
+mv GNU-Linux-x86  /usr/local/sersync   
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;在-slave-上配置自动同步配置&#34;&gt;在 Slave 上配置自动同步配置&lt;/h4&gt;
+
+&lt;p&gt;cd /usr/local/sersync/ &amp;amp;&amp;amp; vim /usr/local/sersync/confxml.xml&lt;br /&gt;
+修改配置文件里面节点数据&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;&amp;lt;delete start=&amp;quot;flase&amp;quot;/&amp;gt;
+
+#源服务器同步目录
+&amp;lt;localpath watch=&amp;quot;/fs/nsf-data/&amp;quot;&amp;gt;  
+
+#remote ip=&amp;quot;172.12.17.166&amp;quot;  #目标服务器ip，每行一个 
+#name=&amp;quot;data&amp;quot;   目标服务器rsync同步目录模块名称
+&amp;lt;remote ip=&amp;quot;172.12.17.166&amp;quot; name=&amp;quot;data&amp;quot;/&amp;gt; 
+
+#rsync同步认证
+#start=&amp;quot;true&amp;quot;   
+#users=&amp;quot;root&amp;quot; 目标服务器rsync同步用户名
+#passwordfile=&amp;quot;/etc/rsync_master.pass&amp;quot; 目标服务器rsync同步用户的密码在源服务器的存放路径
+&amp;lt;auth start=&amp;quot;true&amp;quot; users=&amp;quot;root&amp;quot; passwordfile=&amp;quot;/etc/rsync_master.pass&amp;quot;/&amp;gt;
+
+# 设置rsync远程服务端口，远程非默认端口则需打开自定义
+&amp;lt;userDefinedPort start=&amp;quot;false&amp;quot; port=&amp;quot;873&amp;quot;/&amp;gt;&amp;lt;!-- port=874 --&amp;gt;
+
+#脚本运行失败日志记录
+failLog path=&amp;quot;/tmp/rsync_fail_log.sh&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;启动&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;./sersync2 -r -d -o confxml.xml
+// 测试
+cd /fs/nsf-data
+touch Master1.txt
+// 在 Slave 里面 /fs/nsf-data 里面去看看数据是否存在
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;安装-keepalived在master上执行&#34;&gt;安装 Keepalived在Master上执行&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;yum -y install keepalived
+vim /etc/keepalived/keepalived.conf
+# 其中 eth0 为绑定网卡名称，可以使用 ip addr 命令查看
+# 其中 172.12.17.200  为虚拟 ip ，注意不要和其它 ip 冲突
+! Configuration File for keepalived
+vrrp_instance VI_1 {
+    state MASTER
+    interface eth0
+    # 虚拟路由标识，这个标识是一个数字，同一个vrrp实例使用唯一的标识。
+    # 即同一vrrp_instance下，MASTER和BACKUP必须是一致的
+    virtual_router_id 51
+    # 定义优先级，数字越大，优先级越高（0-255）。
+    # 在同一个vrrp_instance下，MASTER 的优先级必须大于 BACKUP 的优先级
+    priority 150
+    # 设定 MASTER 与 BACKUP 负载均衡器之间同步检查的时间间隔，单位是秒
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 123456
+    }
+    virtual_ipaddress {
+        172.12.17.200/24 brd 172.12.17.255
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;安装-keepalived在slave上执行&#34;&gt;安装 Keepalived在Slave上执行&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;yum -y install keepalived
+vim /etc/keepalived/keepalived.conf
+# 其中 eth0 为绑定网卡名称，可以使用 ip addr 命令查看
+# 其中 172.12.17.200  为虚拟 ip ，注意不要和其它 ip 冲突
+vrrp_instance VI_1 {
+    state MASTER
+    interface eth0
+    # 虚拟路由标识，这个标识是一个数字，同一个vrrp实例使用唯一的标识。
+    # 即同一vrrp_instance下，MASTER和BACKUP必须是一致的
+    virtual_router_id 51
+    # 定义优先级，数字越大，优先级越高（0-255）。
+    # 在同一个vrrp_instance下，MASTER 的优先级必须大于 BACKUP 的优先级
+    priority 100
+    # 设定 MASTER 与 BACKUP 负载均衡器之间同步检查的时间间隔，单位是秒
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 123456
+    }
+    virtual_ipaddress {
+        172.12.17.200/24 brd 172.12.17.255
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;启动服务&#34;&gt;启动服务&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;systemctl start keepalived.service &amp;amp;&amp;amp; systemctl enable keepalived.service
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;测试&#34;&gt;测试&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;在 Master上
+ip a | grep  172.12.17.200
+有输出：    inet 172.12.17.200/32 scope global eth0
+在 Slave上
+ip a | grep  172.12.17.200
+无输出：
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;关闭master上keepalived测试ip是否更换&#34;&gt;关闭Master上keepalived测试IP是否更换&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;在 Master上
+systemctl stop keeplived
+
+在 Slave上
+ip a | grep  172.12.17.200
+有输出：    inet 172.12.17.200/32 scope global eth0
+自动切换成功
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;在k8s集群里面找个node-测试是否能链接上nfs服务-1&#34;&gt;在k8s集群里面找个node 测试是否能链接上nfs服务&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;// 挂载目录
+mkdir /test-nsf-data-200
+// 挂载nfs
+mount -t nfs 172.12.17.200:/fs/nsf-data /test-nsf-data-200
+//查看
+df -TH
+输出里面含有  172.12.17.200:/fs/nsf-data nfs4       53G  4.9G   46G  10% /test-nsf-data-200
+//卸载挂载
+umount /test-nsf-data-200
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;在安装keepalived的机器上设置-keepalived-脚本&#34;&gt;在安装Keepalived的机器上设置 Keepalived 脚本&lt;/h4&gt;
+
+&lt;p&gt;ip 的漂移是根据 Keepalived 的存活来判断的，所以在 nfs 挂之后需要停止 keepalived 服务&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;echo &#39;systemctl status nfs &amp;amp;&amp;gt;/dev/null
+if [ $? -ne 0 ]; then
+  systemctl start nfs
+  systemctl status nfs &amp;amp;&amp;gt;/dev/null
+  if [ $? -ne 0 ]; then
+    systemctl stop keepalived.service
+  fi
+fi&#39; &amp;gt;&amp;gt; /usr/local/sbin/task_nfs.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;加入定时任务&#34;&gt;加入定时任务&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;chmod 777 /usr/local/sbin/task_nfs.sh
+crontab -e
+# 添加定时任务 5秒执行一次
+* * * * * sleep 5;/usr/local/sbin/task_nfs.sh &amp;amp;&amp;gt; /dev/null
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Golang （V2）分布式ID生成系统，高性能、高可用、易扩展的id生成服务</title>
+      <link>https://hwholiday.github.io/2021/gidv2/</link>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2021/gidv2/</guid>
+      <description>
+
+&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
+
+&lt;p&gt;gid 是使用golang开发的生成分布式Id系统，基于数据库号段算法实现&lt;/p&gt;
+
+&lt;h1 id=&#34;gid-v2版本实现了高可用-主从架构-简化了调用逻辑&#34;&gt;gid V2版本实现了高可用，主从架构，简化了调用逻辑&lt;/h1&gt;
+
+&lt;h6 id=&#34;grpc-对外服务&#34;&gt;GRPC 对外服务&lt;/h6&gt;
+
+&lt;h3 id=&#34;性能&#34;&gt;性能&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;id 从内存生成，如果(step)步长设置的足够大,qps可达到千万+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;可用性&#34;&gt;可用性&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;id 分配依赖mysql ,当mysql不可用的,如果内存上还有的可以继续分配&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;特性&#34;&gt;特性&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;全局唯一的int64型id&lt;/li&gt;
+&lt;li&gt;分配ID只访问内存&lt;/li&gt;
+&lt;li&gt;可无限横向扩展&lt;/li&gt;
+&lt;li&gt;依赖mysql恢复服务迅速&lt;/li&gt;
+&lt;li&gt;依赖etcd实现服务的高可用 &amp;hellip;&amp;hellip;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;高可用&#34;&gt;高可用&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;server 基于 ETCD Lease 实现了自动抢主，主节点挂了，从节点自动申请为主节点&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;简化调用逻辑&#34;&gt;简化调用逻辑&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;  go get github.com/hwholiday/gid/v2@gidV2
+  
+  //go mod 内
+  //github.com/hwholiday/gid/v2 v2.0.6
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;封住了 client 实现了自动识别服务主节点&lt;/li&gt;
+&lt;li&gt;只需要实现 client 并调用 GetId(GRPC方法)，无需其他接口，自动创建BizTag，并预加载&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;package main
+
+import (
+	&amp;quot;context&amp;quot;
+	&amp;quot;fmt&amp;quot;
+	gidSrv &amp;quot;github.com/hwholiday/gid/v2/api&amp;quot;
+)
+
+func main() {
+	cli, err := InitGrpc([]string{&amp;quot;127.0.0.1:2379&amp;quot;}, 15)
+	c, _ := cli.GetGidGrpcClient()
+	res, err := c.GetId(context.TODO(), &amp;amp;gidSrv.ReqId{
+		BizTag: &amp;quot;111&amp;quot;,
+	})
+	fmt.Println(res, err)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;安装&#34;&gt;安装&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;初始化 mysql&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;create database gid;
+use gid;
+create table segments
+(
+    biz_tag     varchar(128) not null,
+    max_id      bigint       null,
+    step        int          null,
+    create_time bigint       null,
+    update_time bigint       null,
+    constraint segments_pk
+        primary key (biz_tag)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_bin;
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;编译运行项目&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;    go get github.com/hwholiday/gid/v2@gidV2  OR  git clone -b gidV2 https://github.com/hwholiday/gid.git 
+    cd gid/cmd
+    go build -o gid
+   ./gid -conf ./gid.toml
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;压测&#34;&gt;压测&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;BenchmarkService_GetId-4         2046296               583 ns/op 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;重点sql&#34;&gt;重点SQL&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;Begin
+UPDATE table SET max_id=max_id+step WHERE biz_tag=xxx
+SELECT tag, max_id, step FROM table WHERE biz_tag=xxx
+Commit
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;联系-qq-3355168235&#34;&gt;联系  QQ: 3355168235&lt;/h2&gt;
+
+&lt;h2 id=&#34;完整代码示例-https-github-com-hwholiday-gid-tree-gidv2&#34;&gt;&lt;a href=&#34;https://github.com/hwholiday/gid/tree/gidV2&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;完整代码示例&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h3 id=&#34;文献&#34;&gt;文献&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://tech.meituan.com/2017/04/21/mt-leaf.html&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;美团点评分布式ID生成系统&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>安装 Rancher 控制面板到 K8s 集群</title>
+      <link>https://hwholiday.github.io/2021/install_rancher_rke2/</link>
+      <pubDate>Wed, 03 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2021/install_rancher_rke2/</guid>
+      <description>
+
+&lt;h2 id=&#34;helm-https-helm-sh-zh-docs&#34;&gt;&lt;a href=&#34;https://helm.sh/zh/docs/&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;Helm&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;一键安装脚本&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;cert-manager-证书-https-cert-manager-io-docs-installation-kubernetes&#34;&gt;&lt;a href=&#34;https://cert-manager.io/docs/installation/kubernetes/&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;cert-manager 证书&lt;/a&gt;&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.4/cert-manager.crds.yaml
+kubectl create namespace cert-manager
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.0.4
+kubectl get pods --namespace cert-manager
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;NAME                                       READY   STATUS    RESTARTS   AGE
+cert-manager-756bb56c5-gl7j9               1/1     Running   0          87s
+cert-manager-cainjector-86bc6dc648-sv897   1/1     Running   0          87s
+cert-manager-webhook-66b555bb5-2q996       1/1     Running   0          87s
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;安装-rancher&#34;&gt;安装 Rancher&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;kubectl create namespace rancher-system
+helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+helm install rancher rancher-stable/rancher --namespace rancher-system --set hostname=rancher.hw.com
+
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>centos7 升级内核</title>
+      <link>https://hwholiday.github.io/2021/centos7/</link>
+      <pubDate>Tue, 02 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2021/centos7/</guid>
+      <description>
+
+&lt;h4 id=&#34;查看内核版本-这里的内核版本-3-10-和系统架构-64位&#34;&gt;查看内核版本 &amp;mdash;这里的内核版本（3.10）和系统架构（64位）&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;uname -smr 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;更新软件包仓库&#34;&gt;更新软件包仓库&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;yum update
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;启用elrepo库&#34;&gt;启用Elrepo库&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;安装-elrepo-软件库&#34;&gt;安装 Elrepo 软件库&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;rpm -Uvh https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;列出可用的内核版本&#34;&gt;列出可用的内核版本&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;yum list available --disablerepo=&#39;*&#39; --enablerepo=elrepo-kernel
+kernel-lt表示一个稳定的LTS（长期支持）版本，而kernel-ml表示一个提供短期支持但提供更频繁更新的主线版本
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * elrepo-kernel: mirror.rackspace.com
+elrepo-kernel                                                                                                                                     | 3.0 kB  00:00:00     
+elrepo-kernel/primary_db                                                                                                                          | 2.0 MB  00:00:00     
+Available Packages
+elrepo-release.noarch                                                               7.0-5.el7.elrepo                                                        elrepo-kernel
+kernel-lt.x86_64                                                                    5.4.94-1.el7.elrepo                                                     elrepo-kernel
+kernel-lt-devel.x86_64                                                              5.4.94-1.el7.elrepo                                                     elrepo-kernel
+kernel-lt-doc.noarch                                                                5.4.94-1.el7.elrepo                                                     elrepo-kernel
+kernel-lt-headers.x86_64                                                            5.4.94-1.el7.elrepo                                                     elrepo-kernel
+kernel-lt-tools.x86_64                                                              5.4.94-1.el7.elrepo                                                     elrepo-kernel
+kernel-lt-tools-libs.x86_64                                                         5.4.94-1.el7.elrepo                                                     elrepo-kernel
+kernel-lt-tools-libs-devel.x86_64                                                   5.4.94-1.el7.elrepo                                                     elrepo-kernel
+kernel-ml.x86_64                                                                    5.10.12-1.el7.elrepo                                                    elrepo-kernel
+kernel-ml-devel.x86_64                                                              5.10.12-1.el7.elrepo                                                    elrepo-kernel
+kernel-ml-doc.noarch                                                                5.10.12-1.el7.elrepo                                                    elrepo-kernel
+kernel-ml-headers.x86_64                                                            5.10.12-1.el7.elrepo                                                    elrepo-kernel
+kernel-ml-tools.x86_64                                                              5.10.12-1.el7.elrepo                                                    elrepo-kernel
+kernel-ml-tools-libs.x86_64                                                         5.10.12-1.el7.elrepo                                                    elrepo-kernel
+kernel-ml-tools-libs-devel.x86_64                                                   5.10.12-1.el7.elrepo                                                    elrepo-kernel
+perf.x86_64                                                                         5.10.12-1.el7.elrepo                                                    elrepo-kernel
+python-perf.x86_64                                                                  5.10.12-1.el7.elrepo                                                    elrepo-kernel
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;建议安装最新的版本-长期支持&#34;&gt;建议安装最新的版本（长期支持）&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;yum --enablerepo=elrepo-kernel install kernel-lt
+//这里安装的是 等会需要选择 5.4.94-1.el7.elrepo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h6 id=&#34;安装最新的版本-短期支持&#34;&gt;安装最新的版本（短期支持）&lt;/h6&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;yum --enablerepo=elrepo-kernel install kernel-ml
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;重建grub2引导&#34;&gt;重建Grub2引导&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;grub2-mkconfig -o /boot/grub2/grub.cfg
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;查看有那些版本&#34;&gt;查看有那些版本&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;awk -F\&#39; &#39;$1==&amp;quot;menuentry &amp;quot; {print i++ &amp;quot; : &amp;quot; $2}&#39; /etc/grub2.cfg
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;0 : CentOS Linux (5.4.94-1.el7.elrepo.x86_64) 7 (Core)
+1 : CentOS Linux (3.10.0-1160.11.1.el7.x86_64) 7 (Core)
+2 : CentOS Linux (3.10.0-1160.el7.x86_64) 7 (Core)
+3 : CentOS Linux (0-rescue-407d72b6f7b74133bab8599fbb634d67) 7 (Core)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;设置新的默认启动项&#34;&gt;设置新的默认启动项&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;grub2-set-default 0
+//这里也可以选择其他内核
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;重启后查看版本&#34;&gt;重启后查看版本&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;reboot //重启
+uname -smr  //查看版本
+eg : Linux 5.4.94-1.el7.elrepo.x86_64 x86_6
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>安装 k8s 集群 Rancher RKE</title>
+      <link>https://hwholiday.github.io/2021/install_rancher_rke1/</link>
+      <pubDate>Tue, 02 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2021/install_rancher_rke1/</guid>
+      <description>
+
+&lt;h2 id=&#34;内核&#34;&gt;内核&lt;/h2&gt;
+
+&lt;p&gt;K8S 1.18开始使用了IPVS 所以4.x以下的内核无法再运行K8S 网络会有BUG 官方推荐4.19LTS及以上的内核&lt;/p&gt;
+
+&lt;h4 id=&#34;查看内核版本&#34;&gt;查看内核版本&lt;/h4&gt;
+
+&lt;p&gt;uname -smr&lt;br /&gt;
+建议升级到最新的长期支持版本&lt;/p&gt;
+
+&lt;h2 id=&#34;升级内核-https-www-hwholiday-com-2021-centos7&#34;&gt;&lt;a href=&#34;https://www.hwholiday.com/2021/centos7/&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;升级内核&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h2 id=&#34;安装-docker&#34;&gt;安装 Docker&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;yum install -y yum-utils
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+yum install docker-ce-19.03.9 docker-ce-cli-19.03.9 containerd.io
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;启动-docker&#34;&gt;启动 Docker&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;systemctl enable docker
+systemctl start docker
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;安装-rancher-rke&#34;&gt;安装 Rancher RKE&lt;/h2&gt;
+
+&lt;h5 id=&#34;禁用-selinux&#34;&gt;禁用 SELinux&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;/usr/sbin/sestatus -v |grep &amp;quot;SELinux status&amp;quot;
+#结果为 enabled 为启用状态
+vim /etc/selinux/config
+将SELINUX=enforcing改为SELINUX=disabled
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&#34;禁用-swap&#34;&gt;禁用 swap&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;free -h
+#total        used        free      shared  buff/cache   available
+#Mem:           7.8G        205M        6.9G        8.7M        715M        7.3G
+#Swap:          5.0G          0B        5.0G
+#Swap 有值代表启用了swap
+vim /etc/fstab
+使用 # 注释掉有 swap 的一行
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&#34;关闭防火墙&#34;&gt;关闭防火墙&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;firewall-cmd --state
+systemctl stop firewalld.service
+systemctl disable firewalld.service 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&#34;重启查看修改是否生效&#34;&gt;重启查看修改是否生效&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;reboot
+/usr/sbin/sestatus -v |grep &amp;quot;SELinux status&amp;quot;
+free -h
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&#34;centos7不能使用root用户安装&#34;&gt;CentOS7不能使用root用户安装&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;adduser RKE -G docker
+#设置 RKE 用户密码
+passwd RKE 
+#尝试使用rancher用户操作docker，观察是否有权限
+su RKE
+docker ps
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&#34;配置主节点到各个节点rancher用户的免密登录&#34;&gt;配置主节点到各个节点rancher用户的免密登录&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;#一路回车按到底
+ssh-keygen
+ssh-copy-id RKE@节点IP
+
+# 这个地方要给全部的机器配置ssh，包括自己
+比如我有 172.12.17.167 172.12.17.166 两台机器
+#在 172.12.17.167 上执行
+ssh-keygen
+ssh-copy-id RKE@172.12.17.167
+ssh-copy-id RKE@172.12.17.166
+
+#在 172.12.17.166 上执行
+ssh-keygen
+ssh-copy-id RKE@172.12.17.166
+ssh-copy-id RKE@172.12.17.167
+
+#如何有新的节点加入也需要在所以机器上配置ssh
+
+#测试 ssh 并执行 docker ps 看是否正常工作
+ssh  RKE@节点IP
+docker ps
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&#34;下载rancher-rke-文件-https-github-com-rancher-rke-releases&#34;&gt;&lt;a href=&#34;https://github.com/rancher/rke/releases&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;下载Rancher RKE 文件&lt;/a&gt;&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;cd /home/RKE
+wget https://github.com/rancher/rke/releases/download/v1.2.5/rke_linux-amd64
+chmod +x rke_linux-amd64
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;配置-rke-linux-amd64&#34;&gt;配置 rke_linux-amd64&lt;/h4&gt;
+
+&lt;p&gt;只需要选择一台安装rke_linux-amd64,就可以完成整个集群的安装&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;./rke_linux-amd64 config
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;[+] Cluster Level SSH Private Key Path [~/.ssh/id_rsa]: ~/.ssh/id_rsa
+[+] Number of Hosts [1]: 2
+[+] SSH Address of host (1) [none]: 172.12.17.167
+[+] SSH Port of host (1) [22]:
+[+] SSH Private Key Path of host (172.12.17.167) [none]: ~/.ssh/id_rsa
+[+] SSH User of host (172.12.17.167) [ubuntu]: RKE
+[+] Is host (172.12.17.167) a Control Plane host (y/n)? [y]: y
+[+] Is host (172.12.17.167) a Worker host (y/n)? [n]: n
+[+] Is host (172.12.17.167) an etcd host (y/n)? [n]: y
+[+] Override Hostname of host (172.12.17.167) [none]: hw-k8s-master
+[+] Internal IP of host (172.12.17.167) [none]:
+[+] Docker socket path on host (172.12.17.167) [/var/run/docker.sock]:
+[+] SSH Address of host (2) [none]: 172.12.17.166
+[+] SSH Port of host (2) [22]:
+[+] SSH Private Key Path of host (172.12.17.166) [none]: ~/.ssh/id_rsa
+[+] SSH User of host (172.12.17.166) [ubuntu]: RKE
+[+] Is host (172.12.17.166) a Control Plane host (y/n)? [y]: n
+[+] Is host (172.12.17.166) a Worker host (y/n)? [n]: y
+[+] Is host (172.12.17.166) an etcd host (y/n)? [n]: n
+[+] Override Hostname of host (172.12.17.166) [none]: hw-k8s-worker1
+[+] Internal IP of host (172.12.17.166) [none]:
+[+] Docker socket path on host (172.12.17.166) [/var/run/docker.sock]:
+[+] Network Plugin Type (flannel, calico, weave, canal) [canal]:
+[+] Authentication Strategy [x509]:
+[+] Authorization Mode (rbac, none) [rbac]:
+[+] Kubernetes Docker image [rancher/hyperkube:v1.19.4-rancher1]:
+[+] Cluster domain [cluster.local]:
+[+] Service Cluster IP Range [10.43.0.0/16]:
+[+] Enable PodSecurityPolicy [n]:
+[+] Cluster Network CIDR [10.42.0.0/16]:
+[+] Cluster DNS Service IP [10.43.0.10]:
+[+] Add addon manifest URLs or YAML files [no]:
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;./rke_linux-amd64 up
+当看到 INFO[0294] Finished building Kubernetes cluster successfully
+恭喜你安装集群成功
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&#34;如要外部通过公网访问-请在-cluster-yml-修改&#34;&gt;如要外部通过公网访问,请在 cluster.yml 修改&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;之前
+
+authentication:
+  strategy: x509
+  sans: [] #在里面输入公网的全部节点IP地址
+  webhook: null
+
+之后
+
+authentication:
+  strategy: x509
+  sans: 
+      - &amp;quot;外网IP&amp;quot;
+      - &amp;quot;外网IP&amp;quot;
+  webhook: null
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&#34;配置使用-kubectl&#34;&gt;配置使用 kubectl&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;mkdir ~/.kube
+#kube_config_cluster.yml 集群安装成功后自动生成
+cp kube_config_cluster.yml ~/.kube/config
+
+curl -LO &amp;quot;https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl&amp;quot;
+chmod +x kubectl
+./kubectl get pod -A
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;[RKE@adsl-172-12-17-167 ~]$ ./kubectl get pod -A
+NAMESPACE       NAME                                       READY   STATUS      RESTARTS   AGE
+ingress-nginx   default-http-backend-65dd5949d9-sldzj      1/1     Running     0          23m
+ingress-nginx   nginx-ingress-controller-7np89             1/1     Running     0          7m53s
+kube-system     calico-kube-controllers-7fbff695b4-84hln   1/1     Running     0          24m
+kube-system     canal-2jtlg                                2/2     Running     0          24m
+kube-system     canal-bbh56                                2/2     Running     0          8m23s
+kube-system     coredns-6f85d5fb88-sqvgp                   1/1     Running     0          24m
+kube-system     coredns-autoscaler-79599b9dc6-5r4kv        1/1     Running     0          24m
+kube-system     metrics-server-8449844bf-74jwk             1/1     Running     0          24m
+kube-system     rke-coredns-addon-deploy-job-lq9fb         0/1     Completed   0          24m
+kube-system     rke-ingress-controller-deploy-job-hhm6c    0/1     Completed   0          23m
+kube-system     rke-metrics-addon-deploy-job-fwhx5         0/1     Completed   0          24m
+kube-system     rke-network-plugin-deploy-job-8pwmh        0/1     Completed   0          25m
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;查看节点信息&#34;&gt;查看节点信息&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;[RKE@adsl-172-12-17-167 ~]$ ./kubectl get node
+NAME             STATUS   ROLES               AGE   VERSION
+hw-k8s-master    Ready    controlplane,etcd   52m   v1.19.7
+hw-k8s-worker1   Ready    worker              35m   v1.19.7
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;扩容-rancher-rke&#34;&gt;扩容 Rancher RKE&lt;/h2&gt;
+
+&lt;h4 id=&#34;配置-新节点-ssh&#34;&gt;配置 新节点 ssh&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;# 添加了一个新节点 172.12.17.165
+#在新节点 172.12.17.165 上执行
+ssh-keygen
+ssh-copy-id RKE@172.12.17.165
+ssh-copy-id RKE@172.12.17.166
+ssh-copy-id RKE@172.12.17.167
+
+#在 172.12.17.167
+ssh-keygen //已经执行过不必再执行
+ssh-copy-id RKE@172.12.17.165
+ssh-copy-id RKE@172.12.17.167 //已经执行过不必再执行
+ssh-copy-id RKE@172.12.17.166 //已经执行过不必再执行
+
+#在 172.12.17.166
+
+ssh-keygen //已经执行过不必再执行
+ssh-copy-id RKE@172.12.17.165
+ssh-copy-id RKE@172.12.17.167 //已经执行过不必再执行
+ssh-copy-id RKE@172.12.17.166 //已经执行过不必再执行
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;添加新的-node-信息到安装阶段-rke-linux-amd64-生成的-cluster-yml&#34;&gt;添加新的 node 信息到安装阶段 rke_linux-amd64 生成的 cluster.yml&lt;/h4&gt;
+
+&lt;h4 id=&#34;添加前&#34;&gt;添加前&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;#只展示nodes的信息，其他信息忽略
+nodes:
+- address: 172.12.17.166
+  port: &amp;quot;22&amp;quot;
+  internal_address: &amp;quot;&amp;quot;
+  role:
+  - controlplane
+  - etcd
+  hostname_override: hw-k8s-master
+  user: RKE
+  docker_socket: /var/run/docker.sock
+  ssh_key: &amp;quot;&amp;quot;
+  ssh_key_path: ~/.ssh/id_rsa
+  ssh_cert: &amp;quot;&amp;quot;
+  ssh_cert_path: &amp;quot;&amp;quot;
+  labels: {}
+  taints: []
+- address: 172.12.17.167
+  port: &amp;quot;22&amp;quot;
+  internal_address: &amp;quot;&amp;quot;
+  role:
+  - worker
+  hostname_override: hw-k8s-worker1
+  user: RKE
+  docker_socket: /var/run/docker.sock
+  ssh_key: &amp;quot;&amp;quot;
+  ssh_key_path: ~/.ssh/id_rsa
+  ssh_cert: &amp;quot;&amp;quot;
+  ssh_cert_path: &amp;quot;&amp;quot;
+  labels: {}
+  taints: []
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;添加后&#34;&gt;添加后&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;#只展示nodes的信息，其他信息忽略
+nodes:
+- address: 172.12.17.166
+  port: &amp;quot;22&amp;quot;
+  internal_address: &amp;quot;&amp;quot;
+  role:
+  - controlplane
+  - etcd
+  hostname_override: hw-k8s-master
+  user: RKE
+  docker_socket: /var/run/docker.sock
+  ssh_key: &amp;quot;&amp;quot;
+  ssh_key_path: ~/.ssh/id_rsa
+  ssh_cert: &amp;quot;&amp;quot;
+  ssh_cert_path: &amp;quot;&amp;quot;
+  labels: {}
+  taints: []
+- address: 172.12.17.167
+  port: &amp;quot;22&amp;quot;
+  internal_address: &amp;quot;&amp;quot;
+  role:
+  - worker
+  hostname_override: hw-k8s-worker1
+  user: RKE
+  docker_socket: /var/run/docker.sock
+  ssh_key: &amp;quot;&amp;quot;
+  ssh_key_path: ~/.ssh/id_rsa
+  ssh_cert: &amp;quot;&amp;quot;
+  ssh_cert_path: &amp;quot;&amp;quot;
+  labels: {}
+  taints: []
+- address: 172.12.17.165
+  port: &amp;quot;22&amp;quot;
+  internal_address: &amp;quot;&amp;quot;
+  role:
+  - worker
+  hostname_override: hw-k8s-worker2
+  user: RKE
+  docker_socket: /var/run/docker.sock
+  ssh_key: &amp;quot;&amp;quot;
+  ssh_key_path: ~/.ssh/id_rsa
+  ssh_cert: &amp;quot;&amp;quot;
+  ssh_cert_path: &amp;quot;&amp;quot;
+  labels: {}
+  taints: []
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;在线扩容&#34;&gt;在线扩容&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;./rke_linux-amd64 up --update-only
+当看到 INFO[0294] Finished building Kubernetes cluster successfully
+恭喜你扩容集群成功
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;查看节点信息-1&#34;&gt;查看节点信息&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;[RKE@adsl-172-12-17-167 ~]$ ./kubectl get node
+NAME             STATUS   ROLES               AGE   VERSION
+hw-k8s-master    Ready    controlplane,etcd   52m   v1.19.7
+hw-k8s-worker1   Ready    worker              35m   v1.19.7
+hw-k8s-worker2   Ready    worker              86s   v1.19.7
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Docker-compose 安装 redis-cluster 集群</title>
+      <link>https://hwholiday.github.io/2021/docker_redis/</link>
+      <pubDate>Mon, 01 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2021/docker_redis/</guid>
+      <description>
+
+&lt;h2 id=&#34;安装-redis-集群&#34;&gt;安装 redis 集群&lt;/h2&gt;
+
+&lt;h3 id=&#34;172-13-3-160-为宿主机ip&#34;&gt;172.13.3.160 为宿主机IP&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;redis1.conf 同样的配置只需要改prot&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;port 7001
+protected-mode no
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+cluster-announce-ip 172.13.3.160
+cluster-announce-port 7001
+cluster-announce-bus-port 17001
+appendonly yes
+pidfile /var/run/redis_7001.pid
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;redis2.conf 同样的配置只需要改prot&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;port 7002
+protected-mode no
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+cluster-announce-ip 172.13.3.160
+cluster-announce-port 7002
+cluster-announce-bus-port 17002
+appendonly yes
+pidfile /var/run/redis_7002.pid
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;生成6份&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;docker-compose-yml&#34;&gt;docker-compose.yml&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;version: &#39;3.7&#39;
+x-image:
+  &amp;amp;redis-image
+    redis:5.0.7
+services:
+  redis1:
+    image: *redis-image
+    container_name: redis1
+    command:
+      [&amp;quot;redis-server&amp;quot;, &amp;quot;/home/redis/cluster/redis.conf&amp;quot;]
+    volumes:
+      - ./redis1.conf:/home/redis/cluster/redis.conf
+      - ./7001/data:/data
+    ports:
+      - 7001:7001
+      - 17001:17001
+  redis2:
+    image: *redis-image
+    container_name: redis2
+    command:
+      [&amp;quot;redis-server&amp;quot;, &amp;quot;/home/redis/cluster/redis.conf&amp;quot;]
+    volumes:
+      - ./redis2.conf:/home/redis/cluster/redis.conf
+      - ./7002/data:/data
+    ports:
+      - 7002:7002
+      - 17002:17002
+  redis3:
+    image: *redis-image
+    container_name: redis3
+    command:
+      [&amp;quot;redis-server&amp;quot;, &amp;quot;/home/redis/cluster/redis.conf&amp;quot;]
+    volumes:
+      - ./redis3.conf:/home/redis/cluster/redis.conf
+      - ./7003/data:/data
+    ports:
+      - 7003:7003
+      - 17003:17003
+  redis4:
+    image: *redis-image
+    container_name: redis4
+    command:
+      [&amp;quot;redis-server&amp;quot;, &amp;quot;/home/redis/cluster/redis.conf&amp;quot;]
+    volumes:
+      - ./redis4.conf:/home/redis/cluster/redis.conf
+      - ./7004/data:/data
+    ports:
+      - 7004:7004
+      - 17004:17004
+  redis5:
+    image: *redis-image
+    container_name: redis5
+    command:
+      [&amp;quot;redis-server&amp;quot;, &amp;quot;/home/redis/cluster/redis.conf&amp;quot;]
+    volumes:
+      - ./redis5.conf:/home/redis/cluster/redis.conf
+      - ./7005/data:/data
+    ports:
+      - 7005:7005
+      - 17005:17005
+  redis6:
+    image: *redis-image
+    container_name: redis6
+    command:
+      [&amp;quot;redis-server&amp;quot;, &amp;quot;/home/redis/cluster/redis.conf&amp;quot;]
+    volumes:
+      - ./redis6.conf:/home/redis/cluster/redis.conf
+      - ./7006/data:/data
+    ports:
+      - 7006:7006
+      - 17006:17006
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;执行命令&#34;&gt;执行命令&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;#关闭防火墙
+firewall-cmd --state
+systemctl stop firewalld.service
+systemctl disable firewalld.service 
+
+docker-compose up -d 编译并运行
+docker-compose down 杀死并删除
+docker-compose start
+docker-compose stop
+
+docker exec -it redis1 /bin/bash
+redis-cli --cluster create 172.13.3.160:7001 172.13.3.160:7002 172.13.3.160:7003 172.13.3.160:7004 172.13.3.160:7005 172.13.3.160:7006 --cluster-replicas 1
+redis-cli -c -p 7001
+
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>通过 istio 部署ws,grpc服务并链接外部redis集群</title>
+      <link>https://hwholiday.github.io/2021/istio/</link>
+      <pubDate>Tue, 19 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2021/istio/</guid>
+      <description>
+
+&lt;h2 id=&#34;安装-docker&#34;&gt;安装 docker&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.docker.com/engine/install/&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;https://docs.docker.com/engine/install/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;安装单节点-k8s-环境&#34;&gt;安装单节点 k8s 环境&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;sudo docker run --privileged -d --restart=unless-stopped -p 88:80 -p 433:443 rancher/rancher
+访问 https://宿主机IP:433
+新建集群单结点要把 etcd ， control plane ，worker 都给勾选上
+复制命令启动，等待就好了
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;软件架构&#34;&gt;软件架构&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/1cd92e21-a310-4df4-9263-5769e641aa27.png&#34; alt=&#34;软件架构&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;准备镜像&#34;&gt;准备镜像&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;网关：ws 服务
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/hwholiday/learning_tools/tree/master/istio/gateway&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;在目录 gateway 下&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;服务 V1:grpc 服务
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/hwholiday/learning_tools/tree/master/istio/logic_v1&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;在目录 logic_v1 下&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;服务 V2:grpc 服务
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/hwholiday/learning_tools/tree/master/istio/logic_v2&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;在目录 logic_v2 下&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;服务 V3:grpc 服务
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/hwholiday/learning_tools/tree/master/istio/logic_v3&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;在目录 logic_v3 下&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;链接了 Reids 集群&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;关于k8s和istio的配置文件&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/hwholiday/learning_tools/tree/master/istio/kube&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;在目录 kube 下&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;├── gateway.yaml      部署 gateway(Deployment[k8s]) 服务和对应的 Service(k8s)
+├── logic.yaml        部署 logic(Deployment[k8s]) 服务和对应的 Service(k8s)
+├── net-gateway.yaml  部署 Gateway(istio) VirtualService(istio) 接受外部请求转发到 gateway 服务
+├── net-logic.yaml    部署 VirtualService(istio) DestinationRule(istio) 接受 gateway 请求转发到 logic 服务
+└── net-redis.yaml    部署 Service(k8s) Endpoints(k8s) 将外部服务转发到内部
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;安装-istio&#34;&gt;安装 istio&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://istio.io/&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;https://istio.io/&lt;/a&gt; 建议看英文文档，中文的更新不及时可以对照着看&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;istioctl install 
+
+kubectl create namespace im
+
+kubectl label namespace im istio-injection=enabled //在这个命名空间下的服务都会被自动注入 istio proxy
+
+kubectl apply -f &amp;lt;(istioctl kube-inject -f 你的配置文件.yaml) -n 命令空间   //手动注入
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;查看是否有 EXTERNA-IP&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;kubectl get service -n istio-system                                                                                                                                                     
+NAME                   TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                                                                      AGE
+istio-ingressgateway   LoadBalancer   10.43.50.213   &amp;lt;pending&amp;gt;     15021:31954/TCP,80:32725/TCP,443:32687/TCP,15012:30629/TCP,15443:32721/TCP   20m
+
+#如果看到 EXTERNAL-IP 不为真实IP
+# 手动指定边缘网络IP在 clusterIP 下输入
+kubectl edit service/istio-ingressgateway -n istio-system
+
+externalIPs:
+ - 172.13.3.131
+
+kubectl get service -n istio-system                                                                                                                                                     
+NAME                   TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                                                                      AGE
+istio-ingressgateway   LoadBalancer   10.43.50.213   172.13.3.131   15021:31954/TCP,80:32725/TCP,443:32687/TCP,15012:30629/TCP,15443:32721/TCP   26m
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;安装 kiali&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;kubectl apply -f samples/addons
+kubectl rollout status deployment/kiali -n istio-system
+istioctl dashboard kiali
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;安装 gateway 切换到learnin_tools/istio/kube目录下&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;  kubectl apply -f gateway.yaml -n im
+  kubectl apply -f net-gateway.yaml -n im
+  
+  //更新镜像
+  //kubectl set image deploy gateway-v3 gateway=hwholiday/gateway:v3 -n im
+  
+  kubectl apply -f logic.yaml -n im
+  kubectl apply -f net-logic.yaml -n im
+  kubectl apply -f net-redis.yaml -n im
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;测试-gateway-https-github-com-hwholiday-learning-tools-blob-master-istio-gateway-readme-md&#34;&gt;&lt;a href=&#34;https://github.com/hwholiday/learning_tools/blob/master/istio/gateway/README.md&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;测试 gateway&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h2 id=&#34;其他&#34;&gt;其他&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Service的DNS(host) 服务名.命名空间.svc.cluster.local&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;gateway-v3-7d85c6577f-8xgwz 为pod name
+
+kubectl describe pod/gateway-v3-7d85c6577f-8xgwz -n im
+
+在 istio-proxy 标签里面能看到
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;查看 gateway 路由规则&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;istioctl proxy-config routes istio-ingressgateway-865d46c7f5-2qgdh -n istio-system -o json
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;部署中的自动缩放&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;kubectl autoscale deployment logic-v1 --cpu-percent=50 --min=1 --max=10 -n im
+kubectl get hpa -n im
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;完整代码地址-https-github-com-hwholiday-learning-tools-tree-master-istio&#34;&gt;&lt;a href=&#34;https://github.com/hwholiday/learning_tools/tree/master/istio&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;完整代码地址&lt;/a&gt;&lt;/h3&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>一键安装 K8s 以及在K8s上部署Go服务</title>
+      <link>https://hwholiday.github.io/2020/k8s_v1/</link>
+      <pubDate>Fri, 13 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/k8s_v1/</guid>
+      <description>
+
+&lt;h2 id=&#34;通过rancher一键部署k8s服务&#34;&gt;通过Rancher一键部署k8s服务&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;地址:  &lt;a href=&#34;https://rancher.com/quick-start/&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;https://rancher.com/quick-start/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;命令&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt; sudo docker run --privileged -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;然后访问你的docker机器的IP地址就可以看到一个叫local的k8s环境，不过不知道是不是我操作不对,我不能使用这个集群&lt;/li&gt;
+&lt;li&gt;点击添加集群,自定义一通默认到最后给你一个docker命令执行后我们就又得到一个自定义的k8s集群了（弄一个单节点集群的话最后一步把3个都要勾选上）&lt;/li&gt;
+&lt;li&gt;下载kubectl &lt;a href=&#34;https://kubernetes.io/docs/tasks/tools/install-kubectl/&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;https://kubernetes.io/docs/tasks/tools/install-kubectl/&lt;/a&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;创建一个～/.kube/config文件，把&lt;a href=&#34;https://k8s集群部署IP/c/local/monitoring&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;https://k8s集群部署IP/c/local/monitoring&lt;/a&gt; 里面的Kubeconfig File按钮里面的文本拷贝进去OK&lt;/p&gt;
+
+&lt;h2 id=&#34;部署一个-nginx&#34;&gt;部署一个 nginx&lt;/h2&gt;
+
+&lt;p&gt;nginx.yaml&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+ selector:
+   matchLabels:
+    app: nginx
+ replicas: 1
+ template:
+   metadata:
+    labels:
+     app: nginx
+   spec:
+    containers:
+    - name: nginx
+      image: nginx
+      ports:
+      - containerPort: 80
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;运行&#34;&gt;运行&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;&amp;gt;kubectl apply -f nginx.yml
+deployment.apps/nginx configured
+
+&amp;gt;kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+nginx-deployment-7f4768c97b-69t65   1/1     Running   0          105s
+
+//删除 deployment
+kubectl delete deployment nginx-deployment
+//删除 pod
+kubectl.exe delete pod nginx-deployment-7f4768c97b-69t65
+//查看 pod 日志
+kubectl.exe logs -f nginx-deployment-7f4768c97b-69t65
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;现在外网还无法访问要把pod内的端口通过service给暴露出来&#34;&gt;现在外网还无法访问要把pod内的端口通过service给暴露出来&lt;/h4&gt;
+
+&lt;p&gt;nginx_service.yaml&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  labels:
+   app: nginx
+spec:
+ selector:
+   app: nginx
+ ports:
+  - name: nginx-port
+    protocol: TCP
+    port: 80             
+    targetPort: 80          
+    nodePort: 30080        
+ type: NodePort   
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;运行-1&#34;&gt;运行&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;&amp;gt;kubectl apply -f nginx_service.yaml
+
+
+&amp;gt;kubectl get service
+NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+kubernetes      ClusterIP   10.43.0.1       &amp;lt;none&amp;gt;        443/TCP        83m
+nginx-service   NodePort    10.43.207.110   &amp;lt;none&amp;gt;        80:30080/TCP   29m
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;访问-http-k8s集群部署ip-30080-就可以看到熟悉的-nginx-欢迎界面了&#34;&gt;访问 &lt;a href=&#34;http://k8s集群部署IP:30080&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;http://k8s集群部署IP:30080&lt;/a&gt; 就可以看到熟悉的 nginx 欢迎界面了&lt;/h4&gt;
+
+&lt;h2 id=&#34;在k8s中部署-golang-服务&#34;&gt;在k8s中部署 golang 服务&lt;/h2&gt;
+
+&lt;h3 id=&#34;代码&#34;&gt;代码&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;package main
+import &amp;quot;net/http&amp;quot;
+func main() {
+	http.HandleFunc(&amp;quot;/k8s&amp;quot;, func(writer http.ResponseWriter, request *http.Request) {
+		_, _ = writer.Write([]byte(&amp;quot;hello world k8s&amp;quot;))
+	})
+	_ = http.ListenAndServe(&amp;quot;:8080&amp;quot;, nil)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;dockerfile&#34;&gt;Dockerfile&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;FROM scratch
+ADD app /var/app
+WORKDIR /var
+ENTRYPOINT [&amp;quot;/var/app&amp;quot;]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;构建docker&#34;&gt;构建docker&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;//docker image build -t [username(dockerhub 用户名)]/[repository（在dockerhub新建的仓库）]:[tag（版本号）] .
+docker image build -t hwholiday/app:v1 .
+docker run  -p 8080:8080 --name app -d  hwholiday/app:v1
+//访问定义好的api能正常输出就代表一切正常接下来我们把镜像传到 Dockerhub
+docker push hwholiday/app:v1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;在k8s运行服务&#34;&gt;在k8s运行服务&lt;/h3&gt;
+
+&lt;p&gt;app.yml&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  labels:
+    app: app
+spec:
+  selector:
+    matchLabels:
+      app: app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app
+          image: hwholiday/app:v1
+          ports:
+            - containerPort: 8080
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;app_service.yml&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;apiVersion: v1
+kind: Service
+metadata:
+  name: app-service
+  labels:
+    app: app
+spec:
+  selector:
+    app: app
+  ports:
+    - name: app-port
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 31080
+  type: NodePort
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;运行-2&#34;&gt;运行&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;kubectl.exe apply -f app.yml
+kubectl.exe apply -f app_service.yml
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;访问-http-k8s集群部署ip-31080-k8s-正常输出结果-hello-world-k8s-部署完成&#34;&gt;访问   &lt;a href=&#34;http://k8s集群部署IP:31080/k8s&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;http://k8s集群部署IP:31080/k8s&lt;/a&gt;   正常输出结果（hello world k8s） 部署完成&lt;/h4&gt;
+
+&lt;h3 id=&#34;完整代码地址-https-github-com-hwholiday-learning-tools-tree-master-k8s&#34;&gt;&lt;a href=&#34;https://github.com/hwholiday/learning_tools/tree/master/k8s&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;完整代码地址&lt;/a&gt;&lt;/h3&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>领域驱动设计(DDD)战术上一些实践</title>
+      <link>https://hwholiday.github.io/2020/go_ddd_v1/</link>
+      <pubDate>Mon, 09 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/go_ddd_v1/</guid>
+      <description>
+
+&lt;h1 id=&#34;领域驱动设计-ddd-战术上一些实践&#34;&gt;领域驱动设计(DDD)战术上一些实践&lt;/h1&gt;
+
+&lt;h2 id=&#34;个人能力有限-如有问题欢迎指导&#34;&gt;个人能力有限,如有问题欢迎指导&lt;/h2&gt;
+
+&lt;h3 id=&#34;程序设计谈不上什么最好-无论是面向过程编程-还是面向对象编程-我们都是在追求完美的道路上&#34;&gt;程序设计谈不上什么最好,无论是面向过程编程,还是面向对象编程，我们都是在追求完美的道路上&lt;/h3&gt;
+
+&lt;h3 id=&#34;不设计和过度设计都会对我们产生一些影响-最合适自己的设计才是最好的设计&#34;&gt;不设计和过度设计都会对我们产生一些影响,最合适自己的设计才是最好的设计&lt;/h3&gt;
+
+&lt;h2 id=&#34;ddd-domain-driven-design-领域驱动设计&#34;&gt;DDD（Domain-Driven Design）领域驱动设计&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;领域驱动设计并不是什么银弹，简单的项目并不需要 DDD，引入后反而增加项目难度&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;DDD 更加适合解决复杂的业务问题，并不是说DDD设计模式有什么压倒性的优势也不是说它就是完美无缺的只是说它更适合干这事&lt;/p&gt;
+
+&lt;h2 id=&#34;要不要ddd&#34;&gt;要不要DDD&lt;/h2&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;在业务刚开始的时候,我们的功能都相对于比较简单，就通过CRUD大法就能满足我们的业务需求，
+随着产品的各种需求加入，业务逻辑变的越来越复杂，各个模块相互依赖，修改一个功能时需要花大量的时候去理解当时为什么这些写后，然后再编写代码，甚至开发者自己都不知道这样写会不会影响其他模块，这里我想对测试人员说一句你们辛苦了！&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;产生这些问题的原因就是在于系统架构不清晰，划分出来的模块内*&lt;strong&gt;&lt;em&gt;聚度低、高耦合&lt;/em&gt;&lt;/strong&gt;*项目到达这个地步的时候我们就可以考虑要不要引入 DDD 来解决一些问题&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;贫血模型-vs-充血模型&#34;&gt;贫血模型 VS 充血模型&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;贫血模型:&lt;/strong&gt;  比如在用户类中我们定义了User的实体，但是操作User的并不是用户类，而是 UserService,这样的设计就是贫血模型简单来说就是（只包含数据，不包含业务逻辑的类）
+,就好比我们大学老师说的你有一个车但是不能开只能其他人去开破坏了面向对象的特性，是一种典型的面向过程的编程风格。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;充血模型:&lt;/strong&gt;  我们知道了贫血模型是（只包含数据，不包含业务逻辑的类），那我们把数据和对应的业务逻辑被封装到同一个类中是不是就是充血模型，Bingo 回答正确,你现在不仅拥有了车还可以开这就是面向对象编程风格&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;面向过程-vs-面向对象&#34;&gt;面向过程 VS 面向对象&lt;/h2&gt;
+
+&lt;h3 id=&#34;需求把东西全部放到柜子你里面&#34;&gt;需求把东西全部放到柜子你里面&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;面向过程:&lt;/strong&gt;   我们把整个东西放到一个大柜子里面堆在一起。如果修改了那个部分，可以需要修改其他部分，如果放的东西太多还不知道是否会产生一些不可以预知的错误,有可能就会出现祖传bug！&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;面向对象:&lt;/strong&gt;  我们把整个东西分类到一个一个的放在小柜子里面然后再放入一个大柜子，如果要修改也是修改需要修改的那个柜子，不会影响其他柜子&lt;br /&gt;
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;实体&#34;&gt;实体&lt;/h2&gt;
+
+&lt;p&gt;用于个性特征或区分不同对象，判断是不是同一个实体主要依据身份标识（identity），唯一身份标识和可变性（mutability）特征将实体对象和值对象（Value Object）区分开来。
+ - 总结下来就是,实体是一个唯一的东西，可以在一段时间内持续变化&lt;/p&gt;
+
+&lt;h2 id=&#34;值对象&#34;&gt;值对象&lt;/h2&gt;
+
+&lt;p&gt;值对象用于度量和描述事务，当我们只关心某个对象的属性时，该对象就可以作为一个值对象
+ - 比如在快递单的上的地址，你的地址可以和其他人的地址相同我们只需要关注地址的属性就可以,并不需要给地址一个唯一标识
+ - 值对象具有不变性,如果要修改的话直接替换整个值对象就行&lt;/p&gt;
+
+&lt;h2 id=&#34;聚合&#34;&gt;聚合&lt;/h2&gt;
+
+&lt;p&gt;将实体和值对象在一致性边界内组成聚合,不变性和一致性边界即是聚合的设计依据
+ - 不变性: 不变性表示的是一个业务规则,该规则应该总是保持一致
+ - 一致性边界:单个事务只修改一个聚合实例&lt;/p&gt;
+
+&lt;h2 id=&#34;领域服务&#34;&gt;领域服务&lt;/h2&gt;
+
+&lt;p&gt;领域中的服务表示一个无状态的操作,它用于实现特定于某个领域的任务。当某个操作不适合放在聚合、值对象、实体上时,最好的方式便是使用领域服务
+ -  在我的理解中上面那一句话就是，需要调用多个模型进行处理的就放在领域服务
+ -  eg:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt; 应用服务：获取输入，发送消息给领域层，监听确认消息
+ 领域服务：协调账户模型和邮件进行交互，执行相应的领域行为。
+ 基础服务：按照应用服务的指示发送邮件。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;不过在实际开发过程中,最好吧领域对象封装在领域服务中，领域知识限制在领域服务当中&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;工厂&#34;&gt;工厂&lt;/h2&gt;
+
+&lt;p&gt;将创建复杂对象和聚合的职责分配给一个单独的对象,该对象本身并不承担领域模型中的职责,但是依然是领域设计的一部分。
+工厂应该提供一个创建对象的接口,该接口封装了所有创建对象的复杂操作过程,同时,它并不需要客户去引用那个实际被创建的对象。对于聚合来说,我们应该一次性地创建整个聚合、并且确保它的不变条件得到满足&lt;/p&gt;
+
+&lt;h2 id=&#34;资源库&#34;&gt;资源库&lt;/h2&gt;
+
+&lt;p&gt;简单理解就是一个持久化机制,在DDD设计中一般将聚合实例放在资源库中
+- 比如用户实体，和地址值对象可以组合成一个聚合实例&lt;/p&gt;
+
+&lt;h3 id=&#34;探讨项目结构-golang&#34;&gt;探讨项目结构 golang&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;├── api
+├── cmd		项目启动文件
+│   └── user		项目名称
+│       └── main.go
+├── conf		配置文件   
+│   └── user.yaml
+├── internal
+│   └── user		项目名称
+│       ├── adapter		适配器,对外提供不同的协议适配
+│       │   ├── grpc
+│       │   └── http
+│       ├── domain
+│       │   ├── aggregate		聚合根
+│       │   ├── dto						定义入参,出参
+│       │   ├── entity				实体
+│       │   ├── event					事件
+│       │   ├── interface		抽象接口由外部 repository 实现
+│       │   ├── service				领域服务
+│       │   └── valobj				值对象
+│       ├── facade				接口防腐层 调用其他服务接口
+│       │
+│       └── infrastructure		适配器，是对技术实现的适配
+│           └── repository					依赖倒置实现储存服务
+└── pkg   三方库工具类
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;结语&#34;&gt;结语&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;个人能力有限欢迎添加QQ一起讨论&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;联系-qq-3355168235&#34;&gt;联系  QQ: 3355168235&lt;/h2&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Golang 文件服务器支持多线程上传下载</title>
+      <link>https://hwholiday.github.io/2020/file_storage/</link>
+      <pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/file_storage/</guid>
+      <description>
+
+&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
+
+&lt;p&gt;参照 Telegram &lt;a href=&#34;https://core.telegram.org/api/files&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;Uploading and Downloading Files&lt;/a&gt;&lt;br /&gt;
+ 写的文件服务器（断点续传，分片上传下载,自动生成缩略图等）&lt;/p&gt;
+
+&lt;h2 id=&#34;申请上传文件&#34;&gt;申请上传文件&lt;/h2&gt;
+
+&lt;p&gt;请求
+   - 文件名
+   - 文件大小 （字节）
+   - 文件扩展名
+   - 是否需要缩略图
+   - 文件MD5&lt;/p&gt;
+
+&lt;p&gt;返回
+   - 文件id
+   - 上传过期时间，到时间未上传完，自动清理&lt;/p&gt;
+
+&lt;h2 id=&#34;取消上传文件&#34;&gt;取消上传文件&lt;/h2&gt;
+
+&lt;p&gt;请求
+   - 文件ID&lt;/p&gt;
+
+&lt;p&gt;返回
+   - 成功 or 失败&lt;/p&gt;
+
+&lt;h2 id=&#34;获取文件信息&#34;&gt;获取文件信息&lt;/h2&gt;
+
+&lt;p&gt;请求
+   - 文件ID&lt;/p&gt;
+
+&lt;p&gt;返回
+   - 文件信息&lt;/p&gt;
+
+&lt;h2 id=&#34;上传文件&#34;&gt;上传文件&lt;/h2&gt;
+
+&lt;p&gt;请求&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;文件ID&lt;/li&gt;
+&lt;li&gt;文件分片ID file_part&lt;/li&gt;
+&lt;li&gt;文件MD5&lt;/li&gt;
+&lt;li&gt;文件内容 part_size&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;是否是最后一片&lt;/p&gt;
+
+&lt;h6 id=&#34;所有分片必须具有相同的大小-part-size-并且必须满足以下条件-part-size-1024-0-可被1kb整除524288-part-size-0-512kb必须可以被part-size整除-如果最后一部分的大小小于part-size-则不必满足这些条件-每个部分都应具有序列号file-part-其值的范围为1到3000&#34;&gt;所有分片必须具有相同的大小（part_size），并且必须满足以下条件：part_size % 1024 = 0 （可被1KB整除524288 % part_size = 0（512KB必须可以被part_size整除）如果最后一部分的大小小于part_size，则不必满足这些条件。每个部分都应具有序列号file_part，其值的范围为1到3000。&lt;/h6&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;服务器处理&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;每个分片接收完毕的时候都检查下服务器接受文件MD5是否相等&lt;/li&gt;
+&lt;li&gt;检查该分片是否已经上传，是则不做任何处理,不是则把文件存入内存，再将已上传文件大小累加&lt;/li&gt;
+&lt;li&gt;判断已上传文件大小是否等于文件总大小 （标记文件已经完成）&lt;/li&gt;
+&lt;li&gt;按照文件分片顺序拼接文件&lt;/li&gt;
+&lt;li&gt;检查文件MD5是否相等，上传到文件服务器,文件上传结束&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;返回
+   - 成功 or 失败&lt;/p&gt;
+
+&lt;h2 id=&#34;下载文件&#34;&gt;下载文件&lt;/h2&gt;
+
+&lt;p&gt;请求
+   - 文件ID
+   - limit  可被1024整除
+   - offset 可被1024整除
+   - offset 不能超过 1048576（1 MB）&lt;/p&gt;
+
+&lt;p&gt;服务器处理
+- minio GetObject 可配置&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;var opt minio.GetObjectOptions
+err := opt.SetRange(start, end)
+GetObject(bucketName, fileName, opt)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;返回
+   - 文件信息&lt;/p&gt;
+
+&lt;h2 id=&#34;对外方法&#34;&gt;对外方法&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;//申请上传文件ID
+ApplyFid(info *storage.InApplyFid) (out *storage.OutApplyFid, err error) 
+
+//通过文件MD5获取服务器文件信息
+GetPbFileInfoByMd5(md5 string) (fileInfo *storage.FileInfo, err error)
+
+//通过文件ID获取服务器文件信息
+GetPbFileInfoByFid(fid int64) (fileInfo *storage.FileInfo, err error)
+
+//上传分片文件
+UpSliceFile(in *storage.InUpSliceFileItem) (err error)
+
+//分片下载文件
+DownSliceFile(in *storage.InDownSliceFileItem) (out *storage.OutDownSliceFileItem, err error)
+
+//上传不分片文件
+UpFile(in *storage.InUpFile) (err error)
+
+//下载不分片文件
+GetFile(fid int64) (out *storage.OutDownFile, err error)
+
+//取消上传
+CancelByFid(info *storage.InCancelUpload) (err error)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;联系-qq-3355168235&#34;&gt;联系  QQ: 3355168235&lt;/h2&gt;
+
+&lt;h2 id=&#34;完整代码示例-https-github-com-hwholiday-file-storage&#34;&gt;&lt;a href=&#34;https://github.com/hwholiday/file_storage&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;完整代码示例&lt;/a&gt;&lt;/h2&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Golang 分布式ID生成系统，高性能、高可用、易扩展的id生成服务</title>
+      <link>https://hwholiday.github.io/2020/gid/</link>
+      <pubDate>Wed, 10 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/gid/</guid>
+      <description>
+
+&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
+
+&lt;p&gt;gid 是使用golang开发的生成分布式Id系统，基于数据库号段算法实现&lt;/p&gt;
+
+&lt;h3 id=&#34;性能&#34;&gt;性能&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;id 从内存生成，如果(step)步长设置的足够大,qps可达到千万+&lt;/p&gt;
+
+&lt;h3 id=&#34;可用性&#34;&gt;可用性&lt;/h3&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;id 分配依赖mysql ,当mysql不可用的,如果内存上还有的可以继续分配&lt;/p&gt;
+
+&lt;h3 id=&#34;特性&#34;&gt;特性&lt;/h3&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;全局唯一的int64型id&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;分配ID只访问内存&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;可无限横向扩展&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;依赖mysql恢复服务迅速&lt;br /&gt;
+&amp;hellip;&amp;hellip;&lt;/p&gt;
+
+&lt;h3 id=&#34;安装&#34;&gt;安装&lt;/h3&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;初始化 mysql&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;create database gid;
+use gid;
+create table segments
+(
+    biz_tag     varchar(128) not null,
+    max_id      bigint       null,
+    step        int          null,
+    remark      varchar(200) null,
+    create_time bigint       null,
+    update_time bigint       null,
+    constraint segments_pk
+        primary key (biz_tag)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_bin;
+
+INSERT INTO segments(`biz_tag`, `max_id`, `step`, `remark`, `create_time`, `update_time`)
+VALUES (&#39;test&#39;, 0, 100000, &#39;test&#39;, 1591706686, 1591706686);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;编译运行项目&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;git clone https://github.com/hwholiday/gid.git
+cd gid/cmd
+go build -o gidsrv
+./gidsrv -conf ./gid.toml
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;压测&#34;&gt;压测&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;BenchmarkService_GetId-4         2046296               583 ns/op 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;健康检查&#34;&gt;健康检查&lt;/h4&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;curl &lt;a href=&#34;http://127.0.0.1:8080/ping&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;http://127.0.0.1:8080/ping&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;获取id&#34;&gt;获取ID&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;test6 获取该 tag 类型的 id&lt;/li&gt;
+&lt;li&gt;curl &lt;a href=&#34;http://127.0.0.1:8080/id/test6&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;http://127.0.0.1:8080/id/test6&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;创建-tag&#34;&gt;创建 tag&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;biz_tag tag 名称&lt;/li&gt;
+&lt;li&gt;max_id  从这里开始派发ID&lt;/li&gt;
+&lt;li&gt;step 步长&lt;/li&gt;
+&lt;li&gt;remark 备注&lt;/li&gt;
+&lt;li&gt;{&amp;ldquo;biz_tag&amp;rdquo;:&amp;ldquo;test6&amp;rdquo;,&amp;ldquo;max_id&amp;rdquo;:0,&amp;ldquo;step&amp;rdquo;:10,&amp;ldquo;remark&amp;rdquo;:&amp;ldquo;test6 tag&amp;rdquo;}&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;curl -H &amp;ldquo;Content-Type:application/json&amp;rdquo; -X POST &amp;ndash;data &amp;lsquo;{&amp;ldquo;biz_tag&amp;rdquo;:&amp;ldquo;test6&amp;rdquo;,&amp;ldquo;max_id&amp;rdquo;:0,&amp;ldquo;step&amp;rdquo;:10,&amp;ldquo;remark&amp;rdquo;:&amp;ldquo;test6 tag&amp;rdquo;}&amp;rsquo; &lt;a href=&#34;http://127.0.0.1:8080/tag&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;http://127.0.0.1:8080/tag&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;重点sql&#34;&gt;重点SQL&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;Begin
+UPDATE table SET max_id=max_id+step WHERE biz_tag=xxx
+SELECT tag, max_id, step FROM table WHERE biz_tag=xxx
+Commit
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;联系-qq-3355168235&#34;&gt;联系  QQ: 3355168235&lt;/h2&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;完整代码示例-https-github-com-hwholiday-gid&#34;&gt;&lt;a href=&#34;https://github.com/hwholiday/gid&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;完整代码示例&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h3 id=&#34;文献&#34;&gt;文献&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://tech.meituan.com/2017/04/21/mt-leaf.html&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;美团点评分布式ID生成系统&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Docker 安装(mysql,redis,redis 集群，etcd,zookeeper,kafka,nginx,Jaeger)持续更新</title>
+      <link>https://hwholiday.github.io/2020/docker_install_development_tool/</link>
+      <pubDate>Mon, 18 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/docker_install_development_tool/</guid>
+      <description>
+
+&lt;h2 id=&#34;pwd-获取当前路径&#34;&gt;$PWD 获取当前路径&lt;/h2&gt;
+
+&lt;h2 id=&#34;安装-mysql&#34;&gt;安装 mysql&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;docker run --name mysql -p 3306:3306 -v $PWD/docker_data/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=设置密码 -d mysql:latest
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;安装-redis&#34;&gt;安装 redis&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;docker run --name redis -p 6379:6379 -v $PWD/docker_data/redis:/data  -d redis redis-server --appendonly yes --requirepass &amp;quot;设置密码&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;安装-单点etcd&#34;&gt;安装 单点etcd&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;  docker run -d \
+  -p 2379:2379 \
+  -p 2380:2380 \
+  --mount type=bind,source=/tmp/etcd-data.tmp,destination=/etcd-data \
+  --name etcd-gcr-v3.4.14 \
+  gcr.io/etcd-development/etcd:v3.4.14 \
+  /usr/local/bin/etcd \
+  --name s1 \
+  --data-dir /etcd-data \
+  --listen-client-urls http://0.0.0.0:2379 \
+  --advertise-client-urls http://0.0.0.0:2379 \
+  --listen-peer-urls http://0.0.0.0:2380 \
+  --initial-advertise-peer-urls http://0.0.0.0:2380 \
+  --initial-cluster s1=http://0.0.0.0:2380 \
+  --initial-cluster-token tkn \
+  --initial-cluster-state new \
+  --log-level info \
+  --logger zap \
+  --log-outputs stderr
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;安装-hbase&#34;&gt;安装 hbase&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;
+docker run -d -h docker-hbase \
+        -p 2181:2181 \
+        -p 8080:8080 \
+        -p 8085:8085 \
+        -p 9090:9090 \
+        -p 9000:9000 \
+        -p 9095:9095 \
+        -p 16000:16000 \
+        -p 16010:16010 \
+        -p 16201:16201 \
+        -p 16301:16301 \
+        -p 16020:16020\
+        --name hbase \
+        harisekhon/hbase
+修改hosts
+填入服务器IP docker-hbase     
+
+http://docker-hbase:16010/master-status   
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;安装-zookeeper&#34;&gt;安装 zookeeper&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;docker pull wurstmeister/zookeeper  
+docker run -d --name zookeeper -p 2181:2181 -t wurstmeister/zookeeper:latest
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;安装-kafka&#34;&gt;安装 kafka&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;docker pull wurstmeister/kafka  
+docker run -d --name kafka -p 9092:9092 -e KAFKA_BROKER_ID=0 -e KAFKA_ZOOKEEPER_CONNECT=192.168.1.86:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://192.168.1.86:9092 -e KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 -t wurstmeister/kafka
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;安装-nginx&#34;&gt;安装 nginx&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;docker pull nginx
+docker run --name nginx -p 80:80 -p 443:443  nginx:latest
+docker cp nginx:/etc/nginx/nginx.conf /home/server/nginx/nginx.conf
+docker run -d --name nginx -p 80:80 -p 443:443 -v $PWD/nginx/nginx.conf:/etc/nginx/nginx.conf  nginx:latest
+docker restart nginx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;安装全链路监控jaeger&#34;&gt;安装全链路监控Jaeger&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;docker run -d -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 -p5775:5775/udp -p6831:6831/udp -p6832:6832/udp -p5778:5778 -p16686:16686 -p14268:14268 -p9411:9411 jaegertracing/all-in-one:latest
+//地址  http://127.0.0.1:16686/search
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;联系-qq-3355168235&#34;&gt;联系  QQ: 3355168235&lt;/h2&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>GitLab CI 实现 Golang 自动构建为 Docker 镜像 </title>
+      <link>https://hwholiday.github.io/2020/gitlab_ci_docker/</link>
+      <pubDate>Mon, 30 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/gitlab_ci_docker/</guid>
+      <description>
+
+&lt;h2 id=&#34;实现目标&#34;&gt;实现目标&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;提交代码自动构建,自动打包为docker镜像&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;前期准备&#34;&gt;前期准备&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Makefile &lt;a href=&#34;https://www.hwholiday.com/2020/makefile/&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;学习并使用 MakeFile&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;.gitlab-ci.yml &lt;a href=&#34;https://juejin.im/post/5b1a4438e51d4506d1680ee9&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;.gitlab-ci.yml介绍&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;安装-gitlab-runner-docker&#34;&gt;安装 gitlab_runner (docker)&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.gitlab.com/runner/install.html&#34; rel=&#34;nofollow noreferrer&#34; target=&#34;_blank&#34;&gt;下载地址&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;docker pull gitlab/gitlab-runner
+#/run/docker.sock 容器中可以执行宿主机的Docker命令
+docker run -d --name gitlab-runner --restart always -v /srv/runner/config:/etc/gitlab-runner -v /run/docker.sock:/var/run/docker.sock gitlab/gitlab-runner
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;工程目录&#34;&gt;工程目录&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;目录&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;├── buildDockerImage.sh
+├── Dockerfile
+├── main.go
+├── Makefile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;.gitlab-ci.yml 内容&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;# 所有任务基于这个镜像
+image: golang:1.14.0
+# 在每个任务执行前运行
+before_script:
+  - export VERSION=`echo ${CI_COMMIT_TAG} | awk -F&amp;quot;_&amp;quot; &#39;{print $1}&#39;`
+  # 安装 docker，由于需要在容器里面使用宿主的docker命令，这里就需要安装一个docker的可执行文件，然后在启动容器的时候，将宿主的 docker.sock 文件挂载到容器内的同样位置。
+  - curl -O https://get.docker.com/builds/Linux/x86_64/docker-latest.tgz &amp;amp;&amp;amp; tar zxvf docker-latest.tgz &amp;amp;&amp;amp; cp docker/docker /usr/local/bin/ &amp;amp;&amp;amp; rm -rf docker docker-latest.tgz
+stages:
+  - build
+# 定义 job
+build:
+  stage: build
+  tags:
+    - test
+  script:
+    - echo &amp;quot;开始构建程序&amp;quot;
+    - chmod +x *.sh
+    - make build_image ENV=&amp;quot;prod&amp;quot; VERSION=${VERSION}
+  only:
+    - tags
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Makefile 内容&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;#环境变量
+export VERSION=1.0.0
+build_image:
+  @echo &amp;quot;构建docker镜像&amp;quot;
+  ./buildDockerImage.sh $(VERSION)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;buildDockerImage.sh&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;#!/bin/bash
+echo &amp;quot;检测GOPATH&amp;quot;
+if [ -z &amp;quot;$GOPATH&amp;quot; ]; then
+  echo &amp;quot;GOPATH 未设定&amp;quot;
+  exit 1
+else
+  echo &amp;quot;GOPATH=$GOPATH&amp;quot;
+fi
+if [ ! &amp;quot;$1&amp;quot; ]; then
+  echo &amp;quot;请输入应用版本&amp;quot;
+  exit 1
+fi
+
+app_name=&amp;quot;app&amp;quot;
+new_version=$1
+
+echo &amp;quot;当前路径 $(pwd)&amp;quot;
+
+echo &amp;quot;编译 $app_name 应用&amp;quot;
+CGO_ENABLED=0 GOOS=linux go build -a -ldflags &#39;-extldflags &amp;quot;-static&amp;quot;&#39; -o $app_name .
+
+echo &amp;quot;检测 $app_name 应用&amp;quot;
+FILE=&amp;quot;$app_name&amp;quot;
+if [ -f &amp;quot;$FILE&amp;quot; ]; then
+  echo &amp;quot;$FILE 已就绪&amp;quot;
+else
+  echo &amp;quot;$FILE 应用不存在&amp;quot;
+  exit 1
+fi
+
+echo &amp;quot;开始构建Docker镜像&amp;quot;
+echo &amp;quot;sudo docker build -t $app_name:$new_version .&amp;quot;
+docker build -t $app_name:$new_version .
+
+echo &amp;quot;删除老的编译文件&amp;quot;
+
+rm -rf $app_name
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;注册-gitlab-runner&#34;&gt;注册 gitlab_runner&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;在要构建的项目里面找到 token
+&lt;img src=&#34;https://s1.ax1x.com/2020/03/27/GPpSln.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;注册一个 runner&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;[pc gitlabRunner]$ docker exec -it gitlab-runner gitlab-ci-multi-runner register
+Runtime platform                                    arch=amd64 os=linux pid=5901 revision=4c96e5ad version=12.9.0
+Running in system-mode.                            
+                                                   
+Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com/):
+http://192.168.2.28/   //gitlab 地址
+Please enter the gitlab-ci token for this runner:
+52KL2wic1AwfxffvRrRs   //项目Token
+Please enter the gitlab-ci description for this runner:
+ci                     //项目描述
+Please enter the gitlab-ci tags for this runner (comma separated):
+test                   //给当前runner 添加 tags 在 .gitlab-ci.yml中会用到
+Registering runner... succeeded                     runner=52KL2wic
+Please enter the executor: docker-ssh, virtualbox, kubernetes, docker, parallels, shell, ssh, docker+machine, docker-ssh+machine, custom:
+docker
+Please enter the default Docker image (e.g. ruby:2.6):
+golang:1.14.0
+Runner registered successfully. Feel free to start it, but if it&#39;s running already the config should be automatically reloaded! 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;gitlab runner信息&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://s1.ax1x.com/2020/03/27/GP9zq0.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;修改-srv-runner-config-里面的-gitlab-runner-配置文件&#34;&gt;修改 /srv/runner/config 里面的 gitlab_runner 配置文件&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;concurrent = 1
+check_interval = 0
+[session_server]
+  session_timeout = 1800
+[[runners]]
+  name = &amp;quot;test docker&amp;quot;
+  url = &amp;quot;http://192.168.2.28/&amp;quot;
+  token = &amp;quot;XsnZbWbbkwujbAiXoJ9m&amp;quot;
+  executor = &amp;quot;docker&amp;quot;
+  [runners.custom_build_dir]
+  [runners.cache]
+    [runners.cache.s3]
+    [runners.cache.gcs]
+  [runners.docker]
+    tls_verify = false
+    image = &amp;quot;golang:1.14.0&amp;quot;
+    privileged = false
+    disable_entrypoint_overwrite = false
+    oom_kill_disable = false
+    disable_cache = false
+    volumes = [&amp;quot;/run/docker.sock:/var/run/docker.sock&amp;quot;, &amp;quot;/cache&amp;quot;]
+    pull_policy = &amp;quot;if-not-present&amp;quot;
+    shm_size = 0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;volumes：是为了在容器中可以执行宿主机的Docker命令。&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;pull_policy：当指定的镜像不存在的话，则通过docker pull拉取。&lt;/p&gt;
+
+&lt;h2 id=&#34;运行代码&#34;&gt;运行代码&lt;/h2&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-base&#34;&gt;git commit -a -m &amp;quot;test&amp;quot;
+git push
+​
+## 打tag
+git tag -a &amp;quot;1.2.1&amp;quot; -m &amp;quot;test ci&amp;quot;
+git push origin 1.2.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;执行结果&#34;&gt;执行结果&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;gitlab
+&lt;img src=&#34;https://s1.ax1x.com/2020/03/30/GmttK0.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;docker
+&lt;img src=&#34;https://s1.ax1x.com/2020/03/30/Gmtgr6.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;结语&#34;&gt;结语&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;发布流程有很多种，这里只是提供了一个简单的发布模式，其实发布方法不一定要最厉害最好，要最适合自己的团队才是最好的&lt;/li&gt;
+&lt;li&gt;欢迎添加QQ一起讨论&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;联系-qq-3355168235&#34;&gt;联系  QQ: 3355168235&lt;/h2&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

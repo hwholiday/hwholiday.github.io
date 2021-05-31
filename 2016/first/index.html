@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="hwholiday">
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2016/open_source_agreement/" />
+  <link rel="next" href="https://hwholiday.github.io/2017/ubuntu_use_shadowsocks/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2016/first/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           我的博客是如何构建的 | hwholiday
+       
+  </title>
+  <meta name="title" content="我的博客是如何构建的 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://hwholiday.github.io/"
+    },
+    "articleSection" : "posts",
+    "name" : "我的博客是如何构建的",
+    "headline" : "我的博客是如何构建的",
+    "description" : "我的博客是如何构建的",
+    "inLanguage" : "en-us",
+    "author" : "hwholiday",
+    "creator" : "hwholiday",
+    "publisher": "hwholiday",
+    "accountablePerson" : "hwholiday",
+    "copyrightHolder" : "hwholiday",
+    "copyrightYear" : "2016",
+    "datePublished": "2016-09-11 00:00:00 &#43;0000 UTC",
+    "dateModified" : "2016-09-11 00:00:00 &#43;0000 UTC",
+    "url" : "https://hwholiday.github.io/2016/first/",
+    "wordCount" : "257",
+    "keywords" : [ "其他","golang", "hwholiday"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="dark-theme">
+    <div class="wrapper">
+        <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">我的博客是如何构建的</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2016-09-11 itemprop="datePublished">September 11, 2016</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/%E5%85%B6%E4%BB%96/"> 其他 </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        <img src="http://www.xinhuanet.com//photo/2014-05/21/126528288_14006401328741n.jpg" class="featured_image">
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h2 id="安装hugo-需要先安装go-git环境">安装hugo（需要先安装go,git环境）</h2>
+
+<ul>
+<li>下载 <a href="https://github.com/gohugoio/hugo/releases" rel="nofollow noreferrer" target="_blank">https://github.com/gohugoio/hugo/releases</a> 二进制文件或者hugo.exe<br /></li>
+<li>Mac下直接使用 Homebrew 安装： brew install hugo</li>
+</ul>
+
+<h2 id="创建项目">创建项目</h2>
+
+<pre><code class="language-base">hugo new howie /path/howie     //创建项目howie,/path/howie为路径
+
+     进入 /path/howie 目录
+     结构为
+        ▸ archetypes/
+        ▸ content/
+        ▸ layouts/
+        ▸ static/
+        config.toml
+</code></pre>
+
+<p>创建第一篇文章，放到 post 目录，方便之后生成聚合页面。</p>
+
+<pre><code class="language-base">hugo new post/first.md
+</code></pre>
+
+<p>打开编辑 post/first.md ：</p>
+
+<pre><code class="language-base">---
+date: &quot;2018-10-12&quot;
+title: &quot;first&quot;
+---
+testtesttesttesttesttest
+</code></pre>
+
+<h2 id="安装皮肤这里以-leaveit-为例子">安装皮肤这里以（Leaveit）为例子</h2>
+
+<pre><code class="language-base">cd themes
+git clone https://github.com/liuzc/LeaveIt.git
+</code></pre>
+
+<p>为了更好的使用该主题我们将post/first.md的头部改为</p>
+
+<pre><code class="language-base">---
+date: 2018-10-11
+title: &quot;我的博客是如何构建的&quot;
+description: &quot;我的博客是如何构建的&quot;
+tags: [&quot;其他&quot;, &quot;golang&quot;]
+categories: [&quot;其他&quot;]
+---
+</code></pre>
+
+<h2 id="启动">启动</h2>
+
+<pre><code class="language-base">hugo server --theme=LeaveIt  --buildDrafts
+浏览器里打开： http://localhost:1313
+</code></pre>
+
+<h2 id="配置">配置</h2>
+
+<h4 id="根据主题配置分享下我的配置">根据主题配置分享下我的配置</h4>
+
+<pre><code class="language-base">baseurl = &quot;http://hwholiday.github.io/&quot;
+title = &quot;Howie&quot;
+languageCode = &quot;en-us&quot;
+theme = &quot;LeaveIt&quot;
+
+paginate = 12
+enableEmoji = true
+enableRobotsTXT = true
+
+
+preserveTaxonomyNames = true
+
+[blackfriday]
+  hrefTargetBlank = true
+  nofollowLinks = true
+  noreferrerLinks = true
+
+[params]
+    since = 2017
+    author = &quot;Howie&quot;                         
+    avatar = &quot;头像地址&quot;           
+    subtitle = &quot;坚信自己会更好&quot;   
+[Permalinks]
+ posts = &quot;/:year/:filename/&quot;      
+[menu]
+  [[menu.main]]
+    name = &quot;主页&quot;
+    url = &quot;/posts/&quot;
+    weight = 1
+  [[menu.main]]
+    name = &quot;分类&quot;
+    url = &quot;/categories/&quot;
+    weight = 2
+  [[menu.main]]
+    name = &quot;标签&quot;
+    url = &quot;/tags/&quot;
+    weight = 3
+  [[menu.main]]
+    name = &quot;关于&quot;
+    url = &quot;/about/&quot;
+    weight = 4
+
+[params.social]
+    GitHub = &quot;hwholiday&quot;
+    Email   = &quot;地址&quot;
+    Wechat = &quot;地址&quot;  # Wechat QRcode image
+</code></pre>
+
+<h2 id="发布项目到github">发布项目到github</h2>
+
+<p>先在自己的github上建立一个新的项目名称为（你的github用户名.github.io）<br />
+打包项目</p>
+
+<pre><code class="language-base">    hugo --theme=LeaveIt --buildDrafts --baseUrl=&quot;https://hwholiday.github.io/&quot; 
+</code></pre>
+
+<p>进入项目里面的pubilc文件夹</p>
+
+<pre><code class="language-base">    git init
+    git add .
+    git commit -m &quot;first commit&quot;
+    git remote add origin https://github.com/hwholiday/hwholiday.github.io.git 
+    git push -u origin master
+    浏览器里访问：http://hwholiday.github.io/
+</code></pre>
+
+<h2 id="设置默认为黑色">设置默认为黑色</h2>
+
+<pre><code class="language-base">   vim /themes/LeaveIt/layouts/_default/baseof.html
+   修改为
+   &lt;!DOCTYPE html&gt;
+   &lt;html lang=&quot;{{ .Site.LanguageCode }}&quot;&gt;
+  {{ partial &quot;head.html&quot; . }}
+  &lt;body class=&quot;dark-theme&quot;&gt;
+    &lt;div class=&quot;wrapper&quot;&gt;
+        {{ partial &quot;header&quot; . }}
+       &lt;main class=&quot;main&quot;&gt;
+          &lt;div class=&quot;container&quot;&gt;
+          {{ block &quot;content&quot; . }}{{ end }}
+          &lt;/div&gt;
+       &lt;/main&gt;
+      {{ partial &quot;footer.html&quot; . }}
+     &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<h2 id="联系-qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+  
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://hwholiday.github.io/2016/first/>https://hwholiday.github.io/2016/first/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/%E5%85%B6%E4%BB%96/">
+                    #其他</a></span>
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2016/open_source_agreement/" class="prev" rel="prev" title="常用开源协议"><i class="iconfont icon-left"></i>&nbsp;常用开源协议</a>
+         
+        
+        <a href="https://hwholiday.github.io/2017/ubuntu_use_shadowsocks/" class="next" rel="next" title="ubuntu使用shadowsocks">ubuntu使用shadowsocks&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2021</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="hwholiday">
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2018/micro_server/" />
+  <link rel="next" href="https://hwholiday.github.io/2018/docker_install_minio/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2018/del_or_update_passwd/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           ubuntu 删除,修改,忘记passwd导致无法开机解决 | hwholiday
+       
+  </title>
+  <meta name="title" content="ubuntu 删除,修改,忘记passwd导致无法开机解决 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://hwholiday.github.io/"
+    },
+    "articleSection" : "posts",
+    "name" : "ubuntu 删除,修改,忘记passwd导致无法开机解决",
+    "headline" : "ubuntu 删除,修改,忘记passwd导致无法开机解决",
+    "description" : "ubuntu 删除或者修改passwd导致无法开机解决",
+    "inLanguage" : "en-us",
+    "author" : "hwholiday",
+    "creator" : "hwholiday",
+    "publisher": "hwholiday",
+    "accountablePerson" : "hwholiday",
+    "copyrightHolder" : "hwholiday",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-10-22 00:00:00 &#43;0000 UTC",
+    "dateModified" : "2018-10-22 00:00:00 &#43;0000 UTC",
+    "url" : "https://hwholiday.github.io/2018/del_or_update_passwd/",
+    "wordCount" : "49",
+    "keywords" : [ "linux", "hwholiday"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="dark-theme">
+    <div class="wrapper">
+        <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">ubuntu 删除,修改,忘记passwd导致无法开机解决</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2018-10-22 itemprop="datePublished">October 22, 2018</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/linux/"> Linux </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h3 id="重启ubuntu-随即长按shirft进入grub菜单">重启ubuntu，随即长按shirft进入grub菜单</h3>
+
+<h3 id="选择ubuntu高级模式-选择一个带recovery-mode的选项-有的人显示不太一样-选择最新内核回车即可">选择ubuntu高级模式,选择一个带recovery mode的选项,有的人显示不太一样，选择最新内核回车即可</h3>
+
+<h3 id="选择-root-drop-to-root-shell-prompt">选择 root Drop to root shell prompt</h3>
+
+<h3 id="依次执行如下命令">依次执行如下命令</h3>
+
+<pre><code class="language-base">//修改权限
+mount -o rw,remount /
+// 系统中的用户
+ls /home
+//修改密码      
+passwd 用户名 
+//重启
+reboot
+</code></pre>
+
+<h3 id="如果修改文件过程中提示权限不够">如果修改文件过程中提示权限不够</h3>
+
+<pre><code class="language-base">lsattr /etc/passwd
+----i---------e--- /etc/passwd
+chattr -i /etc/passwd //去掉不得任意更动文件或目录该效果
+chattr +i /etc/passwd //添加不得任意更动文件或目录该效果
+a：让文件或目录仅供附加用途。
+b：不更新文件或目录的最后存取时间。
+c：将文件或目录压缩后存放。
+d：将文件或目录排除在倾倒操作之外。
+i：不得任意更动文件或目录。包括root账户
+s：保密性删除文件或目录。
+S：即时更新文件或目录。
+u：预防意外删除。
+</code></pre>
+
+<h2 id="联系-qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+  
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://hwholiday.github.io/2018/del_or_update_passwd/>https://hwholiday.github.io/2018/del_or_update_passwd/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/linux/">
+                    #linux</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2018/micro_server/" class="prev" rel="prev" title="从零开始微服务构建"><i class="iconfont icon-left"></i>&nbsp;从零开始微服务构建</a>
+         
+        
+        <a href="https://hwholiday.github.io/2018/docker_install_minio/" class="next" rel="next" title="docker和二进制安装minio单机和集群">docker和二进制安装minio单机和集群&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2021</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="hwholiday">
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2018/chat_mongodb/" />
+  <link rel="next" href="https://hwholiday.github.io/2018/del_or_update_passwd/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2018/micro_server/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           从零开始微服务构建 | hwholiday
+       
+  </title>
+  <meta name="title" content="从零开始微服务构建 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://hwholiday.github.io/"
+    },
+    "articleSection" : "posts",
+    "name" : "从零开始微服务构建",
+    "headline" : "从零开始微服务构建",
+    "description" : "从零开始微服务构建",
+    "inLanguage" : "en-us",
+    "author" : "hwholiday",
+    "creator" : "hwholiday",
+    "publisher": "hwholiday",
+    "accountablePerson" : "hwholiday",
+    "copyrightHolder" : "hwholiday",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-10-22 00:00:00 &#43;0000 UTC",
+    "dateModified" : "2018-10-22 00:00:00 &#43;0000 UTC",
+    "url" : "https://hwholiday.github.io/2018/micro_server/",
+    "wordCount" : "40",
+    "keywords" : [ "微服务","golang", "hwholiday"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="dark-theme">
+    <div class="wrapper">
+        <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">从零开始微服务构建</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2018-10-22 itemprop="datePublished">October 22, 2018</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+            
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h2 id="代码演示地址-点击这里-https-github-com-hwholiday-microservice-learning">代码演示地址 <a href="https://github.com/hwholiday/microservice_learning" rel="nofollow noreferrer" target="_blank">点击这里</a></h2>
+
+<p>是使用<a href="https://github.com/micro/micro" rel="nofollow noreferrer" target="_blank">Micro</a>,<a href="https://github.com/coreos/etcd" rel="nofollow noreferrer" target="_blank">etcd</a>,<a href="https://github.com/nsqio/nsq" rel="nofollow noreferrer" target="_blank">nsq</a>,<a href="https://github.com/grpc/grpc-go" rel="nofollow noreferrer" target="_blank">grpc</a>,<a href="https://github.com/gin-gonic/gin" rel="nofollow noreferrer" target="_blank">gin</a>等相关技术的一个微服务实例</p>
+
+<pre><code class="language-base"> 只有一个gateway服务器，api节点,db节点,log节点都可以自由添加
+ log节点采用nsq,其他节点采用grpc,网关服务对外默认http
+ #TODO 添加令牌服务器,链路追踪等功能,prometheus
+</code></pre>
+
+<h2 id="架构图">架构图</h2>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="https://raw.githubusercontent.com/hwholiday/microservice_learning/master/file/20180824104336.png" alt="架构图" class="lazyload"><figcaption class="image-caption">架构图</figcaption></figure></p>
+
+<h2 id="启动命令">启动命令</h2>
+
+<pre><code class="language-base">etcd
+nsqlookupd
+nsqd --lookupd-tcp-address=127.0.0.1:4160
+nsqadmin --lookupd-http-address=127.0.0.1:4161
+micro --registry=etcdv3   --broker=nsq   api  --handler=http
+执行conf中的文件将配置信息读取到etcd中
+启动api_agent,log_agent,db_agent
+curl http://127.0.0.1:8080/api/v1/test 查看整个程序的运行情况
+</code></pre>
+
+<h3 id="log-agent">log_agent</h3>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="https://raw.githubusercontent.com/hwholiday/microservice_learning/master/file/log_20180827095134.png" alt="output" class="lazyload"><figcaption class="image-caption">output</figcaption></figure></p>
+
+<h3 id="db-agent">db_agent</h3>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="https://raw.githubusercontent.com/hwholiday/microservice_learning/master/file/db_20180827095209.png" alt="output" class="lazyload"><figcaption class="image-caption">output</figcaption></figure></p>
+
+<h3 id="api-agent">api_agent</h3>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="https://raw.githubusercontent.com/hwholiday/microservice_learning/master/file/api_20180827095415.png" alt="output" class="lazyload"><figcaption class="image-caption">output</figcaption></figure></p>
+
+<h2 id="关于-micro">关于 Micro</h2>
+
+<ul>
+<li>Micro 是一个微服务工具集。它被用来实现它的特性和接口，同时提供强大的可插拔的架构来保证基础组件可以被替换掉。</li>
+<li>Micro 专注于解决构建微服务系统的基础需求。它采用了深思熟虑地富有预见性的方式来实现它的设计。</li>
+<li>如果你想深入研究 Micro 工具集请<a href="https://github.com/micro/micro" rel="nofollow noreferrer" target="_blank">点击这里</a></li>
+</ul>
+
+<h2 id="联系-qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+  
+<div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+  const gitalk = new Gitalk({
+    clientID: '64d60a02f98e01e31e2f',
+    clientSecret: 'b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58',
+    repo: 'hwholiday.github.io',
+    owner: 'hwholiday',
+    admin: 'hwholiday',
+    id: 'micro_server', 
+    distractionFreeMode: false 
+  });
+  (function() {
+    if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+      document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+      return;
+    }
+    gitalk.render('gitalk-container');
+  })();
+</script>
+
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://hwholiday.github.io/2018/micro_server/>https://hwholiday.github.io/2018/micro_server/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">
+                    #微服务</a></span>
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2018/chat_mongodb/" class="prev" rel="prev" title="我是如何把聊天数据迁移到mongodb"><i class="iconfont icon-left"></i>&nbsp;我是如何把聊天数据迁移到mongodb</a>
+         
+        
+        <a href="https://hwholiday.github.io/2018/del_or_update_passwd/" class="next" rel="next" title="ubuntu 删除,修改,忘记passwd导致无法开机解决">ubuntu 删除,修改,忘记passwd导致无法开机解决&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2021</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+     <link href="//lib.baomitu.com/lightgallery/1.6.11/css/lightgallery.min.css" rel="stylesheet">  
+      
+     <script src="/js/vendor_gallery.min.js" async="" ></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

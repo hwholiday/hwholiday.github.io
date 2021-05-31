@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="hwholiday">
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2019/ecc/" />
+  <link rel="next" href="https://hwholiday.github.io/2019/google_py/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2019/signal_prorocol/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Golang 双棘轮算法 | hwholiday
+       
+  </title>
+  <meta name="title" content="Golang 双棘轮算法 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://hwholiday.github.io/"
+    },
+    "articleSection" : "posts",
+    "name" : "Golang 双棘轮算法",
+    "headline" : "Golang 双棘轮算法",
+    "description" : "Golang 双棘轮算法",
+    "inLanguage" : "en-us",
+    "author" : "hwholiday",
+    "creator" : "hwholiday",
+    "publisher": "hwholiday",
+    "accountablePerson" : "hwholiday",
+    "copyrightHolder" : "hwholiday",
+    "copyrightYear" : "2019",
+    "datePublished": "2019-07-03 00:00:00 &#43;0000 UTC",
+    "dateModified" : "2019-07-03 00:00:00 &#43;0000 UTC",
+    "url" : "https://hwholiday.github.io/2019/signal_prorocol/",
+    "wordCount" : "244",
+    "keywords" : [ "golang","加密", "hwholiday"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="dark-theme">
+    <div class="wrapper">
+        <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Golang 双棘轮算法</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2019-07-03 itemprop="datePublished">July 3, 2019</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h3 id="什么是双棘轮算法">什么是双棘轮算法</h3>
+
+<p>双棘轮算法用于通信双方基于共享密钥交换加密消息。通常，通信双方将先使用某种密钥协商协议（例如 X3DH1）以协商共享密钥。此后，通信双方即可使用双棘轮算法发送接收加密消息了。<br></p>
+
+<p>通信双方将为每一个双棘轮消息派生出新的密钥，使得旧的密钥不能从新的密钥计算得到。通信双方还将在消息中附上迪菲-赫尔曼公钥值。迪菲-赫尔曼计算的结果将被混入派生出的密钥中，使得新的密钥不能从旧的密钥计算得到。这些特性将在某一方的密钥泄漏后保护此前或此后的加密消息。</p>
+
+<h3 id="代码实现">代码实现</h3>
+
+<pre><code class="language-base">var a PseronA
+	a.IdentityPri, a.IdentityPub = GetCurve25519KeypPair()
+	a.SignedPri, a.SignedPub = GetCurve25519KeypPair()
+	a.OneTimePri, a.OneTimePub = GetCurve25519KeypPair()
+	a.EphemeralPri, a.EphemeralPub = GetCurve25519KeypPair()
+
+	var b PseronB
+	b.IdentityPri, b.IdentityPub = GetCurve25519KeypPair()
+	b.SignedPri, b.SignedPub = GetCurve25519KeypPair()
+	b.OneTimePri, b.OneTimePub = GetCurve25519KeypPair()
+	b.EphemeralPri, b.EphemeralPub = GetCurve25519KeypPair()
+	//DH1 = DH(IPK-A私钥, SPK-B公钥)
+	//DH2 = DH(EPK-A私钥, IPK-B公钥)
+	//DH3= DH(EPK-A私钥, SPK-B公钥)
+	//DH4 = DH(IPK-A私钥, OPK--B公钥)
+	a.DH1 = GetCurve25519Key(a.IdentityPri, b.SignedPub)
+	a.DH2 = GetCurve25519Key(a.EphemeralPri, b.IdentityPub)
+	a.DH3 = GetCurve25519Key(a.EphemeralPri, b.SignedPub)
+	a.DH4 = GetCurve25519Key(a.EphemeralPri, b.OneTimePub)
+
+	b.DH1 = GetCurve25519Key(b.SignedPri, a.IdentityPub)
+	b.DH2 = GetCurve25519Key(b.IdentityPri, a.EphemeralPub)
+	b.DH3 = GetCurve25519Key(b.SignedPri, a.EphemeralPub)
+	b.DH4 = GetCurve25519Key(b.OneTimePri, a.EphemeralPub)
+
+	var aKey = bytes.Join([][]byte{a.DH1[:], a.DH2[:], a.DH3[:], a.DH4[:]}, []byte{})
+
+	var bKey = bytes.Join([][]byte{b.DH1[:], b.DH2[:], b.DH3[:], b.DH4[:]}, []byte{})
+
+	fmt.Println(&quot;ADH1&quot;,  base64.StdEncoding.EncodeToString(a.DH1[:]))
+	fmt.Println(&quot;ADH2&quot;,  base64.StdEncoding.EncodeToString(a.DH2[:]))
+	fmt.Println(&quot;ADH3&quot;,  base64.StdEncoding.EncodeToString(a.DH3[:]))
+	fmt.Println(&quot;ADH4&quot;,  base64.StdEncoding.EncodeToString(a.DH4[:]))
+
+	fmt.Println(&quot;BDH1&quot;,  base64.StdEncoding.EncodeToString(b.DH1[:]))
+	fmt.Println(&quot;BDH2&quot;,  base64.StdEncoding.EncodeToString(b.DH2[:]))
+	fmt.Println(&quot;BDH3&quot;,  base64.StdEncoding.EncodeToString(b.DH3[:]))
+	fmt.Println(&quot;BDH4&quot;,  base64.StdEncoding.EncodeToString(b.DH4[:]))
+
+	fmt.Println(&quot;aKey&quot;, base64.StdEncoding.EncodeToString(aKey))
+	fmt.Println(&quot;aKey&quot;, base64.StdEncoding.EncodeToString(kdf(aKey)))
+
+	fmt.Println(&quot;bKey&quot;, base64.StdEncoding.EncodeToString(bKey))
+	fmt.Println(&quot;bKey&quot;, base64.StdEncoding.EncodeToString(kdf(bKey)))
+	fmt.Println(&quot;x3DH结束&quot;)
+	fmt.Println(&quot;开始计算Signal protocol(双棘轮)&quot;)
+
+	for i := 1; i &lt;= 3; i++ {
+		aSalt := GetCurve25519Key(a.EphemeralPri, b.EphemeralPub)
+		fmt.Println(&quot;计算Ａ的salt&quot;,  base64.StdEncoding.EncodeToString(aSalt[:]))
+		fmt.Println(&quot;计算A的KEY&quot;, base64.StdEncoding.EncodeToString(Signalkdf(aKey, aSalt, &quot;A&quot;)))
+
+		bSalt := GetCurve25519Key(b.EphemeralPri, a.EphemeralPub)
+		fmt.Println(&quot;计算B的salt&quot;,  base64.StdEncoding.EncodeToString(bSalt[:]))
+		fmt.Println(&quot;计算B的KEY&quot;, base64.StdEncoding.EncodeToString(Signalkdf(bKey, bSalt, &quot;B&quot;)))
+	}
+</code></pre>
+
+<h3 id="输出值">输出值</h3>
+
+<pre><code class="language-base">ADH1 /+X9wl2KPWdV+nUlglwqCOwfhXMddZIQz6b22b9TVVM=
+ADH2 0BCGm+Fn0ue8xyvZAQlT6Nt7XGiI5tVFm8RJT8mxlz0=
+ADH3 +QtJECdZdn3wipebo/7MTJEzNsqzU4z9VyIAIZ2oPgw=
+ADH4 B5NQhL/2UwTs2HYjlog06QuwR7GLnNOCUbFCNKJSLhE=
+BDH1 /+X9wl2KPWdV+nUlglwqCOwfhXMddZIQz6b22b9TVVM=
+BDH2 0BCGm+Fn0ue8xyvZAQlT6Nt7XGiI5tVFm8RJT8mxlz0=
+BDH3 +QtJECdZdn3wipebo/7MTJEzNsqzU4z9VyIAIZ2oPgw=
+BDH4 B5NQhL/2UwTs2HYjlog06QuwR7GLnNOCUbFCNKJSLhE=
+aKey /+X9wl2KPWdV+nUlglwqCOwfhXMddZIQz6b22b9TVVPQEIab4WfS57zHK9kBCVPo23tcaIjm1UWbxElPybGXPfkLSRAnWXZ98IqXm6P+zEyRMzbKs1OM/VciACGdqD4MB5NQhL/2UwTs2HYjlog06QuwR7GLnNOCUbFCNKJSLhE=
+aKey jByyQR2sNtJLdC9lD3OIHQe4X/iPzCiZMoiq+TzCGCM=
+bKey /+X9wl2KPWdV+nUlglwqCOwfhXMddZIQz6b22b9TVVPQEIab4WfS57zHK9kBCVPo23tcaIjm1UWbxElPybGXPfkLSRAnWXZ98IqXm6P+zEyRMzbKs1OM/VciACGdqD4MB5NQhL/2UwTs2HYjlog06QuwR7GLnNOCUbFCNKJSLhE=
+bKey jByyQR2sNtJLdC9lD3OIHQe4X/iPzCiZMoiq+TzCGCM=
+x3DH结束
+开始计算Signal protocol(双棘轮)
+计算Ａ的salt第  1  次 tTh8Pt9qZYXGLo5xX0SCLRHXgytK7KLN4Kp0l8IFVEQ=
+计算A的KEY第  1  次 XX/5C4toO4AtidozmQU6zUVImoI3EqTUNWFM6bVu9Nk=
+计算B的salt第  1  次 tTh8Pt9qZYXGLo5xX0SCLRHXgytK7KLN4Kp0l8IFVEQ=
+计算B的KEY第  1  次 XX/5C4toO4AtidozmQU6zUVImoI3EqTUNWFM6bVu9Nk=
+计算Ａ的salt第  2  次 tTh8Pt9qZYXGLo5xX0SCLRHXgytK7KLN4Kp0l8IFVEQ=
+计算A的KEY第  2  次 /EjtTIfRbB6z0+GxRW8Y8ifVOITMKbqsUKdHHqs36Sw=
+计算B的salt第  2  次 tTh8Pt9qZYXGLo5xX0SCLRHXgytK7KLN4Kp0l8IFVEQ=
+计算B的KEY第  2  次 /EjtTIfRbB6z0+GxRW8Y8ifVOITMKbqsUKdHHqs36Sw=
+计算Ａ的salt第  3  次 tTh8Pt9qZYXGLo5xX0SCLRHXgytK7KLN4Kp0l8IFVEQ=
+计算A的KEY第  3  次 FweRXcj+QyaZC56PVGCd8vSVV0CvBZIrFYbDMIPdlsQ=
+计算B的salt第  3  次 tTh8Pt9qZYXGLo5xX0SCLRHXgytK7KLN4Kp0l8IFVEQ=
+计算B的KEY第  3  次 FweRXcj+QyaZC56PVGCd8vSVV0CvBZIrFYbDMIPdlsQ=
+</code></pre>
+
+<h3 id="完整演示代码-点击这里-https-github-com-hwholiday-learning-tools-blob-master-encryption-algorithm-x3curve25519-go">完整演示代码  <a href="https://github.com/hwholiday/learning_tools/blob/master/encryption_algorithm/x3curve25519.go" rel="nofollow noreferrer" target="_blank">点击这里</a></h3>
+
+<h2 id="联系-qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+  
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://hwholiday.github.io/2019/signal_prorocol/>https://hwholiday.github.io/2019/signal_prorocol/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/%E5%8A%A0%E5%AF%86/">
+                    #加密</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2019/ecc/" class="prev" rel="prev" title="Golang 椭圆加密算法实现"><i class="iconfont icon-left"></i>&nbsp;Golang 椭圆加密算法实现</a>
+         
+        
+        <a href="https://hwholiday.github.io/2019/google_py/" class="next" rel="next" title="Golang 实现Google 内购以及订阅代码">Golang 实现Google 内购以及订阅代码&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2021</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

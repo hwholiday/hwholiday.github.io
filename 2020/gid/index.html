@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="hwholiday">
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2020/docker_install_development_tool/" />
+  <link rel="next" href="https://hwholiday.github.io/2020/file_storage/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2020/gid/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Golang 分布式ID生成系统，高性能、高可用、易扩展的id生成服务 | hwholiday
+       
+  </title>
+  <meta name="title" content="Golang 分布式ID生成系统，高性能、高可用、易扩展的id生成服务 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://hwholiday.github.io/"
+    },
+    "articleSection" : "posts",
+    "name" : "Golang 分布式ID生成系统，高性能、高可用、易扩展的id生成服务",
+    "headline" : "Golang 分布式ID生成系统，高性能、高可用、易扩展的id生成服务",
+    "description" : "Golang 分布式ID生成系统，高性能、高可用、容扩展的id生成服务",
+    "inLanguage" : "en-us",
+    "author" : "hwholiday",
+    "creator" : "hwholiday",
+    "publisher": "hwholiday",
+    "accountablePerson" : "hwholiday",
+    "copyrightHolder" : "hwholiday",
+    "copyrightYear" : "2020",
+    "datePublished": "2020-06-10 00:00:00 &#43;0000 UTC",
+    "dateModified" : "2020-06-10 00:00:00 &#43;0000 UTC",
+    "url" : "https://hwholiday.github.io/2020/gid/",
+    "wordCount" : "152",
+    "keywords" : [ "golang", "hwholiday"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="dark-theme">
+    <div class="wrapper">
+        <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Golang 分布式ID生成系统，高性能、高可用、易扩展的id生成服务</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2020-06-10 itemprop="datePublished">June 10, 2020</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h1 id="简介">简介</h1>
+
+<p>gid 是使用golang开发的生成分布式Id系统，基于数据库号段算法实现</p>
+
+<h3 id="性能">性能</h3>
+
+<ul>
+<li><p>id 从内存生成，如果(step)步长设置的足够大,qps可达到千万+</p>
+
+<h3 id="可用性">可用性</h3></li>
+
+<li><p>id 分配依赖mysql ,当mysql不可用的,如果内存上还有的可以继续分配</p>
+
+<h3 id="特性">特性</h3></li>
+
+<li><p>全局唯一的int64型id</p></li>
+
+<li><p>分配ID只访问内存</p></li>
+
+<li><p>可无限横向扩展</p></li>
+
+<li><p>依赖mysql恢复服务迅速<br />
+&hellip;&hellip;</p>
+
+<h3 id="安装">安装</h3></li>
+
+<li><p>初始化 mysql</p></li>
+</ul>
+
+<pre><code class="language-base">create database gid;
+use gid;
+create table segments
+(
+    biz_tag     varchar(128) not null,
+    max_id      bigint       null,
+    step        int          null,
+    remark      varchar(200) null,
+    create_time bigint       null,
+    update_time bigint       null,
+    constraint segments_pk
+        primary key (biz_tag)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_bin;
+
+INSERT INTO segments(`biz_tag`, `max_id`, `step`, `remark`, `create_time`, `update_time`)
+VALUES ('test', 0, 100000, 'test', 1591706686, 1591706686);
+</code></pre>
+
+<ul>
+<li><p>编译运行项目</p>
+
+<pre><code class="language-base">git clone https://github.com/hwholiday/gid.git
+cd gid/cmd
+go build -o gidsrv
+./gidsrv -conf ./gid.toml
+</code></pre>
+
+<h4 id="压测">压测</h4>
+
+<pre><code class="language-base">BenchmarkService_GetId-4         2046296               583 ns/op 
+</code></pre>
+
+<h4 id="健康检查">健康检查</h4></li>
+
+<li><p>curl <a href="http://127.0.0.1:8080/ping" rel="nofollow noreferrer" target="_blank">http://127.0.0.1:8080/ping</a></p></li>
+</ul>
+
+<h4 id="获取id">获取ID</h4>
+
+<ul>
+<li>test6 获取该 tag 类型的 id</li>
+<li>curl <a href="http://127.0.0.1:8080/id/test6" rel="nofollow noreferrer" target="_blank">http://127.0.0.1:8080/id/test6</a></li>
+</ul>
+
+<h4 id="创建-tag">创建 tag</h4>
+
+<ul>
+<li>biz_tag tag 名称</li>
+<li>max_id  从这里开始派发ID</li>
+<li>step 步长</li>
+<li>remark 备注</li>
+<li>{&ldquo;biz_tag&rdquo;:&ldquo;test6&rdquo;,&ldquo;max_id&rdquo;:0,&ldquo;step&rdquo;:10,&ldquo;remark&rdquo;:&ldquo;test6 tag&rdquo;}</li>
+
+<li><p>curl -H &ldquo;Content-Type:application/json&rdquo; -X POST &ndash;data &lsquo;{&ldquo;biz_tag&rdquo;:&ldquo;test6&rdquo;,&ldquo;max_id&rdquo;:0,&ldquo;step&rdquo;:10,&ldquo;remark&rdquo;:&ldquo;test6 tag&rdquo;}&rsquo; <a href="http://127.0.0.1:8080/tag" rel="nofollow noreferrer" target="_blank">http://127.0.0.1:8080/tag</a></p>
+
+<h4 id="重点sql">重点SQL</h4>
+
+<pre><code class="language-base">Begin
+UPDATE table SET max_id=max_id+step WHERE biz_tag=xxx
+SELECT tag, max_id, step FROM table WHERE biz_tag=xxx
+Commit
+</code></pre>
+
+<h2 id="联系-qq-3355168235">联系  QQ: 3355168235</h2></li>
+</ul>
+
+<h2 id="完整代码示例-https-github-com-hwholiday-gid"><a href="https://github.com/hwholiday/gid" rel="nofollow noreferrer" target="_blank">完整代码示例</a></h2>
+
+<h3 id="文献">文献</h3>
+
+<p><a href="https://tech.meituan.com/2017/04/21/mt-leaf.html" rel="nofollow noreferrer" target="_blank">美团点评分布式ID生成系统</a></p>
+
+    </div>
+    
+  
+<div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+  const gitalk = new Gitalk({
+    clientID: '64d60a02f98e01e31e2f',
+    clientSecret: 'b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58',
+    repo: 'hwholiday.github.io',
+    owner: 'hwholiday',
+    admin: 'hwholiday',
+    id: 'gid', 
+    distractionFreeMode: false 
+  });
+  (function() {
+    if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+      document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+      return;
+    }
+    gitalk.render('gitalk-container');
+  })();
+</script>
+
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://hwholiday.github.io/2020/gid/>https://hwholiday.github.io/2020/gid/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2020/docker_install_development_tool/" class="prev" rel="prev" title="Docker 安装(mysql,redis,redis 集群，etcd,zookeeper,kafka,nginx,Jaeger)持续更新"><i class="iconfont icon-left"></i>&nbsp;Docker 安装(mysql,redis,redis 集群，etcd,zookeeper,kafka,nginx,Jaeger)持续更新</a>
+         
+        
+        <a href="https://hwholiday.github.io/2020/file_storage/" class="next" rel="next" title="Golang 文件服务器支持多线程上传下载">Golang 文件服务器支持多线程上传下载&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2021</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

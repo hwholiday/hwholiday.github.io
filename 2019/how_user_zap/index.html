@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="hwholiday">
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2019/cosine_similarity/" />
+  <link rel="next" href="https://hwholiday.github.io/2019/archive/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2019/how_user_zap/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Golang 高性能日志库 zap 封装工具类 | hwholiday
+       
+  </title>
+  <meta name="title" content="Golang 高性能日志库 zap 封装工具类 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://hwholiday.github.io/"
+    },
+    "articleSection" : "posts",
+    "name" : "Golang 高性能日志库 zap 封装工具类",
+    "headline" : "Golang 高性能日志库 zap 封装工具类",
+    "description" : "Golang高性能日志库zap封装工具类",
+    "inLanguage" : "en-us",
+    "author" : "hwholiday",
+    "creator" : "hwholiday",
+    "publisher": "hwholiday",
+    "accountablePerson" : "hwholiday",
+    "copyrightHolder" : "hwholiday",
+    "copyrightYear" : "2019",
+    "datePublished": "2019-12-10 00:00:00 &#43;0000 UTC",
+    "dateModified" : "2019-12-10 00:00:00 &#43;0000 UTC",
+    "url" : "https://hwholiday.github.io/2019/how_user_zap/",
+    "wordCount" : "125",
+    "keywords" : [ "golang","源码", "hwholiday"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="dark-theme">
+    <div class="wrapper">
+        <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Golang 高性能日志库 zap 封装工具类</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2019-12-10 itemprop="datePublished">December 10, 2019</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
+                        <a href="https://hwholiday.github.io/categories/%E6%BA%90%E7%A0%81/"> 源码 </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h2 id="zap是uber开源的go高性能日志库">zap是uber开源的Go高性能日志库</h2>
+
+<pre><code class="language-base">   //安装
+   go get -u go.uber.org/zap
+</code></pre>
+
+<h2 id="封装日志库">封装日志库</h2>
+
+<ul>
+<li>支持日志文件分等级存放</li>
+<li>支付日志文件自动分割</li>
+<li>支持日志文件自动压缩</li>
+<li>支持日志文件自定义目录</li>
+</ul>
+
+<pre><code class="language-base">   type Options struct {
+	LogFileDir    string //文件保存地方
+	AppName       string //日志文件前缀
+	ErrorFileName string
+	WarnFileName  string
+	InfoFileName  string
+	DebugFileName string
+	Level         zapcore.Level //日志等级
+	MaxSize       int           //日志文件小大（M）
+	MaxBackups    int           // 最多存在多少个切片文件
+	MaxAge        int           //保存的最大天数
+	Development   bool          //是否是开发模式
+	zap.Config
+}
+</code></pre>
+
+<h3 id="使用">使用</h3>
+
+<pre><code class="language-base">lg := NewLogger(SetAppName(&quot;test_app&quot;), SetDevelopment(true), SetLevel(zap.DebugLevel), SetErrorFileName(&quot;error_e_e_e_e.log&quot;))
+lg.Debug(fmt.Sprint(&quot;debug log &quot;, 1), zap.Int(&quot;line&quot;, 47))
+lg.Info(fmt.Sprint(&quot;Info log &quot;, 2), zap.Any(&quot;level&quot;, &quot;1231231231&quot;))
+lg.Warn(fmt.Sprint(&quot;warn log &quot;, 3), zap.String(&quot;level&quot;, `{&quot;a&quot;:&quot;4&quot;,&quot;b&quot;:&quot;5&quot;}`))
+lg.Error(fmt.Sprint(&quot;err log &quot;, 4), zap.String(&quot;level&quot;, `{&quot;a&quot;:&quot;7&quot;,&quot;b&quot;:&quot;8&quot;}`))
+
+//输出
+2019-12-31 14:34:40	INFO	logtool/log.go:89	[NewLogger] success
+2019-12-31 14:34:40	DEBUG	logtool/log_test.go:11	debug log 1	{&quot;line&quot;: 47}
+2019-12-31 14:34:40	INFO	logtool/log_test.go:12	Info log 2	{&quot;level&quot;: &quot;1231231231&quot;}
+2019-12-31 14:34:40	WARN	logtool/log_test.go:13	warn log 3	{&quot;level&quot;: &quot;{\&quot;a\&quot;:\&quot;4\&quot;,\&quot;b\&quot;:\&quot;5\&quot;}&quot;}
+2019-12-31 14:34:40	ERROR	logtool/log_test.go:14	err log 4	{&quot;level&quot;: &quot;{\&quot;a\&quot;:\&quot;7\&quot;,\&quot;b\&quot;:\&quot;8\&quot;}&quot;}
+</code></pre>
+
+<h3 id="完整代码地址-https-github-com-hwholiday-learning-tools-tree-master-all-packaged-library-logtool"><a href="https://github.com/hwholiday/learning_tools/tree/master/all_packaged_library/logtool" rel="nofollow noreferrer" target="_blank">完整代码地址</a></h3>
+
+<h2 id="联系-qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+  
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://hwholiday.github.io/2019/how_user_zap/>https://hwholiday.github.io/2019/how_user_zap/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/%E6%BA%90%E7%A0%81/">
+                    #源码</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2019/cosine_similarity/" class="prev" rel="prev" title="Golang 实现向量空间余弦相似度(Cosine Similarity)"><i class="iconfont icon-left"></i>&nbsp;Golang 实现向量空间余弦相似度(Cosine Similarity)</a>
+         
+        
+        <a href="https://hwholiday.github.io/2019/archive/" class="next" rel="next" title="Golang 实践归档">Golang 实践归档&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2021</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

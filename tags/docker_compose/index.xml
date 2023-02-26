@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>docker_compose on hwholiday</title>
+    <link>https://hwholiday.github.io/tags/docker_compose/</link>
+    <description>Recent content in docker_compose on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 19 Jan 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/tags/docker_compose/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>golang 插上docker_compose的翅膀</title>
+      <link>https://hwholiday.github.io/2020/golang_for_docker_compose/</link>
+      <pubDate>Sun, 19 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/golang_for_docker_compose/</guid>
+      <description>为你的golang程序插上docker_compose的翅膀 构建一个简单的http服务,使用redis的get，set方法 使用docker_compose构建一个agent服务，redis服务并使用networks 服务端代码 var rd *redis.Client func main() { InitRedis() http.HandleFunc(&amp;#34;/&amp;#34;, func(writer http.ResponseWriter, request *http.Request) { _, _ = fmt.Fprintf(writer, &amp;#34;hello world&amp;#34;) }) http.HandleFunc(&amp;#34;/set&amp;#34;, func(writer http.ResponseWriter, request *http.Request) { _ = request.ParseForm() key := request.Form.Get(&amp;#34;key&amp;#34;) val := request.Form.Get(&amp;#34;val&amp;#34;) fmt.Println(&amp;#34;set &amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; &amp;#34;, &amp;#34;key&amp;#34;, key, &amp;#34;val&amp;#34;, val) if key == &amp;#34;&amp;#34; { _, _ = writer.Write([]byte(&amp;#34;参数错误&amp;#34;)) return } if err := rd.Set(key, val, time.Second*60).Err(); err != nil { _, _ = writer.</description>
+    </item>
+    
+  </channel>
+</rss>

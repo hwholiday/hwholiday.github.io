@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>git on hwholiday</title>
+    <link>https://hwholiday.github.io/tags/git/</link>
+    <description>Recent content in git on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 02 Dec 2017 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>docker安装gitlab</title>
+      <link>https://hwholiday.github.io/2017/docker_install_gitlab/</link>
+      <pubDate>Sat, 02 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2017/docker_install_gitlab/</guid>
+      <description>Gitlab简介 GitLab是由GitLab Inc.开发，使用MIT许可证的基于网络的Git仓库管理工具，且具有wiki和issue跟踪功能。 GitLab是一个Git的代码托管工具，有免费的社区版允许我们在本地搭建代码托管网站，也有付费的企业版网站，能够在线托管代码。 搜索 gitlab Docker镜像 sudo docker search gitlab //输出结果部分截图 NAME DESCRIPTION STARS OFFICIAL AUTOMATED gitlab/gitlab-ce GitLab Community Edition docker image based … 2165 [OK] sameersbn/gitlab Dockerized gitlab web server 1067 [OK] gitlab/gitlab-runner GitLab CI Multi Runner used to fetch and run… 409 [OK] twang2218/gitlab-ce-zh 汉化的 GitLab 社区版 Docker Image 149 [OK] gitlab/gitlab-ee GitLab Enterprise Edition docker image based… 115 jangrewe/gitlab-ci-android GitLab CI image for building Android apps 46 [OK] centurylink/gitlab This image uses the image from sameersbn / g… 26 [OK] gitlab/dind 24 [OK] 拉取 gitlab Docker镜像 sudo docker pull gitlab/gitlab-ce 启动Gitlab 启动一个默认配置的Gitlab。在本机测试使用的话，将-h替换为127.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>android on hwholiday</title>
+    <link>https://hwholiday.github.io/tags/android/</link>
+    <description>Recent content in android on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 10 Apr 2016 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/tags/android/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Android实用插件</title>
+      <link>https://hwholiday.github.io/2016/android_idea_plugin/</link>
+      <pubDate>Sun, 10 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2016/android_idea_plugin/</guid>
+      <description>top：1 Android ButterKnife Zelezny ButterKnife是一个专注于Android系统的View注入框架,可以减少大量的findViewById以及 setOnClickListener代码，可视化一键生成。
+top:2 GsonFormat GsonFormat是一个快速格式化json数据,自动生成实体类参数的插件。(对于返回的数据格式是json，简直不能再好用)
+top:3 Android Postfix Completion 可根据后缀快速完成代码。(log,toast，神技能)
+top:4 Codota 基于安卓代码搜索引擎是有以色列理工大学毕业生制造的一个可以在网上发现的代码案例，帮助开发人员可以节省开发者大量的工作时间，通过专业的代码搜索引擎可以更方便的查询想要的代码。
+top:5 Lifecycle Sorter 可以根据Activity或者fragment的生命周期对其生命周期方法位置进行先后排序。
+top：6 Android Drawable Importer 为了适应所有Android屏幕的大小和密度，每个Android项目都会包含drawable文件夹。任何具备Android开发经验的开发人员都知道，为了支持所有的屏幕尺寸，你必须给每个屏幕类型导入不同的画板。Android Drawable Importer插件能让这项工作变得更容易。它可以减少导入缩放图像到Android项目所需的工作量。Android Drawable Importer添加了一个在不同分辨率导入画板或缩放指定图像到定义分辨率的选项
+top:7 Material Theme UI 如果你使用的是android studio 那么这个无疑会让你的编辑器，b格上升一个档次（个人喜爱。。。）
+top：8 ECTranslation 翻译插件，可以再IDE里直接翻译单词，对于我们这些英语小菜鸡简直是神器。
+top：9 Sexy Editor 设置Android Stuido 代码编辑区的背景图
+top:10 JsonOnlineViewer 可实现直接在android studio中调试接口数据，可以选择请求类型，自定义请求头及请求体，json数据格式化后展示
+top:11 CodeGlance 在右边可以预览代码，实现快速定位
+top：12 SelectorChapek for Android 通过资源文件命名自动生成Selector文件
+top:13 .ignore .gitignore 配置文件用于配置不需要加入版本管理的文件，配置好该文件可以为我们的版本管理带来很大的便利 1、配置语法： 以斜杠“/”开头表示目录； 以星号“*”通配多个字符； 以问号“?”通配单个字符 以方括号“[]”包含单个字符的匹配列表； 以叹号“!”表示不忽略(跟踪)匹配到的文件或目录； top:14 Material Design Icon Generator 第三方的图标库，很多实用好看的icon提供使用</description>
+    </item>
+    
+    <item>
+      <title>Android开发 你应该知道的adb 命令</title>
+      <link>https://hwholiday.github.io/2016/android_adb/</link>
+      <pubDate>Thu, 03 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2016/android_adb/</guid>
+      <description>个人建议配置环境变量时在Path类加入 你sdk的存放目录\platform-tools
+启动cmd
+1：启动adb
+adb start-service 2：停止 adb server
+adb kill-server 3：显示当前运行的全部模拟器
+adb devices 4：列出手机装的所有app的包名
+adb shell pm list packages 5：列出系统应用的所有包名
+adb shell pm list packages -s 6：列出除了系统应用的第三方应用包名
+adb shell pm list packages -3 7：安装应用程序
+adb install -r 应用程序.apk 如果不是当前目录，则后面要跟路径名 8： 卸载软件
+adb uninstall 应用程序.apk adb uninstall -k 应用程序.apk如果加 -k 参数,为卸载软件但是保留配置和缓存文件.如果不是当前目录，则后面要跟路径名 9：获取序列号
+adb get-serialno 10： 获取管理员权限：
+adb root 11：查看adb命令帮助信息：
+adb help 12： 进入模拟器的shell模式：
+adb shell 13：查看最上层成activity名字
+adb shell dumpsys activity | findstr &amp;#34;mFocusedActivity&amp;#34; 14：获取 MAC 地址</description>
+    </item>
+    
+  </channel>
+</rss>

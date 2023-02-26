@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2020/go_ddd_v1/" />
+  <link rel="next" href="https://hwholiday.github.io/2021/istio/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2020/k8s_v1/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           一键安装 K8s 以及在K8s上部署Go服务 | hwholiday
+       
+  </title>
+  <meta name="title" content="一键安装 K8s 以及在K8s上部署Go服务 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="一键安装 K8s 以及在K8s上部署Go服务"/>
+<meta name="twitter:description" content="一键安装 K8s 以及在K8s上部署Go服务"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "一键安装 K8s 以及在K8s上部署Go服务",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https:\/\/hwholiday.github.io\/2020\/k8s_v1\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "k8s, docker",
+  "wordcount":  304 ,
+  "url": "https:\/\/hwholiday.github.io\/2020\/k8s_v1\/",
+  "datePublished": "2020-11-13T00:00:00\u002b00:00",
+  "dateModified": "2020-11-13T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "一键安装 K8s 以及在K8s上部署Go服务"
+}
+</script>
+</head>
+
+  
+             
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">一键安装 K8s 以及在K8s上部署Go服务</h1>
+        <div class="post-meta">
+            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2020-11-13 >13 November 2020</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/kubernetes/"> Kubernetes </a>
+                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                2 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="通过rancher一键部署k8s服务">通过Rancher一键部署k8s服务</h2>
+<ul>
+<li>地址:  <a href="https://rancher.com/quick-start/">https://rancher.com/quick-start/</a></li>
+<li>命令</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base"> sudo docker run --privileged -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher
+</code></pre><ul>
+<li>然后访问你的docker机器的IP地址就可以看到一个叫local的k8s环境，不过不知道是不是我操作不对,我不能使用这个集群</li>
+<li>点击添加集群,自定义一通默认到最后给你一个docker命令执行后我们就又得到一个自定义的k8s集群了（弄一个单节点集群的话最后一步把3个都要勾选上）</li>
+<li>下载kubectl <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">https://kubernetes.io/docs/tasks/tools/install-kubectl/</a></li>
+<li>创建一个～/.kube/config文件，把https://k8s集群部署IP/c/local/monitoring 里面的Kubeconfig File按钮里面的文本拷贝进去OK</li>
+</ul>
+<h2 id="部署一个-nginx">部署一个 nginx</h2>
+<p>nginx.yaml</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+ selector:
+   matchLabels:
+    app: nginx
+ replicas: 1
+ template:
+   metadata:
+    labels:
+     app: nginx
+   spec:
+    containers:
+    - name: nginx
+      image: nginx
+      ports:
+      - containerPort: 80
+</code></pre><h4 id="运行">运行</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">&gt;kubectl apply -f nginx.yml
+deployment.apps/nginx configured
+
+&gt;kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+nginx-deployment-7f4768c97b-69t65   1/1     Running   0          105s
+
+//删除 deployment
+kubectl delete deployment nginx-deployment
+//删除 pod
+kubectl.exe delete pod nginx-deployment-7f4768c97b-69t65
+//查看 pod 日志
+kubectl.exe logs -f nginx-deployment-7f4768c97b-69t65
+</code></pre><h4 id="现在外网还无法访问要把pod内的端口通过service给暴露出来">现在外网还无法访问要把pod内的端口通过service给暴露出来</h4>
+<p>nginx_service.yaml</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  labels:
+   app: nginx
+spec:
+ selector:
+   app: nginx
+ ports:
+  - name: nginx-port
+    protocol: TCP
+    port: 80             
+    targetPort: 80          
+    nodePort: 30080        
+ type: NodePort   
+</code></pre><h4 id="运行-1">运行</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">&gt;kubectl apply -f nginx_service.yaml
+
+
+&gt;kubectl get service
+NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+kubernetes      ClusterIP   10.43.0.1       &lt;none&gt;        443/TCP        83m
+nginx-service   NodePort    10.43.207.110   &lt;none&gt;        80:30080/TCP   29m
+</code></pre><h4 id="访问-httpk8s集群部署ip30080-就可以看到熟悉的-nginx-欢迎界面了">访问 http://k8s集群部署IP:30080 就可以看到熟悉的 nginx 欢迎界面了</h4>
+<h2 id="在k8s中部署-golang-服务">在k8s中部署 golang 服务</h2>
+<h3 id="代码">代码</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">package main
+import &#34;net/http&#34;
+func main() {
+	http.HandleFunc(&#34;/k8s&#34;, func(writer http.ResponseWriter, request *http.Request) {
+		_, _ = writer.Write([]byte(&#34;hello world k8s&#34;))
+	})
+	_ = http.ListenAndServe(&#34;:8080&#34;, nil)
+}
+</code></pre><h3 id="dockerfile">Dockerfile</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">FROM scratch
+ADD app /var/app
+WORKDIR /var
+ENTRYPOINT [&#34;/var/app&#34;]
+</code></pre><h3 id="构建docker">构建docker</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">//docker image build -t [username(dockerhub 用户名)]/[repository（在dockerhub新建的仓库）]:[tag（版本号）] .
+docker image build -t hwholiday/app:v1 .
+docker run  -p 8080:8080 --name app -d  hwholiday/app:v1
+//访问定义好的api能正常输出就代表一切正常接下来我们把镜像传到 Dockerhub
+docker push hwholiday/app:v1
+</code></pre><h3 id="在k8s运行服务">在k8s运行服务</h3>
+<p>app.yml</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  labels:
+    app: app
+spec:
+  selector:
+    matchLabels:
+      app: app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app
+          image: hwholiday/app:v1
+          ports:
+            - containerPort: 8080
+</code></pre><p>app_service.yml</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">apiVersion: v1
+kind: Service
+metadata:
+  name: app-service
+  labels:
+    app: app
+spec:
+  selector:
+    app: app
+  ports:
+    - name: app-port
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 31080
+  type: NodePort
+</code></pre><h4 id="运行-2">运行</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">kubectl.exe apply -f app.yml
+kubectl.exe apply -f app_service.yml
+</code></pre><h4 id="访问---httpk8s集群部署ip31080k8s---正常输出结果hello-world-k8s-部署完成">访问   http://k8s集群部署IP:31080/k8s   正常输出结果（hello world k8s） 部署完成</h4>
+<h3 id="完整代码地址httpsgithubcomhwholidaylearning_toolstreemasterk8s"><a href="https://github.com/hwholiday/learning_tools/tree/master/k8s">完整代码地址</a></h3>
+
+    </div>
+    
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        const gitalk = new Gitalk({
+            clientID: '64d60a02f98e01e31e2f',
+            clientSecret: 'b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58',
+            repo: 'hwholiday.github.io',
+            owner: 'hwholiday',
+            admin: 'hwholiday',
+            id: 'k8s_v1', 
+            distractionFreeMode: false 
+        });
+        (function() {
+            if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+                document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+                return;
+            }
+            gitalk.render('gitalk-container');
+        })();
+    </script>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>304</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/k8s/">
+                    #k8s</a></span>
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/docker/">
+                    #docker</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2020/go_ddd_v1/" class="prev" rel="prev" title="领域驱动设计(DDD)战术上一些实践"><i class="iconfont icon-dajiantou"></i>&nbsp;领域驱动设计(DDD)战术上一些实践</a>
+         
+        
+        <a href="https://hwholiday.github.io/2021/istio/" class="next" rel="next" title="通过 istio 部署ws,grpc服务并链接外部redis集群">通过 istio 部署ws,grpc服务并链接外部redis集群&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

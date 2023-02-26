@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mongodb on hwholiday</title>
+    <link>https://hwholiday.github.io/tags/mongodb/</link>
+    <description>Recent content in mongodb on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 11 Dec 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/tags/mongodb/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>mongodb官方的golang驱动基础使用</title>
+      <link>https://hwholiday.github.io/2018/how_use_mongo-go-driver/</link>
+      <pubDate>Tue, 11 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/how_use_mongo-go-driver/</guid>
+      <description>导入 go get github.com/mongodb/mongo-go-driver/mongo struct里面获取ObjectID 点击这里 链接mongo服务 if client, err = mongo.Connect(getContext(), url); err != nil { checkErr(err) } 判断服务是否可用 if err = client.Ping(getContext(), readpref.Primary()); err != nil { checkErr(err) } 选择数据库和集合 collection = client.Database(&amp;#34;testing_base&amp;#34;).Collection(&amp;#34;howie&amp;#34;) 设置集合内数据过期时间 k := mongo.IndexModel{ Keys: bsonx.Doc{{&amp;#34;expiredtime&amp;#34;, bsonx.Int32(1)}}, Options: options.Index().SetExpireAfterSeconds(1 * 60),//60秒后过期，详细请查询完整的代码演示 } _, err = collection.Indexes().CreateOne(getContext(), k) 删除这个集合 collection.Drop(getContext()) 插入一条数据 if insertOneRes, err = collection.InsertOne(getContext(), howieArray[0]); err != nil { checkErr(err) } fmt.Printf(&amp;#34;InsertOne插入的消息ID:%v\n&amp;#34;, insertOneRes.InsertedID) 批量插入数据 if insertManyRes, err = collection.</description>
+    </item>
+    
+    <item>
+      <title>我是如何把聊天数据迁移到mongodb</title>
+      <link>https://hwholiday.github.io/2018/chat_mongodb/</link>
+      <pubDate>Wed, 17 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/chat_mongodb/</guid>
+      <description>背景 目前我在一家IM相关的公司上班，老的项目聊天数据没做相关的数据缓存直接存在的mysql数据库，经常链接数过多服务假死,所以现在我们在重构整个聊天项目 业务场景数据 由于要持久化redis中的用户消息数据，数据量比较大，写频繁。因为MongoDB的底层实现采用内存映射机制，因此非常适合大并发量的写。 由于用户的消息量非常大，因此要很方便的支持水平扩展。MongoDB的对水平扩展的支持非常好，并且支持自动分片　因为redis和Mongodb都是Nosql其他方面的属性差不多,所以我选择了用Mongodb来储存聊天数据 业务分析 单聊只会缓存离线数据，拉去一条离线就会删除一条，整体数据量不大 群聊会缓存全部的聊天数据，对与聊天信息比较多的群会７天新建一个collection同样存３０天的数据，聊天少的３０天为一个collection，超过的数据会导出为文本放在minio搭建的对象存储服务器上面(eg:可以看看我其他文章,了解minio搭建已经介绍) 其他 mongodb 最大可以创建多少 collection ？ 默认的情况下，MongoDB的每个数据库有24000左右命名空间的限制。 每个命名空间有628字节。.nsfile默认为16MB。 每个collection以及索引都算作namespace。因此如果每个collection有一个索引， 我们能创建12000个collection。 --nssize允许提升这个限制。 小心的是每个collection都会占用一些存储-很少的KB。更近一步说，任何的索引都需要至少8KB的数据空间， 也就意味着每个b-tree page大小为8KB. 如果有很多collection以及元数据经常要页输出，会导致核心的操作速度变慢。 --nssize 如果需要更多的collection，运行mongod --nssize参数。这个参数会让.ns文件更大， 支持更多的collection。注意的是 --nssize 用于最新创建数据库。如果你运行在一个存在的数据库， 希望重新定义大小，那么在运行--nssize之后，要运行db.repairDatabase()命令来调整大小。 .ns 文件最大为 2GB. 应用 collection单聊　名字我设置为single_用户id collection群聊　名字我设置为group_群id_年月日　通过年月日就可以判断是否需要新建或者存档数据 MongoDb 集群(副本集) mongod --nssize 500 --bind_ip 192.168.2.28 --port 27019 --dbpath /data/db_c --replSet howie/192.168.2.28:27017 mongod --nssize 500 --bind_ip 192.168.2.28 --port 27018 --dbpath /data/db_b --replSet howie/192.168.2.28:27019 mongod --nssize 500 --bind_ip 192.168.2.28 --port 27017 --dbpath /data/db_a --replSet howie/192.</description>
+    </item>
+    
+    <item>
+      <title>如何使用mongodb</title>
+      <link>https://hwholiday.github.io/2018/how_use_mongodb/</link>
+      <pubDate>Wed, 10 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/how_use_mongodb/</guid>
+      <description>查找 Find m := bson.M{ &amp;#34;create_time&amp;#34;: bson.M{ &amp;#34;$gte&amp;#34;: start, &amp;#34;$lte&amp;#34;: end, }, &amp;#34;account&amp;#34;: account, &amp;#34;tag&amp;#34;: &amp;#34;tag&amp;#34;, } session.DB(&amp;#34;db&amp;#34;).C(&amp;#34;collect&amp;#34;).Find(m).Count() 这里查找时间戳内，账号为account，标签为tag的数据并统计个数。
+聚合管道在mgo中为Pipe(pipeline interface{}) 这个和bash中使用的管道很像，数据可以被层层处理。一般传入的参数为[]bson.M。这个[]bson.M里如果还有嵌套则还要使用[]bson.M
+比如这里首先匹配标签和账号 时间戳在一段时间内 然后根据名字分组统计数量 最后排序取最前面的三个。 //这个就可以传入Pipe m := []bson.M{ {&amp;#34;$match&amp;#34;: bson.M{&amp;#34;tag&amp;#34;: &amp;#34;tag&amp;#34;, &amp;#34;account&amp;#34;: account, &amp;#34;create_time&amp;#34;: bson.M{&amp;#34;$gte&amp;#34;: start, &amp;#34;$lte&amp;#34;: end}}}, {&amp;#34;$group&amp;#34;: bson.M{&amp;#34;_id&amp;#34;: &amp;#34;$TagName&amp;#34;, &amp;#34;count&amp;#34;: bson.M{&amp;#34;$sum&amp;#34;: 1}}}, {&amp;#34;$sort&amp;#34;: bson.M{&amp;#34;count&amp;#34;: -1}}, {&amp;#34;$limit&amp;#34;: 3}, } //这里就可以取到输出的数据 var values []result session.DB(&amp;#34;db&amp;#34;).C(&amp;#34;collect&amp;#34;).Pipe(m).All(&amp;amp;values) 简单介绍 package main import ( &amp;#34;gopkg.in/mgo.v2&amp;#34; &amp;#34;log&amp;#34; &amp;#34;gopkg.in/mgo.v2/bson&amp;#34; ) type User struct { Id bson.</description>
+    </item>
+    
+  </channel>
+</rss>

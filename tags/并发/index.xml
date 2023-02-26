@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>并发 on hwholiday</title>
+    <link>https://hwholiday.github.io/tags/%E5%B9%B6%E5%8F%91/</link>
+    <description>Recent content in 并发 on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 10 Dec 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/tags/%E5%B9%B6%E5%8F%91/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Golang 中的并发限制与超时控制</title>
+      <link>https://hwholiday.github.io/2018/golang_limit_req/</link>
+      <pubDate>Mon, 10 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/golang_limit_req/</guid>
+      <description>代码地址 点击这里 并发限制(一种常见的做法就是利用 channel 的缓冲机制) var limitChan = make(chan bool, n) 如果 channel 没有缓冲，或者缓冲区满了。goroutine 会自动阻塞，直到 channel 里的数据被读走为止 代码演示 var addr = flag.String(&amp;#34;p&amp;#34;, &amp;#34;192.168.2.28:8099&amp;#34;, &amp;#34;port&amp;#34;) func main() { flag.Parse() perf.StartPprof([]string{&amp;#34;192.168.2.28:9022&amp;#34;}) logtool.InitZapLogger(&amp;#34;ghost.log&amp;#34;, true) //http服务 mux := http.NewServeMux() mux.HandleFunc(&amp;#34;/limit_api&amp;#34;, limitApi) s := &amp;amp;http.Server{ Handler: mux, Addr: *addr, WriteTimeout: 15 * time.Second, ReadTimeout: 15 * time.Second, MaxHeaderBytes: 1 &amp;lt;&amp;lt; 20, } go func() { err := s.ListenAndServe() if err != nil { logtool.Zap.Panic(&amp;#34;bat_file err&amp;#34;, zap.</description>
+    </item>
+    
+  </channel>
+</rss>

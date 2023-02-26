@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2022/auth2_tactics/" />
+  
+  <link rel="canonical" href="https://hwholiday.github.io/2023/timewheel/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           用golang实现一个timewheel时间轮 | hwholiday
+       
+  </title>
+  <meta name="title" content="用golang实现一个timewheel时间轮 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="用golang实现一个timewheel时间轮"/>
+<meta name="twitter:description" content="用golang实现一个timewheel时间轮"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "用golang实现一个timewheel时间轮",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https:\/\/hwholiday.github.io\/2023\/timewheel\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang",
+  "wordcount":  328 ,
+  "url": "https:\/\/hwholiday.github.io\/2023\/timewheel\/",
+  "datePublished": "2023-02-26T00:00:00\u002b00:00",
+  "dateModified": "2023-02-26T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "用golang实现一个timewheel时间轮"
+}
+</script>
+</head>
+
+  
+             
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">用golang实现一个timewheel时间轮</h1>
+        <div class="post-meta">
+            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2023-02-26 >26 February 2023</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                2 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+            
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="timewheel简介">timewheel简介</h2>
+<ul>
+<li>时间轮是一个环形队列，底层实现就是一个固定长度的数组，数组中的每个元素存储一个双向列表，这个列表存放着该时间内需要执行的所有任务
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="https://i.328888.xyz/2023/02/27/EuCiH.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></li>
+</ul>
+<h2 id="例子">例子</h2>
+<ul>
+<li>抽象点来说时钟表盘就是1秒为一个时间刻度，一共（一天）会有86400个刻度的时间轮，当指针走到那个刻度的时候就可以把对应的任务全部取出执行</li>
+<li>也就是说这里我们定义了一个可以延迟86400秒的时候轮，不过当我们定一个86401秒后执行的任务怎么办
+<ul>
+<li>方案一 多级时间轮 （这里不展开描述）</li>
+<li>方案二 定义circle参数 （本文）, 一轮是86400秒的话，86401= 86400 + 1 也就是 1circle（一轮）加上一个刻度就可以取出该任务执行</li>
+</ul>
+</li>
+</ul>
+<h2 id="结构体">结构体</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">type TimeWheel struct {
+	interval     time.Duration 
+	slots        []*list.List
+	slotsNum     int64
+	currentSlots int64
+	ticker       *time.Ticker
+	mt           sync.Mutex
+	isRun        bool
+	tasks        sync.Map
+	addTaskCh    chan *Task
+	removeTaskCh chan string
+	closeCh      chan struct{}
+}
+
+type Task struct {
+	ID         string
+	createTime time.Time
+	delay      time.Duration
+	slots      int64
+	circle     int64 // 多少圈
+	job        Job
+	times      int64 //执行多少次 -1 一直执行
+}
+</code></pre><h2 id="启动时间轮">启动时间轮</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">//定义定时器驱动时间轮
+t.ticker = time.NewTicker(t.interval)
+		
+func (t *TimeWheel) run() {
+	for {
+		select {
+		case _ = &lt;-t.ticker.C:
+			t.runTask()
+		case task := &lt;-t.addTaskCh:
+			t.addTask(task, true)
+		case id := &lt;-t.removeTaskCh:
+			t.delTask(id)
+		case _ = &lt;-t.closeCh:
+			t.ticker.Stop()
+			break
+		}
+	}
+}
+</code></pre><h2 id="向时间轮添加任务">向时间轮添加任务</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">func (t *TimeWheel) AddTask(ID string, job Job, delay time.Duration, times ...int64) error {
+	if ID == &#34;&#34; {
+		return errors.New(&#34;ID is empty&#34;)
+	}
+	if delay &lt; t.interval {
+		return errors.New(&#34;the delay time must be greater than the interval time&#34;)
+	}
+	var timesInt64 int64 = 1
+	if len(times) &gt; 0 {
+		timesInt64 = times[0]
+	}
+	_, ok := t.tasks.Load(ID)
+	if ok {
+		return errors.New(&#34;ID already exists&#34;)
+	}
+	task := &amp;Task{
+		ID:         ID,
+		createTime: time.Now(),
+		job:        job,
+		delay:      delay,
+		times:      timesInt64,
+	}
+	t.addTaskCh &lt;- task
+	return nil
+}
+func (t *TimeWheel) addTask(task *Task, first bool) {
+	task.circle, task.slots = t.getCircleAndSlots(task.delay, first)
+	ele := t.slots[task.slots].PushBack(task)
+	t.tasks.Store(task.ID, ele)
+}
+
+func (t *TimeWheel) getCircleAndSlots(delay time.Duration, first bool) (circle, slots int64) {
+	delaySed := int64(delay.Seconds())
+	intervalSed := int64(t.interval.Seconds())
+	circle = delaySed / intervalSed / t.slotsNum
+	slots = delaySed - (t.slotsNum * intervalSed * circle) + t.currentSlots
+	if slots == t.currentSlots &amp;&amp; circle &gt; 0 {
+		circle--
+	}
+	//第一次加入时 当前秒（currentSlots）还未执行，比如当前是第一秒的slot(0) 延迟5秒计算得出为5 （0～5有6格所有需要-1）
+	//第二次加入时 当前秒（currentSlots）已经执行，就不需要-1
+	if slots &gt; 0 &amp;&amp; first {
+		slots--
+	}
+	return
+}
+</code></pre><h2 id="时间轮删除任务">时间轮删除任务</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">func (t *TimeWheel) RemoveTask(ID string) error {
+	_, ok := t.tasks.Load(ID)
+	if !ok {
+		return errors.New(&#34;ID does not exist&#34;)
+	}
+	t.removeTaskCh &lt;- ID
+	return nil
+}
+
+func (t *TimeWheel) delTask(id string) {
+	if val, ok := t.tasks.Load(id); ok {
+		task := val.(*list.Element).Value.(*Task)
+		t.slots[task.slots].Remove(val.(*list.Element))
+		t.tasks.Delete(task.ID)
+	}
+}
+</code></pre><h3 id="完整代码地址httpsgithubcomhwholidaylearning_toolstreemastertimewheel"><a href="https://github.com/hwholiday/learning_tools/tree/master/timewheel">完整代码地址</a></h3>
+
+    </div>
+    
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        const gitalk = new Gitalk({
+            clientID: '64d60a02f98e01e31e2f',
+            clientSecret: 'b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58',
+            repo: 'hwholiday.github.io',
+            owner: 'hwholiday',
+            admin: 'hwholiday',
+            id: 'git_timewheel', 
+            distractionFreeMode: false 
+        });
+        (function() {
+            if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+                document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+                return;
+            }
+            gitalk.render('gitalk-container');
+        })();
+    </script>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>328</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2022/auth2_tactics/" class="prev" rel="prev" title="OAuth 2.0-授权码模式（authorization code）仿微信设计（战术篇）"><i class="iconfont icon-dajiantou"></i>&nbsp;OAuth 2.0-授权码模式（authorization code）仿微信设计（战术篇）</a>
+         
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    <link crossorigin="anonymous" integrity="sha384-yziQACfvCVwLqVFLqkWBYRO3XeA4EqzfXKGwaWnenYn5XzqfJFlFdKEmvutIQdKb" href="https://lib.baomitu.com/lightgallery/1.10.0/css/lightgallery.min.css" rel="stylesheet">
+      
+     <script src="/js/vendor_gallery.min.js" async="" ></script>
+    
+  
+
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

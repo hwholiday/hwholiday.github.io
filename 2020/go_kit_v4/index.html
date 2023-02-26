@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2020/go_kit_v3/" />
+  <link rel="next" href="https://hwholiday.github.io/2020/etcd_registry_selector/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2020/go_kit_v4/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现） | hwholiday
+       
+  </title>
+  <meta name="title" content="go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现） | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）"/>
+<meta name="twitter:description" content="go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "go-kit 微服务 限流 （uber\/ratelimit 和 golang\/rate 实现）",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https:\/\/hwholiday.github.io\/2020\/go_kit_v4\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang, go-kit",
+  "wordcount":  311 ,
+  "url": "https:\/\/hwholiday.github.io\/2020\/go_kit_v4\/",
+  "datePublished": "2020-01-04T00:00:00\u002b00:00",
+  "dateModified": "2020-01-04T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "go-kit 微服务 限流 （uber\/ratelimit 和 golang\/rate 实现）"
+}
+</script>
+</head>
+
+  
+             
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）</h1>
+        <div class="post-meta">
+            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2020-01-04 >4 January 2020</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
+                        <a href="https://hwholiday.github.io/categories/go-kit/"> go-kit </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                2 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="go-kit-微服务-限流-uberratelimit-和-golangrate-实现">go-kit 微服务 限流 (uber/ratelimit 和 golang/rate 实现)</h2>
+<h3 id="golangrate-简介golangorgxtimerate">golang/rate 简介（golang.org/x/time/rate）</h3>
+<ul>
+<li>golang 标准库中就自带的限流算法</li>
+<li>该限流器是基于 Token Bucket(令牌桶) 实现的</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">//第一个参数是 r Limit。代表每秒可以向 Token 桶中产生多少 token
+//第二个参数是 b int。b 代表 Token 桶的容量大小
+golangLimit := rate.NewLimiter(10, 1)
+//golangLimit 其令牌桶大小为 1, 以每秒 10 个 Token 的速率向桶中放置 Token。
+</code></pre><ul>
+<li>Wait/WaitN
+<ul>
+<li>Wait 实际上就是 WaitN(ctx,1)</li>
+<li>当使用 Wait 方法时，如果令牌桶内Token（大于or等于 N）直接返回，如果当时令牌桶内 Token 不足(小于 N)，那么 Wait 方法将会阻塞，直到能从令牌桶内获得 Token</li>
+</ul>
+</li>
+<li>Allow/AllowN
+<ul>
+<li>Allow 实际上就是 AllowN(time.Now(),1)。</li>
+<li>当使用使用 AllowN 方法时，截止到time.Now()这一时刻(time可以自己传入)令牌桶中数目必须（大于or等于 N），满足则返回正确，同时从令牌桶中消费 N 个 Token</li>
+<li>应用场景请求速度太快就直接丢掉一些请求</li>
+</ul>
+</li>
+<li>Reserve/ReserveN
+<ul>
+<li>Reserve 相当于 ReserveN(time.Now(), 1)</li>
+<li>当使用使用 ReserveN 方法时，不管能不能从令牌桶内获取到Token都会返回一个Reservation对象</li>
+<li>Reservation对象的 Ok() 方法返回了令牌桶是否可以在最大等待时间内提供请求的令牌数量，如果OK为false，则Delay()返回InfDuration</li>
+<li>Reservation对象的 Delay() 方法返回了需要等待的时间，如果时间为0则不需要等待</li>
+<li>如果不想等待就调用 Reservation对象的 Cancel()</li>
+</ul>
+</li>
+</ul>
+<h3 id="uberratelimit-简介gouberorgratelimit">uber/ratelimit 简介（go.uber.org/ratelimit）</h3>
+<ul>
+<li>uber 开源的限流算法,</li>
+<li>该组件基于 Leaky Bucket(漏桶) 实现的</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">//一秒请求一次
+uberLimit := ratelimit.New(1)         
+//使用方法
+uberLimit.Take()        
+</code></pre><h2 id="endpoint层修改">Endpoint层修改</h2>
+<ul>
+<li>添加基于golang.org/x/time/rate的限流中间件</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">func NewGolangRateAllowMiddleware(limit *rate.Limiter) endpoint.Middleware {
+	return func(next endpoint.Endpoint) endpoint.Endpoint {
+		return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+			if !limit.Allow() {
+				return &#34;&#34;, errors.New(&#34;limit req  Allow&#34;)
+			}
+			return next(ctx, request)
+		}
+	}
+}
+</code></pre><ul>
+<li>添加基于go.uber.org/ratelimit的限流中间件</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">func NewUberRateMiddleware(limit ratelimit.Limiter) endpoint.Middleware {
+	return func(next endpoint.Endpoint) endpoint.Endpoint {
+		return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+			limit.Take()
+			return next(ctx, request)
+		}
+	}
+}
+</code></pre><ul>
+<li>对于需要限流的方法添加限流中间件</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">func NewEndPointServer(svc v4_service.Service, log *zap.Logger, limit *rate.Limiter, limiter ratelimit.Limiter) EndPointServer {
+	var addEndPoint endpoint.Endpoint
+	{
+		addEndPoint = MakeAddEndPoint(svc)
+		addEndPoint = LoggingMiddleware(log)(addEndPoint)
+		addEndPoint = AuthMiddleware(log)(addEndPoint)
+		addEndPoint = NewUberRateMiddleware(limiter)(addEndPoint)
+	}
+	var loginEndPoint endpoint.Endpoint
+	{
+		loginEndPoint = MakeLoginEndPoint(svc)
+		loginEndPoint = LoggingMiddleware(log)(loginEndPoint)
+		loginEndPoint = NewGolangRateAllowMiddleware(limit)(loginEndPoint)
+	}
+	return EndPointServer{AddEndPoint: addEndPoint, LoginEndPoint: loginEndPoint}
+}
+</code></pre><h2 id="激动人心的时刻来了修改main方法">激动人心的时刻来了，修改main方法</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">utils.NewLoggerServer()
+golangLimit := rate.NewLimiter(10, 1) //每秒产生10个令牌,令牌桶的可以装1个令牌
+uberLimit := ratelimit.New(1)         //一秒请求一次
+server := v4_service.NewService(utils.GetLogger())
+endpoints := v4_endpoint.NewEndPointServer(server, utils.GetLogger(), golangLimit, uberLimit)
+httpHandler := v4_transport.NewHttpHandler(endpoints, utils.GetLogger())
+utils.GetLogger().Info(&#34;server run 0.0.0.0:8888&#34;)
+_ = http.ListenAndServe(&#34;0.0.0.0:8888&#34;, httpHandler))
+</code></pre><h2 id="日志一秒请求100次接口">日志（一秒请求100次接口）</h2>
+<ul>
+<li>
+<p>日志比较多这里我减少了一些日志以便于观看</p>
+</li>
+<li>
+<p>go.uber.org/ratelimit的限流中间件</p>
+</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">2020-01-03 09:46:30     DEBUG   v4_transport/transport.go:70    5fd6eae3-32ea-5a24-9507-ed3c865f2e50    {&#34; 开始解析请求数据&#34;: {&#34;a&#34;:1,&#34;b&#34;:1}}
+2020-01-03 09:46:31     DEBUG   v4_transport/transport.go:70    ca39186b-c4e1-5976-bb02-f5e484aeca48    {&#34; 开始解析请求数据&#34;: {&#34;a&#34;:1,&#34;b&#34;:1}}
+2020-01-03 09:46:32     DEBUG   v4_transport/transport.go:70    691bfdf1-6701-553f-ae78-d443eff6fb6b    {&#34; 开始解析请求数据&#34;: {&#34;a&#34;:1,&#34;b&#34;:1}}
+......
+可以看到请求是按照我们控制的一秒一秒请求的
+</code></pre><ul>
+<li>golang.org/x/time/rate的限流中间件</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">2020-01-03 09:42:17     DEBUG   v4_transport/transport.go:75    cc74b82d-4fa9-558c-acd3-ad2ea292dfdd    {&#34;请求结束封装返回值&#34;:&#34;token&#34;}}
+2020-01-03 09:42:17     WARN    v4_transport/transport.go:20    c1a00c56-edad-55b0-b546-076a0d070086    {&#34;error&#34;: &#34;limit req  Allow&#34;}
+2020-01-03 09:42:17     DEBUG   v4_transport/transport.go:75    2c8ab986-c300-5df1-99fc-0d88c8db8c40    {&#34;请求结束封装返回值&#34;:&#34;token&#34;}}
+2020-01-03 09:42:17     WARN    v4_transport/transport.go:20    8e5dc5d4-e048-56c7-9a42-33863843cd67    {&#34;error&#34;: &#34;limit req  Allow&#34;}
+......
+</code></pre><h2 id="结语">结语</h2>
+<ul>
+<li>在请求数量过多且我们的服务处理不完时,添加限流能保证我们服务的健康状态</li>
+<li>在文章中我只展示了下限流在go-kit里面的简单使用</li>
+<li>欢迎添加QQ一起讨论</li>
+</ul>
+<h3 id="完整代码地址httpsgithubcomhwholidaylearning_toolstreemastergo-kitv4"><a href="https://github.com/hwholiday/learning_tools/tree/master/go-kit/v4">完整代码地址</a></h3>
+<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        const gitalk = new Gitalk({
+            clientID: '64d60a02f98e01e31e2f',
+            clientSecret: 'b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58',
+            repo: 'hwholiday.github.io',
+            owner: 'hwholiday',
+            admin: 'hwholiday',
+            id: 'git_kit_v4', 
+            distractionFreeMode: false 
+        });
+        (function() {
+            if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+                document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+                return;
+            }
+            gitalk.render('gitalk-container');
+        })();
+    </script>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>311</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/go-kit/">
+                    #go-kit</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2020/go_kit_v3/" class="prev" rel="prev" title="go-kit 微服务 身份认证 （JWT）"><i class="iconfont icon-dajiantou"></i>&nbsp;go-kit 微服务 身份认证 （JWT）</a>
+         
+        
+        <a href="https://hwholiday.github.io/2020/etcd_registry_selector/" class="next" rel="next" title="Golang etcd 服务发现与负载均衡">Golang etcd 服务发现与负载均衡&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

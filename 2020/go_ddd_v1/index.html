@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2020/file_storage/" />
+  <link rel="next" href="https://hwholiday.github.io/2020/k8s_v1/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2020/go_ddd_v1/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           领域驱动设计(DDD)战术上一些实践 | hwholiday
+       
+  </title>
+  <meta name="title" content="领域驱动设计(DDD)战术上一些实践 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="领域驱动设计(DDD)战术上一些实践"/>
+<meta name="twitter:description" content="ddd 领域驱动设计"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "领域驱动设计(DDD)战术上一些实践",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https:\/\/hwholiday.github.io\/2020\/go_ddd_v1\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang",
+  "wordcount":  162 ,
+  "url": "https:\/\/hwholiday.github.io\/2020\/go_ddd_v1\/",
+  "datePublished": "2020-11-09T00:00:00\u002b00:00",
+  "dateModified": "2020-11-09T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "ddd 领域驱动设计"
+}
+</script>
+</head>
+
+  
+             
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">领域驱动设计(DDD)战术上一些实践</h1>
+        <div class="post-meta">
+            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2020-11-09 >9 November 2020</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
+                        <a href="https://hwholiday.github.io/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"> 设计模式 </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                1 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h1 id="领域驱动设计ddd战术上一些实践">领域驱动设计(DDD)战术上一些实践</h1>
+<h2 id="个人能力有限如有问题欢迎指导">个人能力有限,如有问题欢迎指导</h2>
+<h3 id="程序设计谈不上什么最好无论是面向过程编程还是面向对象编程我们都是在追求完美的道路上">程序设计谈不上什么最好,无论是面向过程编程,还是面向对象编程，我们都是在追求完美的道路上</h3>
+<h3 id="不设计和过度设计都会对我们产生一些影响最合适自己的设计才是最好的设计">不设计和过度设计都会对我们产生一些影响,最合适自己的设计才是最好的设计</h3>
+<h2 id="ddddomain-driven-design领域驱动设计">DDD（Domain-Driven Design）领域驱动设计</h2>
+<ul>
+<li>领域驱动设计并不是什么银弹，简单的项目并不需要 DDD，引入后反而增加项目难度</li>
+<li>DDD 更加适合解决复杂的业务问题，并不是说DDD设计模式有什么压倒性的优势也不是说它就是完美无缺的只是说它更适合干这事</li>
+</ul>
+<h2 id="要不要ddd">要不要DDD</h2>
+<ul>
+<li>
+<p>在业务刚开始的时候,我们的功能都相对于比较简单，就通过CRUD大法就能满足我们的业务需求，
+随着产品的各种需求加入，业务逻辑变的越来越复杂，各个模块相互依赖，修改一个功能时需要花大量的时候去理解当时为什么这些写后，然后再编写代码，甚至开发者自己都不知道这样写会不会影响其他模块，这里我想对测试人员说一句你们辛苦了！</p>
+</li>
+<li>
+<p>产生这些问题的原因就是在于系统架构不清晰，划分出来的模块内<strong><strong>聚度低、高耦合</strong></strong>项目到达这个地步的时候我们就可以考虑要不要引入 DDD 来解决一些问题</p>
+</li>
+</ul>
+<h2 id="贫血模型-vs-充血模型">贫血模型 VS 充血模型</h2>
+<ul>
+<li>
+<p><strong>贫血模型:</strong>  比如在用户类中我们定义了User的实体，但是操作User的并不是用户类，而是 UserService,这样的设计就是贫血模型简单来说就是（只包含数据，不包含业务逻辑的类）
+,就好比我们大学老师说的你有一个车但是不能开只能其他人去开破坏了面向对象的特性，是一种典型的面向过程的编程风格。</p>
+</li>
+<li>
+<p><strong>充血模型:</strong>  我们知道了贫血模型是（只包含数据，不包含业务逻辑的类），那我们把数据和对应的业务逻辑被封装到同一个类中是不是就是充血模型，Bingo 回答正确,你现在不仅拥有了车还可以开这就是面向对象编程风格</p>
+</li>
+</ul>
+<h2 id="面向过程-vs-面向对象">面向过程 VS 面向对象</h2>
+<h3 id="需求把东西全部放到柜子你里面">需求把东西全部放到柜子你里面</h3>
+<ul>
+<li><strong>面向过程:</strong>   我们把整个东西放到一个大柜子里面堆在一起。如果修改了那个部分，可以需要修改其他部分，如果放的东西太多还不知道是否会产生一些不可以预知的错误,有可能就会出现祖传bug！</li>
+<li><strong>面向对象:</strong>  我们把整个东西分类到一个一个的放在小柜子里面然后再放入一个大柜子，如果要修改也是修改需要修改的那个柜子，不会影响其他柜子</li>
+</ul>
+<h2 id="实体">实体</h2>
+<p>用于个性特征或区分不同对象，判断是不是同一个实体主要依据身份标识（identity），唯一身份标识和可变性（mutability）特征将实体对象和值对象（Value Object）区分开来。</p>
+<ul>
+<li>总结下来就是,实体是一个唯一的东西，可以在一段时间内持续变化</li>
+</ul>
+<h2 id="值对象">值对象</h2>
+<p>值对象用于度量和描述事务，当我们只关心某个对象的属性时，该对象就可以作为一个值对象</p>
+<ul>
+<li>比如在快递单的上的地址，你的地址可以和其他人的地址相同我们只需要关注地址的属性就可以,并不需要给地址一个唯一标识</li>
+<li>值对象具有不变性,如果要修改的话直接替换整个值对象就行</li>
+</ul>
+<h2 id="聚合">聚合</h2>
+<p>将实体和值对象在一致性边界内组成聚合,不变性和一致性边界即是聚合的设计依据</p>
+<ul>
+<li>不变性: 不变性表示的是一个业务规则,该规则应该总是保持一致</li>
+<li>一致性边界:单个事务只修改一个聚合实例</li>
+</ul>
+<h2 id="领域服务">领域服务</h2>
+<p>领域中的服务表示一个无状态的操作,它用于实现特定于某个领域的任务。当某个操作不适合放在聚合、值对象、实体上时,最好的方式便是使用领域服务</p>
+<ul>
+<li>在我的理解中上面那一句话就是，需要调用多个模型进行处理的就放在领域服务</li>
+<li>eg:</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">应用服务：获取输入，发送消息给领域层，监听确认消息
+领域服务：协调账户模型和邮件进行交互，执行相应的领域行为。
+基础服务：按照应用服务的指示发送邮件。
+</code></pre><ul>
+<li>不过在实际开发过程中,最好吧领域对象封装在领域服务中，领域知识限制在领域服务当中</li>
+</ul>
+<h2 id="工厂">工厂</h2>
+<p>将创建复杂对象和聚合的职责分配给一个单独的对象,该对象本身并不承担领域模型中的职责,但是依然是领域设计的一部分。
+工厂应该提供一个创建对象的接口,该接口封装了所有创建对象的复杂操作过程,同时,它并不需要客户去引用那个实际被创建的对象。对于聚合来说,我们应该一次性地创建整个聚合、并且确保它的不变条件得到满足</p>
+<h2 id="资源库">资源库</h2>
+<p>简单理解就是一个持久化机制,在DDD设计中一般将聚合实例放在资源库中</p>
+<ul>
+<li>比如用户实体，和地址值对象可以组合成一个聚合实例</li>
+</ul>
+<h3 id="探讨项目结构-golang">探讨项目结构 golang</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">├── api
+├── cmd		项目启动文件
+│   └── user		项目名称
+│       └── main.go
+├── conf		配置文件   
+│   └── user.yaml
+├── internal
+│   └── user		项目名称
+│       ├── adapter		适配器,对外提供不同的协议适配
+│       │   ├── grpc
+│       │   └── http
+│       ├── domain
+│       │   ├── aggregate		聚合根
+│       │   ├── dto						定义入参,出参
+│       │   ├── entity				实体
+│       │   ├── event					事件
+│       │   ├── interface		抽象接口由外部 repository 实现
+│       │   ├── service				领域服务
+│       │   └── valobj				值对象
+│       ├── facade				接口防腐层 调用其他服务接口
+│       │
+│       └── infrastructure		适配器，是对技术实现的适配
+│           └── repository					依赖倒置实现储存服务
+└── pkg   三方库工具类
+</code></pre><h2 id="结语">结语</h2>
+<ul>
+<li>个人能力有限欢迎添加QQ一起讨论</li>
+</ul>
+<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>162</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2020/file_storage/" class="prev" rel="prev" title="Golang 文件服务器支持多线程上传下载"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang 文件服务器支持多线程上传下载</a>
+         
+        
+        <a href="https://hwholiday.github.io/2020/k8s_v1/" class="next" rel="next" title="一键安装 K8s 以及在K8s上部署Go服务">一键安装 K8s 以及在K8s上部署Go服务&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>redis on hwholiday</title>
+    <link>https://hwholiday.github.io/categories/redis/</link>
+    <description>Recent content in redis on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 17 Mar 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>golang 通过 Redis GEO 实现 LBS 功能</title>
+      <link>https://hwholiday.github.io/2020/redis_geo/</link>
+      <pubDate>Tue, 17 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2020/redis_geo/</guid>
+      <description>LBS 基于位置的服务（Location Based Services，LBS），是利用各类型的定位技术来获取定位设备当前的所在位置，通过移动互联网向定位设备提供信息资源和基础服务。LBS首先读者可利用定位技术确定自身的空间位置，随后读者便可通过移动互联网来获取与位置相关资源和信息。LBS服务中融合了移动通讯、互联网络、空间定位、位置信息、大数据等多种信息技术，利用移动互联网络服务平台进行数据更新和交互，使用户可以通过空间定位来获取相应的服务。 redis 中关于 GEO 的方法 geoadd：增加某个位置的坐标。 geopos：获取某个位置的坐标。 geohash：获取某个位置的geohash值。 geodist：获取两个位置的距离。 georadius：根据给定位置坐标获取指定范围内的位置集合。 georadiusbymember：根据给定位置获取指定范围内的位置集合。 geoadd 使用方法 res, err := GlobalClient.GeoAdd(&amp;#34;geo_hash_test&amp;#34;, &amp;amp;redis.GeoLocation{ Name: &amp;#34;天府广场&amp;#34;, Longitude: 104.072833, Latitude: 30.663422, }, &amp;amp;redis.GeoLocation{ Name: &amp;#34;四川大剧院&amp;#34;, Longitude: 104.074378, Latitude: 30.664804, }, &amp;amp;redis.GeoLocation{ Name: &amp;#34;新华文轩&amp;#34;, Longitude: 104.070084, Latitude: 30.664649, }, &amp;amp;redis.GeoLocation{ Name: &amp;#34;手工茶&amp;#34;, Longitude: 104.072402, Latitude: 30.664121, }, &amp;amp;redis.GeoLocation{ Name: &amp;#34;宽窄巷子&amp;#34;, Longitude: 104.059826, Latitude: 30.669883, }, &amp;amp;redis.GeoLocation{ Name: &amp;#34;奶茶&amp;#34;, Longitude: 104.06085, Latitude: 30.670054, }, &amp;amp;redis.GeoLocation{ Name: &amp;#34;钓鱼台&amp;#34;, Longitude: 104.</description>
+    </item>
+    
+  </channel>
+</rss>

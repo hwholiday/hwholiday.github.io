@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2020/go_kit_v5/" />
+  <link rel="next" href="https://hwholiday.github.io/2020/go_kit_v7/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2020/go_kit_v6/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           go-kit 微服务 服务注册与发现（etcd实现） | hwholiday
+       
+  </title>
+  <meta name="title" content="go-kit 微服务 服务注册与发现（etcd实现） | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="go-kit 微服务 服务注册与发现（etcd实现）"/>
+<meta name="twitter:description" content="go-kit 微服务 服务注册与发现（etcd实现）"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "go-kit 微服务 服务注册与发现（etcd实现）",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https:\/\/hwholiday.github.io\/2020\/go_kit_v6\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang, go-kit",
+  "wordcount":  551 ,
+  "url": "https:\/\/hwholiday.github.io\/2020\/go_kit_v6\/",
+  "datePublished": "2020-01-08T00:00:00\u002b00:00",
+  "dateModified": "2020-01-08T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "go-kit 微服务 服务注册与发现（etcd实现）"
+}
+</script>
+</head>
+
+  
+             
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">go-kit 微服务 服务注册与发现（etcd实现）</h1>
+        <div class="post-meta">
+            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2020-01-08 >8 January 2020</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
+                        <a href="https://hwholiday.github.io/categories/go-kit/"> go-kit </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                3 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="go-kit-微服务-服务注册与发现-etcd-实现-">go-kit 微服务 服务注册与发现 (etcd 实现 )</h2>
+<h3 id="etcd">etcd</h3>
+<ul>
+<li>相关介绍使用请看文章<a href="https://www.hwholiday.com/2020/etcd_registry_selector/">《Golang etcd 服务发现与负载均衡》</a> 对服务注册，发现，与负载均衡提供了思路</li>
+</ul>
+<h3 id="简介">简介</h3>
+<ul>
+<li>通过grpc实现一个用户中心实现简单的鉴权中心并返回用户token</li>
+<li>上篇文章<a href="https://www.hwholiday.com/2020/go_kit_v5/">《go-kit 微服务 使用Grpc（并传递请求ID）》</a>，我们已经实现了一个grpc的服务</li>
+<li>我们这次主要是添加基于 go-kit 服务注册,发现,负载均衡</li>
+</ul>
+<h3 id="服务注册">服务注册</h3>
+<ul>
+<li>使用go-kit初始化一个etcdV3客户端</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">options := etcdv3.ClientOptions{
+	DialTimeout:   ttl,
+	DialKeepAlive: ttl,
+}
+etcdClient, err := etcdv3.NewClient(context.Background(), etcdAddrs, options)
+if err != nil {
+	utils.GetLogger().Error(&#34;[user_agent]  NewClient&#34;, zap.Error(err))
+	return
+}
+Registar := etcdv3.NewRegistrar(etcdClient, etcdv3.Service{
+	Key:   fmt.Sprintf(&#34;%s/%s&#34;,serName,grpcAddr),
+	Value: grpcAddr,
+}, log.NewNopLogger())
+</code></pre><ul>
+<li>将节点注册到服务器</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">Registar.Register()
+</code></pre><ul>
+<li>将节点注销</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">Registar.Deregister()
+</code></pre><h3 id="服务发现与负载均衡">服务发现与负载均衡</h3>
+<ul>
+<li>
+<p>在基于<a href="https://www.hwholiday.com/2020/go_kit_v5/">《go-kit 微服务 使用Grpc（并传递请求ID）》</a>  我们已经实现了一个grpc客户端，现在我们只需要为这个客户端添加服务发现，与负载均衡等相关操作</p>
+</li>
+<li>
+<p>创建一个UserAgent结构体，里面包含一个 etcdv3.Instancer 对象和一个 log.Logger对象</p>
+</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">type UserAgent struct {
+	instancerm *etcdv3.Instancer
+	logger     log.Logger
+}
+</code></pre><ul>
+<li>
+<p>初始化UserAgent</p>
+<ul>
+<li>服务发现：通过etcd去查询对应服务的服务地址</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">func NewUserAgentClient(addr []string, logger log.Logger) (*UserAgent, error) {
+  var (
+  	etcdAddrs = addr
+  	serName   = &#34;svc.user.agent&#34;
+  	ttl       = 5 * time.Second
+  )
+  options := etcdv3.ClientOptions{
+  	DialTimeout:   ttl,
+  	DialKeepAlive: ttl,
+  }
+  etcdClient, err := etcdv3.NewClient(context.Background(), etcdAddrs, options)
+  if err != nil {
+  	return nil, err
+  }
+  instancerm, err := etcdv3.NewInstancer(etcdClient, serName, logger)
+  if err != nil {
+  	return nil, err
+  }
+  return &amp;UserAgent{
+  	instancerm: instancerm,
+  	logger:     logger,
+  }, err
+</code></pre></li>
+</ul>
+<p>}</p>
+<pre tabindex="0"><code>+ 负载均衡：把取到的服务地址按照自己需求进行处理（Random，RoundRobin等）
+ 
+```base
+func (u *UserAgent) UserAgentClient() (src.Service, error) {
+  var (
+  	retryMax     = 3
+  	retryTimeout = 500 * time.Millisecond
+  )
+  var (
+  	endpoints src.EndPointServer
+  )
+  {
+  	factory := u.factoryFor(src.MakeLoginEndPoint)
+  	endpointer := sd.NewEndpointer(u.instancerm, factory, u.logger)
+  	balancer := lb.NewRandom(endpointer, time.Now().UnixNano())
+  	retry := lb.Retry(retryMax, retryTimeout, balancer)
+  	endpoints.LoginEndPoint = retry
+  }
+  return endpoints, nil
+}
+
+func (u *UserAgent) factoryFor(makeEndpoint func(src.Service) endpoint.Endpoint) sd.Factory {
+  return func(instance string) (endpoint.Endpoint, io.Closer, error) {
+  	conn, err := grpc.Dial(instance, grpc.WithInsecure())
+  	if err != nil {
+  		return nil, nil, err
+  	}
+  	srv := u.NewGRPCClient(conn)
+  	endpoints := makeEndpoint(srv)
+  	return endpoints, conn, err
+  }
+}
+</code></pre><h2 id="运行日志">运行日志</h2>
+<ul>
+<li>我们启动3个服务地址分别为（127.0.0.1:8881,127.0.0.1:8882,127.0.0.1:8883）</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">./user_agent -g 127.0.0.1:8881
+2020-01-08 16:28:45     INFO    logtool/log.go:89       [NewLogger] success
+2020-01-08 16:28:45     INFO    user_agent/main.go:75   [user_agent] run 127.0.0.1:8881
+
+
+./user_agent -g 127.0.0.1:8882
+2020-01-08 16:28:45     INFO    logtool/log.go:89       [NewLogger] success
+2020-01-08 16:28:45     INFO    user_agent/main.go:75   [user_agent] run 127.0.0.1:8882
+
+
+./user_agent -g 127.0.0.1:8883
+2020-01-08 16:28:45     INFO    logtool/log.go:89       [NewLogger] success
+2020-01-08 16:28:45     INFO    user_agent/main.go:75   [user_agent] run 127.0.0.1:8883
+</code></pre><ul>
+<li>运行 TestNewUserAgentClient 方法  查选3个服务器的日志输入</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">./user_agent -g 127.0.0.1:8881
+2020-01-08 16:28:36     INFO    logtool/log.go:89       [NewLogger] success
+2020-01-08 16:28:36     INFO    user_agent/main.go:75   [user_agent] run 127.0.0.1:8881
+2020-01-08 16:30:00     DEBUG   src/middleware_server.go:31     [ee92f353-5e8f-526e-b0b4-970d7507e5f6]  {&#34;调用 Login logMiddlewareServer&#34;: &#34;Login&#34;, &#34;req&#34;: &#34;Account:\&#34;hwholiday\&#34; Password:\&#34;123456\&#34; &#34;, &#34;res&#34;: &#34;Token:\&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJO1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc4NDcyMjMwLCJpYXQiOjE1Nzg0NzIyMDAsImlzcyI6ImtpdF92NCIsIm5iZiI6MTU3ODQ3MjIwMCwic3ViIjoibG9naW4ifQ.q6lveFqZbgl-10VcaPm4dRrwA4m9FN4i7Fqc82inclY\&#34; &#34;, &#34;time&#34;: &#34;272.061µs&#34;, &#34;err&#34;: null}
+2020-01-08 16:30:02     DEBUG   src/middleware_server.go:31     [63f4ddb2-dc6b-503a-85aa-bdf99027f91e]  {&#34;调用 Login logMiddlewareServer&#34;: &#34;Login&#34;, &#34;req&#34;: &#34;Account:\&#34;hwholiday\&#34; Password:\&#34;123456\&#34; &#34;, &#34;res&#34;: &#34;Token:\&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJO1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc4NDcyMjMyLCJpYXQiOjE1Nzg0NzIyMDIsImlzcyI6ImtpdF92NCIsIm5iZiI6MTU3ODQ3MjIwMiwic3ViIjoibG9naW4ifQ.Td_pBMlkGpK-RjpIOikn1N4BF9q0nID1munt7SvN-0E\&#34; &#34;, &#34;time&#34;: &#34;105.5µs&#34;, &#34;err&#34;: null}
+2020-01-08 16:30:03     DEBUG   src/middleware_server.go:31     [fe1a7185-cf9b-5bff-91c7-58271f9eecc8]  {&#34;调用 Login logMiddlewareServer&#34;: &#34;Login&#34;, &#34;req&#34;: &#34;Account:\&#34;hwholiday\&#34; Password:\&#34;123456\&#34; &#34;, &#34;res&#34;: &#34;Token:\&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJO1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc4NDcyMjMzLCJpYXQiOjE1Nzg0NzIyMDMsImlzcyI6ImtpdF92NCIsIm5iZiI6MTU3ODQ3MjIwMywic3ViIjoibG9naW4ifQ.d7yyFAH70CJvMpK1hIU-rBya0bjwNapP89j_-43liSQ\&#34; &#34;, &#34;time&#34;: &#34;40.564µs&#34;, &#34;err&#34;: null}
+2020-01-08 16:30:31     DEBUG   src/middleware_server.go:31     [eed06439-bc47-5f17-9329-9fdb3dfbce5f]  {&#34;调用 Login logMiddlewareServer&#34;: &#34;Login&#34;, &#34;req&#34;: &#34;Account:\&#34;hwholiday\&#34; Password:\&#34;123456\&#34; &#34;, &#34;res&#34;: &#34;Token:\&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJO1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc4NDcyMjYxLCJpYXQiOjE1Nzg0NzIyMzEsImlzcyI6ImtpdF92NCIsIm5iZiI6MTU3ODQ3MjIzMSwic3ViIjoibG9naW4ifQ.jAbaiEPM5QZKY_bHHVb8a_WyflKHKn34l2MPHIarly4\&#34; &#34;, &#34;time&#34;: &#34;111.298µs&#34;, &#34;err&#34;: null}
+2020-01-08 16:30:33     DEBUG   src/middleware_server.go:31     [21deba8a-2de6-5c44-bd01-633225e652c2]  {&#34;调用 Login logMiddlewareServer&#34;: &#34;Login&#34;, &#34;req&#34;: &#34;Account:\&#34;hwholiday\&#34; Password:\&#34;123456\&#34; &#34;, &#34;res&#34;: &#34;Token:\&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJO1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc4NDcyMjYzLCJpYXQiOjE1Nzg0NzIyMzMsImlzcyI6ImtpdF92NCIsIm5iZiI6MTU3ODQ3MjIzMywic3ViIjoibG9naW4ifQ.wJWduZ42o99DTUF6Nkhr9h4ddVCiY7G4jZtuhoHIqwE\&#34; &#34;, &#34;time&#34;: &#34;59.499µs&#34;, &#34;err&#34;: null}
+2020-01-08 16:30:36     DEBUG   src/middleware_server.go:31     [02e304ff-8ef1-5f9a-8ed6-cdd64814ea52]  {&#34;调用 Login logMiddlewareServer&#34;: &#34;Login&#34;, &#34;req&#34;: &#34;Account:\&#34;hwholiday\&#34; Password:\&#34;123456\&#34; &#34;, &#34;res&#34;: &#34;Token:\&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJO1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc4NDcyMjY2LCJpYXQiOjE1Nzg0NzIyMzYsImlzcyI6ImtpdF92NCIsIm5iZiI6MTU3ODQ3MjIzNiwic3ViIjoibG9naW4ifQ._Rvw4NwSeDrSFIKkzbSVcx0k6YvFVZqGPt3bYFmJUjg\&#34; &#34;, &#34;time&#34;: &#34;71.755µs&#34;, &#34;err&#34;: null}
+
+./user_agent -g 127.0.0.1:8882
+2020-01-08 16:28:42     INFO    logtool/log.go:89       [NewLogger] success
+2020-01-08 16:28:42     INFO    user_agent/main.go:75   [user_agent] run 127.0.0.1:8882
+2020-01-08 16:30:32     DEBUG   src/middleware_server.go:31     [759c5214-ec26-5788-840d-1387f6cce9be]  {&#34;调用 Login logMiddlewareServer&#34;: &#34;Login&#34;, &#34;req&#34;: &#34;Account:\&#34;hwholiday\&#34; Password:\&#34;123456\&#34; &#34;, &#34;res&#34;: &#34;Token:\&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJO1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc4NDcyMjYyLCJpYXQiOjE1Nzg0NzIyMzIsImlzcyI6ImtpdF92NCIsIm5iZiI6MTU3ODQ3MjIzMiwic3ViIjoibG9naW4ifQ.QQyA9Pt3eDVRBAXc764eIX7MBZYoW8Wr-Tlvw8boyxI\&#34; &#34;, &#34;time&#34;: &#34;196.996µs&#34;, &#34;err&#34;: null}
+2020-01-08 16:30:35     DEBUG   src/middleware_server.go:31     [ec3826e3-09e6-55f6-9998-baff941a8042]  {&#34;调用 Login logMiddlewareServer&#34;: &#34;Login&#34;, &#34;req&#34;: &#34;Account:\&#34;hwholiday\&#34; Password:\&#34;123456\&#34; &#34;, &#34;res&#34;: &#34;Token:\&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJO1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc4NDcyMjY1LCJpYXQiOjE1Nzg0NzIyMzUsImlzcyI6ImtpdF92NCIsIm5iZiI6MTU3ODQ3MjIzNSwic3ViIjoibG9naW4ifQ.ZljiQVypRaBrmPgzGK_aKpBbQueJdAPRAKdkzvhi0Yk\&#34; &#34;, &#34;time&#34;: &#34;858.642µs&#34;, &#34;err&#34;: null}
+
+./user_agent -g 127.0.0.1:8883
+2020-01-08 16:28:45     INFO    logtool/log.go:89       [NewLogger] success
+2020-01-08 16:28:45     INFO    user_agent/main.go:75   [user_agent] run 127.0.0.1:8883
+2020-01-08 16:30:01     DEBUG   src/middleware_server.go:31     [e68ec443-5f38-58de-a874-e8ff8ed127c0]  {&#34;调用 Login logMiddlewareServer&#34;: &#34;Login&#34;, &#34;req&#34;: &#34;Account:\&#34;hwholiday\&#34; Password:\&#34;123456\&#34; &#34;, &#34;res&#34;: &#34;Token:\&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJO1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc4NDcyMjMxLCJpYXQiOjE1Nzg0NzIyMDEsImlzcyI6ImtpdF92NCIsIm5iZiI6MTU3ODQ3MjIwMSwic3ViIjoibG9naW4ifQ.taUS3LxS8uTAA3loIGEeBfHuYVMgImBBNUnYvgygnVE\&#34; &#34;, &#34;time&#34;: &#34;271.665µs&#34;, &#34;err&#34;: null}
+2020-01-08 16:30:34     DEBUG   src/middleware_server.go:31     [cabaf11b-4b34-5a4c-98ca-6cc6e31b6da9]  {&#34;调用 Login logMiddlewareServer&#34;: &#34;Login&#34;, &#34;req&#34;: &#34;Account:\&#34;hwholiday\&#34; Password:\&#34;123456\&#34; &#34;, &#34;res&#34;: &#34;Token:\&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJO1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc4NDcyMjY0LCJpYXQiOjE1Nzg0NzIyMzQsImlzcyI6ImtpdF92NCIsIm5iZiI6MTU3ODQ3MjIzNCwic3ViIjoibG9naW4ifQ.yE1Lb51Ov6z-NmJRSrMAMHR1rdReflH5ngslbEttTmo\&#34; &#34;, &#34;time&#34;: &#34;114.162µs&#34;, &#34;err&#34;: null}
+</code></pre><h2 id="结语">结语</h2>
+<ul>
+<li>观察日志看到client请求地址平均分布在3台服务器上，现在已经基本实现了服务注册，发现，负载均衡</li>
+<li>欢迎添加QQ一起讨论</li>
+</ul>
+<h3 id="完整代码地址httpsgithubcomhwholidaylearning_toolstreemastergo-kitv6"><a href="https://github.com/hwholiday/learning_tools/tree/master/go-kit/v6">完整代码地址</a></h3>
+<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        const gitalk = new Gitalk({
+            clientID: '64d60a02f98e01e31e2f',
+            clientSecret: 'b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58',
+            repo: 'hwholiday.github.io',
+            owner: 'hwholiday',
+            admin: 'hwholiday',
+            id: 'git_kit_v5', 
+            distractionFreeMode: false 
+        });
+        (function() {
+            if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+                document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+                return;
+            }
+            gitalk.render('gitalk-container');
+        })();
+    </script>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>551</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/go-kit/">
+                    #go-kit</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2020/go_kit_v5/" class="prev" rel="prev" title="go-kit 微服务 使用GRPC（并为每个请求添加UUID） "><i class="iconfont icon-dajiantou"></i>&nbsp;go-kit 微服务 使用GRPC（并为每个请求添加UUID） </a>
+         
+        
+        <a href="https://hwholiday.github.io/2020/go_kit_v7/" class="next" rel="next" title="go-kit 微服务 服务监控（prometheus 实现）">go-kit 微服务 服务监控（prometheus 实现）&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

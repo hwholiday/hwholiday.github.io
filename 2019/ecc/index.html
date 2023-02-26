@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2019/short_url/" />
+  <link rel="next" href="https://hwholiday.github.io/2019/signal_prorocol/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2019/ecc/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Golang 椭圆加密算法实现 | hwholiday
+       
+  </title>
+  <meta name="title" content="Golang 椭圆加密算法实现 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Golang 椭圆加密算法实现"/>
+<meta name="twitter:description" content="Golang 椭圆加密算法实现"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Golang 椭圆加密算法实现",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https:\/\/hwholiday.github.io\/2019\/ecc\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang, 加密",
+  "wordcount":  90 ,
+  "url": "https:\/\/hwholiday.github.io\/2019\/ecc\/",
+  "datePublished": "2019-07-03T00:00:00\u002b00:00",
+  "dateModified": "2019-07-03T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "Golang 椭圆加密算法实现"
+}
+</script>
+</head>
+
+  
+             
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">Golang 椭圆加密算法实现</h1>
+        <div class="post-meta">
+            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2019-07-03 >3 July 2019</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                1 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h3 id="什么是椭圆加密算法">什么是椭圆加密算法</h3>
+<p>椭圆曲线密码学（英语：Elliptic Curve Cryptography，缩写：ECC）是一种基于椭圆曲线数学的公开密钥加密算法。椭圆曲线在密码学中的使用是在1985年由Neal Koblitz和Victor Miller分别独立提出的。<!-- raw HTML omitted -->
+ECC的主要优势是在某些情况下它比其他的算法（比如RSA加密算法）使用更小的密钥并提供相当的或更高等级的安全。ECC的另一个优势是可以定义群之间的双线性映射，基于Weil对或是Tate对；双线性映射已经在密码学中发现了大量的应用，例如基于身份的加密。<!-- raw HTML omitted -->不过一个缺点是加密和解密操作的实现比其他机制花费的时间长。</p>
+<h3 id="代码实现">代码实现</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	var Aprivate, Apublic [32]byte
+	//产生随机数
+	if _, err := io.ReadFull(rand.Reader, Aprivate[:]); err != nil {
+		os.Exit(0)
+	}
+	curve25519.ScalarBaseMult(&amp;Apublic, &amp;Aprivate)
+	fmt.Println(&#34;A私钥&#34;, base64.StdEncoding.EncodeToString(Aprivate[:]))
+	fmt.Println(&#34;A公钥&#34;, base64.StdEncoding.EncodeToString(Apublic[:])) //作为椭圆起点
+
+	var Bprivate, Bpublic [32]byte
+	//产生随机数
+	if _, err := io.ReadFull(rand.Reader, Bprivate[:]); err != nil {
+		os.Exit(0)
+	}
+	curve25519.ScalarBaseMult(&amp;Bpublic, &amp;Bprivate)
+	fmt.Println(&#34;B私钥&#34;,  base64.StdEncoding.EncodeToString(Bprivate[:]))
+	fmt.Println(&#34;B公钥&#34;,  base64.StdEncoding.EncodeToString(Bpublic[:])) //作为椭圆起点
+
+	var Akey, Bkey [32]byte
+
+	//A的私钥加上Ｂ的公钥计算A的key
+	curve25519.ScalarMult(&amp;Akey, &amp;Aprivate, &amp;Bpublic)
+
+	//B的私钥加上A的公钥计算B的key
+	curve25519.ScalarMult(&amp;Bkey, &amp;Bprivate, &amp;Apublic)
+
+	fmt.Println(&#34;A交互的KEY&#34;,  base64.StdEncoding.EncodeToString(Akey[:]))
+	fmt.Println(&#34;B交互的KEY&#34;,  base64.StdEncoding.EncodeToString(Bkey[:]))
+</code></pre><h3 id="输出值">输出值</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">A私钥 7i3ADsF/e47UHxdZW1dP5R+OO4wZjK8lHIvW0Y65CZY=
+A公钥 DTyAub5yB+ZpPJl0D6jcL7RPu0elDBcWxlBkP9DaCFY=
+B私钥 dnkaHZ8BouXCuZTcjDwAmrsZhGd8WMrLhsYsisdd1dQ=
+B公钥 ob63R56KbVqQghFDfB6qMX0/8kKYy4ZkIKacAaedw3o=
+A交互的KEY yn6TpBZprWR+pr++lFJFOEawNJ/gp2grLvYLBS8pjDY=
+B交互的KEY yn6TpBZprWR+pr++lFJFOEawNJ/gp2grLvYLBS8pjDY=
+</code></pre><h3 id="完整演示代码--点击这里httpsgithubcomhwholidaylearning_toolsblobmasterencryption_algorithmcurve25519go">完整演示代码  <a href="https://github.com/hwholiday/learning_tools/blob/master/encryption_algorithm/curve25519.go">点击这里</a></h3>
+<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>90</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/%E5%8A%A0%E5%AF%86/">
+                    #加密</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2019/short_url/" class="prev" rel="prev" title="Golang 生成短链接服务"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang 生成短链接服务</a>
+         
+        
+        <a href="https://hwholiday.github.io/2019/signal_prorocol/" class="next" rel="next" title="Golang 双棘轮算法">Golang 双棘轮算法&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

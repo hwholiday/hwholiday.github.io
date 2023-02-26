@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2018/golang_limit_req/" />
+  <link rel="next" href="https://hwholiday.github.io/2019/docker_install_prometheus/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2018/how_use_mongo-go-driver/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           mongodb官方的golang驱动基础使用 | hwholiday
+       
+  </title>
+  <meta name="title" content="mongodb官方的golang驱动基础使用 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="mongodb官方的golang驱动基础使用"/>
+<meta name="twitter:description" content="mongodb官方的golang驱动基础使用"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "mongodb官方的golang驱动基础使用",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https:\/\/hwholiday.github.io\/2018\/how_use_mongo-go-driver\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang, mongodb",
+  "wordcount":  402 ,
+  "url": "https:\/\/hwholiday.github.io\/2018\/how_use_mongo-go-driver\/",
+  "datePublished": "2018-12-11T00:00:00\u002b00:00",
+  "dateModified": "2018-12-11T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "mongodb官方的golang驱动基础使用"
+}
+</script>
+</head>
+
+  
+             
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">mongodb官方的golang驱动基础使用</h1>
+        <div class="post-meta">
+            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2018-12-11 >11 December 2018</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                2 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="导入">导入</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">go get github.com/mongodb/mongo-go-driver/mongo
+</code></pre><h3 id="struct里面获取objectid-点击这里httpsgithubcomhwholidaylearning_toolsblobmastermongodbmongo-go-drivermaingo">struct里面获取ObjectID <a href="https://github.com/hwholiday/learning_tools/blob/master/mongodb/mongo-go-driver/main.go">点击这里</a></h3>
+<h3 id="链接mongo服务">链接mongo服务</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if client, err = mongo.Connect(getContext(), url); err != nil {
+		checkErr(err)
+	}
+</code></pre><h3 id="判断服务是否可用">判断服务是否可用</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if err = client.Ping(getContext(), readpref.Primary()); err != nil {
+		checkErr(err)
+	}
+</code></pre><h3 id="选择数据库和集合">选择数据库和集合</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	collection = client.Database(&#34;testing_base&#34;).Collection(&#34;howie&#34;)
+</code></pre><h3 id="设置集合内数据过期时间">设置集合内数据过期时间</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	k := mongo.IndexModel{
+		Keys:    bsonx.Doc{{&#34;expiredtime&#34;, bsonx.Int32(1)}},
+		Options: options.Index().SetExpireAfterSeconds(1 * 60),//60秒后过期，详细请查询完整的代码演示
+	}
+	_, err = collection.Indexes().CreateOne(getContext(), k)
+</code></pre><h3 id="删除这个集合">删除这个集合</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	collection.Drop(getContext())
+</code></pre><h3 id="插入一条数据">插入一条数据</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if insertOneRes, err = collection.InsertOne(getContext(), howieArray[0]); err != nil {
+		checkErr(err)
+	}
+	fmt.Printf(&#34;InsertOne插入的消息ID:%v\n&#34;, insertOneRes.InsertedID)
+</code></pre><h3 id="批量插入数据">批量插入数据</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if insertManyRes, err = collection.InsertMany(getContext(), howieArray); err != nil {
+		checkErr(err)
+	}
+	fmt.Printf(&#34;InsertMany插入的消息ID:%v\n&#34;, insertManyRes.InsertedIDs)
+</code></pre><h3 id="查询单条数据">查询单条数据</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if err = collection.FindOne(getContext(), bson.D{{&#34;name&#34;, &#34;howie_2&#34;}, {&#34;age&#34;, 11}}).Decode(&amp;howie); err != nil {
+		checkErr(err)
+	}
+	fmt.Printf(&#34;FindOne查询到的数据:%v\n&#34;, howie)
+</code></pre><h3 id="查询单条数据后删除该数据">查询单条数据后删除该数据</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if err = collection.FindOneAndDelete(getContext(), bson.D{{&#34;name&#34;, &#34;howie_3&#34;}}).Decode(&amp;howie); err != nil {
+		checkErr(err)
+	}
+	fmt.Printf(&#34;FindOneAndDelete查询到的数据:%v\n&#34;, howie)
+</code></pre><h3 id="询单条数据后修改该数据">询单条数据后修改该数据</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if err = collection.FindOneAndUpdate(getContext(), bson.D{{&#34;name&#34;, &#34;howie_4&#34;}}, bson.M{&#34;$set&#34;: bson.M{&#34;name&#34;: &#34;这条数据我需要修改了&#34;}}).Decode(&amp;howie); err != nil {
+		checkErr(err)
+	}
+	fmt.Printf(&#34;FindOneAndUpdate查询到的数据:%v\n&#34;, howie)
+</code></pre><h3 id="查询单条数据后替换该数据以前的数据全部清空">查询单条数据后替换该数据(以前的数据全部清空)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if err = collection.FindOneAndReplace(getContext(), bson.D{{&#34;name&#34;, &#34;howie_5&#34;}}, bson.M{&#34;hero&#34;: &#34;这条数据我替换了&#34;}).Decode(&amp;howie); err != nil {
+		checkErr(err)
+	}
+	fmt.Printf(&#34;FindOneAndReplace查询到的数据:%v\n&#34;, howie)
+</code></pre><h3 id="一次查询多条数据查询createtime3限制取2条createtime从大到小排序的数据">一次查询多条数据(查询createtime&gt;=3,限制取2条,createtime从大到小排序的数据)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if cursor, err = collection.Find(getContext(), bson.M{&#34;createtime&#34;: bson.M{&#34;$gte&#34;: 2}}, options.Find().SetLimit(2), options.Find().SetSort(bson.M{&#34;createtime&#34;: -1})); err != nil {
+		checkErr(err)
+	}
+	if err = cursor.Err(); err != nil {
+		checkErr(err)
+	}
+	defer cursor.Close(context.Background())
+	for cursor.Next(context.Background()) {
+		if err = cursor.Decode(&amp;howie); err != nil {
+			checkErr(err)
+		}
+		howieArrayEmpty = append(howieArrayEmpty, howie)
+	}
+	fmt.Printf(&#34;Find查询到的数据:%v\n&#34;, howieArrayEmpty)
+</code></pre><h3 id="查询集合里面有多少数据">查询集合里面有多少数据</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if size, err = collection.Count(getContext(), nil); err != nil {
+		checkErr(err)
+	}
+	fmt.Printf(&#34;Count里面有多少条数据:%d\n&#34;, size)
+</code></pre><h3 id="查询集合里面有多少数据查询createtime3的数据">查询集合里面有多少数据(查询createtime&gt;=3的数据)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if size, err = collection.Count(getContext(), bson.M{&#34;createtime&#34;: bson.M{&#34;$gte&#34;: 3}}); err != nil {
+		checkErr(err)
+	}
+	fmt.Printf(&#34;Count里面有多少条数据:%d\n&#34;, size)
+</code></pre><h3 id="修改一条数据">修改一条数据</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if updateRes, err = collection.UpdateOne(getContext(), bson.M{&#34;name&#34;: &#34;howie_2&#34;}, bson.M{&#34;$set&#34;: bson.M{&#34;name&#34;: &#34;我要改了他的名字&#34;}}); err != nil {
+		checkErr(err)
+	}
+	fmt.Printf(&#34;UpdateOne的数据:%d\n&#34;, updateRes)
+</code></pre><h3 id="修改多条数据">修改多条数据</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if updateRes, err = collection.UpdateMany(getContext(), bson.M{&#34;createtime&#34;: bson.M{&#34;$gte&#34;: 3}}, bson.M{&#34;$set&#34;: bson.M{&#34;name&#34;: &#34;我要批量改了他的名字&#34;}}); err != nil {
+		checkErr(err)
+	}
+	fmt.Printf(&#34;UpdateMany的数据:%d\n&#34;, updateRes)
+</code></pre><h3 id="删除一条数据">删除一条数据</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if delRes, err = collection.DeleteOne(getContext(), bson.M{&#34;name&#34;: &#34;howie_1&#34;}); err != nil {
+		checkErr(err)
+	}
+	fmt.Printf(&#34;DeleteOne删除了多少条数据:%d\n&#34;, delRes.DeletedCount)
+</code></pre><h3 id="删除多条数据">删除多条数据</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	if delRes, err = collection.DeleteMany(getContext(), bson.M{&#34;createtime&#34;: bson.M{&#34;$gte&#34;: 7}}); err != nil {
+		checkErr(err)
+	}
+	fmt.Printf(&#34;DeleteMany删除了多少条数据:%d\n&#34;, delRes.DeletedCount)
+</code></pre><h3 id="使用事务">使用事务</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	//不能在单节点使用（副本集可以使用）
+func UseSession(client *mongo.Client) {
+	client.UseSession(getContext(), func(sctx mongo.SessionContext) error {
+		err := sctx.StartTransaction(options.Transaction().
+			SetReadConcern(readconcern.Snapshot()).
+			SetWriteConcern(writeconcern.New(writeconcern.WMajority())),
+		)
+		if err != nil {
+			return err
+		}
+		_, err = client.Database(&#34;aa&#34;).Collection(&#34;bb&#34;).InsertOne(sctx, bson.D{{&#34;aa&#34;, 3}})
+		if err != nil {
+			_ = sctx.AbortTransaction(sctx)
+			return err
+		}
+		_, err = client.Database(&#34;aa&#34;).Collection(&#34;bb&#34;).InsertOne(sctx, bson.D{{&#34;bb&#34;, 3}})
+		if err != nil {
+			_ = sctx.AbortTransaction(sctx)
+			return err
+		}
+		for {
+			err = sctx.CommitTransaction(sctx)
+			switch e := err.(type) {
+			case nil:
+				return nil
+			case mongo.CommandError:
+				if e.HasErrorLabel(&#34;UnknownTransactionCommitResult&#34;) {
+					continue
+				}
+				return e
+			default:
+				return e
+			}
+		}
+	})
+}
+</code></pre><h3 id="完整演示代码--点击这里httpsgithubcomhwholidaylearning_toolsblobmastermongodbmongo-go-drivermaingo">完整演示代码  <a href="https://github.com/hwholiday/learning_tools/blob/master/mongodb/mongo-go-driver/main.go">点击这里</a></h3>
+<h3 id="查看mongo-bson详细用法--点击这里httpswwwhwholidaycom2018how_use_mongodb">查看mongo BSON详细用法  <a href="https://www.hwholiday.com/2018/how_use_mongodb/">点击这里</a></h3>
+<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        const gitalk = new Gitalk({
+            clientID: '64d60a02f98e01e31e2f',
+            clientSecret: 'b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58',
+            repo: 'hwholiday.github.io',
+            owner: 'hwholiday',
+            admin: 'hwholiday',
+            id: 'how_use_mongo_go_driver', 
+            distractionFreeMode: false 
+        });
+        (function() {
+            if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+                document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+                return;
+            }
+            gitalk.render('gitalk-container');
+        })();
+    </script>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>402</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/mongodb/">
+                    #mongodb</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2018/golang_limit_req/" class="prev" rel="prev" title="Golang 中的并发限制与超时控制"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang 中的并发限制与超时控制</a>
+         
+        
+        <a href="https://hwholiday.github.io/2019/docker_install_prometheus/" class="next" rel="next" title="docker安装prometheus（普罗米修斯）">docker安装prometheus（普罗米修斯）&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

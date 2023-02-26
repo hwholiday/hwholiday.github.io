@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tcp on hwholiday</title>
+    <link>https://hwholiday.github.io/tags/tcp/</link>
+    <description>Recent content in tcp on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 01 Nov 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/tags/tcp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用TCP并解决TCP粘包的问题</title>
+      <link>https://hwholiday.github.io/2018/goang_tcp_use/</link>
+      <pubDate>Thu, 01 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/goang_tcp_use/</guid>
+      <description>最新代码地址(添加head+type+data 解包 并添加心跳) 点击这里 此项目有对应的Android端demo有需求请联系下方QQ TCP粘包和拆包产生的原因 应用程序写入数据的字节大小大于套接字发送缓冲区的大小 进行MSS大小的TCP分段。MSS是最大报文段长度的缩写。MSS是TCP报文段中的数据字段的最大长度。数据字段加上TCP首部才等于整个的TCP报文段。所以MSS并不是TCP报文段的最大长度，而是：MSS=TCP报文段长度-TCP首部长度 以太网的payload大于MTU进行IP分片。MTU指：一种通信协议的某一层上面所能通过的最大数据包大小。如果IP层有一个数据包要传，而且数据的长度比链路层的MTU大，那么IP层就会进行分片，把数据包分成托干片，让每一片都不超过MTU。注意，IP分片可以发生在原始发送端主机上，也可以发生在中间路由器上。 TCP粘包和拆包的解决策略 消息定长。例如100字节。 在包尾部增加回车或者空格符等特殊字符进行分割，典型的如FTP协议 将消息分为消息头和消息尾。(len+data模式) 其它复杂的协议，如RTMP协议等。 将消息分为消息头+消息类型+消息体。(len+type+data 模式) 废话不多说直接上代码 服务端 package network import ( &amp;#34;net&amp;#34; &amp;#34;github.com/hwholiday/libs/logtool&amp;#34; &amp;#34;go.uber.org/zap&amp;#34; &amp;#34;os&amp;#34; &amp;#34;time&amp;#34; &amp;#34;io&amp;#34; &amp;#34;fmt&amp;#34; ) func InitTcp() { addr, err := net.ResolveTCPAddr(&amp;#34;tcp&amp;#34;, &amp;#34;192.168.2.28:8111&amp;#34;) if err != nil { logtool.Zap.Error(&amp;#34;create addr&amp;#34;, zap.Error(err)) os.Exit(0) } listener, err := net.ListenTCP(&amp;#34;tcp&amp;#34;, addr) if err != nil { logtool.Zap.Error(&amp;#34;listen tcp&amp;#34;, zap.Error(err)) os.Exit(0) } logtool.Zap.Info(&amp;#34;listen tcp&amp;#34;, zap.String(&amp;#34;地址&amp;#34;, addr.String())) go acceptTcp(listener) } func acceptTcp(listener *net.</description>
+    </item>
+    
+  </channel>
+</rss>

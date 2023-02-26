@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>加密 on hwholiday</title>
+    <link>https://hwholiday.github.io/tags/%E5%8A%A0%E5%AF%86/</link>
+    <description>Recent content in 加密 on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 03 Jul 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/tags/%E5%8A%A0%E5%AF%86/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Golang 双棘轮算法</title>
+      <link>https://hwholiday.github.io/2019/signal_prorocol/</link>
+      <pubDate>Wed, 03 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/signal_prorocol/</guid>
+      <description>什么是双棘轮算法 双棘轮算法用于通信双方基于共享密钥交换加密消息。通常，通信双方将先使用某种密钥协商协议（例如 X3DH1）以协商共享密钥。此后，通信双方即可使用双棘轮算法发送接收加密消息了。
+通信双方将为每一个双棘轮消息派生出新的密钥，使得旧的密钥不能从新的密钥计算得到。通信双方还将在消息中附上迪菲-赫尔曼公钥值。迪菲-赫尔曼计算的结果将被混入派生出的密钥中，使得新的密钥不能从旧的密钥计算得到。这些特性将在某一方的密钥泄漏后保护此前或此后的加密消息。
+代码实现 var a PseronA a.IdentityPri, a.IdentityPub = GetCurve25519KeypPair() a.SignedPri, a.SignedPub = GetCurve25519KeypPair() a.OneTimePri, a.OneTimePub = GetCurve25519KeypPair() a.EphemeralPri, a.EphemeralPub = GetCurve25519KeypPair() var b PseronB b.IdentityPri, b.IdentityPub = GetCurve25519KeypPair() b.SignedPri, b.SignedPub = GetCurve25519KeypPair() b.OneTimePri, b.OneTimePub = GetCurve25519KeypPair() b.EphemeralPri, b.EphemeralPub = GetCurve25519KeypPair() //DH1 = DH(IPK-A私钥, SPK-B公钥) //DH2 = DH(EPK-A私钥, IPK-B公钥) //DH3= DH(EPK-A私钥, SPK-B公钥) //DH4 = DH(IPK-A私钥, OPK--B公钥) a.DH1 = GetCurve25519Key(a.IdentityPri, b.SignedPub) a.DH2 = GetCurve25519Key(a.EphemeralPri, b.IdentityPub) a.DH3 = GetCurve25519Key(a.EphemeralPri, b.SignedPub) a.</description>
+    </item>
+    
+    <item>
+      <title>Golang 椭圆加密算法实现</title>
+      <link>https://hwholiday.github.io/2019/ecc/</link>
+      <pubDate>Wed, 03 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/ecc/</guid>
+      <description>什么是椭圆加密算法 椭圆曲线密码学（英语：Elliptic Curve Cryptography，缩写：ECC）是一种基于椭圆曲线数学的公开密钥加密算法。椭圆曲线在密码学中的使用是在1985年由Neal Koblitz和Victor Miller分别独立提出的。 ECC的主要优势是在某些情况下它比其他的算法（比如RSA加密算法）使用更小的密钥并提供相当的或更高等级的安全。ECC的另一个优势是可以定义群之间的双线性映射，基于Weil对或是Tate对；双线性映射已经在密码学中发现了大量的应用，例如基于身份的加密。不过一个缺点是加密和解密操作的实现比其他机制花费的时间长。
+代码实现 var Aprivate, Apublic [32]byte //产生随机数 if _, err := io.ReadFull(rand.Reader, Aprivate[:]); err != nil { os.Exit(0) } curve25519.ScalarBaseMult(&amp;amp;Apublic, &amp;amp;Aprivate) fmt.Println(&amp;#34;A私钥&amp;#34;, base64.StdEncoding.EncodeToString(Aprivate[:])) fmt.Println(&amp;#34;A公钥&amp;#34;, base64.StdEncoding.EncodeToString(Apublic[:])) //作为椭圆起点 var Bprivate, Bpublic [32]byte //产生随机数 if _, err := io.ReadFull(rand.Reader, Bprivate[:]); err != nil { os.Exit(0) } curve25519.ScalarBaseMult(&amp;amp;Bpublic, &amp;amp;Bprivate) fmt.Println(&amp;#34;B私钥&amp;#34;, base64.StdEncoding.EncodeToString(Bprivate[:])) fmt.Println(&amp;#34;B公钥&amp;#34;, base64.StdEncoding.EncodeToString(Bpublic[:])) //作为椭圆起点 var Akey, Bkey [32]byte //A的私钥加上Ｂ的公钥计算A的key curve25519.ScalarMult(&amp;amp;Akey, &amp;amp;Aprivate, &amp;amp;Bpublic) //B的私钥加上A的公钥计算B的key curve25519.ScalarMult(&amp;amp;Bkey, &amp;amp;Bprivate, &amp;amp;Apublic) fmt.Println(&amp;#34;A交互的KEY&amp;#34;, base64.StdEncoding.EncodeToString(Akey[:])) fmt.</description>
+    </item>
+    
+  </channel>
+</rss>

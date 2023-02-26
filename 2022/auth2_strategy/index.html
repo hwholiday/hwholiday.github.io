@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2022/hconfig/" />
+  <link rel="next" href="https://hwholiday.github.io/2022/auth2_tactics/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2022/auth2_strategy/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           OAuth 2.0-授权码模式（authorization code）仿微信设计（战略篇） | hwholiday
+       
+  </title>
+  <meta name="title" content="OAuth 2.0-授权码模式（authorization code）仿微信设计（战略篇） | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="OAuth 2.0-授权码模式（authorization code）仿微信设计（战略篇）"/>
+<meta name="twitter:description" content="Auth2.0-授权码模式（战略篇）"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "OAuth 2.0-授权码模式（authorization code）仿微信设计（战略篇）",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https:\/\/hwholiday.github.io\/2022\/auth2_strategy\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang, Auth",
+  "wordcount":  206 ,
+  "url": "https:\/\/hwholiday.github.io\/2022\/auth2_strategy\/",
+  "datePublished": "2022-01-16T00:00:00\u002b00:00",
+  "dateModified": "2022-01-16T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "Auth2.0-授权码模式（战略篇）"
+}
+</script>
+</head>
+
+  
+             
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">OAuth 2.0-授权码模式（authorization code）仿微信设计（战略篇）</h1>
+        <div class="post-meta">
+            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2022-01-16 >16 January 2022</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
+                        <a href="https://hwholiday.github.io/categories/auth/"> Auth </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                1 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="归档">归档</h2>
+<h4 id="oauth-20-授权码模式authorization-code仿微信设计战略篇httpswwwhwholidaycom2022auth2_strategy"><a href="https://www.hwholiday.com/2022/auth2_strategy/">OAuth 2.0-授权码模式（authorization code）仿微信设计（战略篇）</a></h4>
+<h4 id="oauth-20-授权码模式authorization-code仿微信设计战术篇httpswwwhwholidaycom2022auth2_tactics-ddd-领域驱动设计实现代码-golang-"><a href="https://www.hwholiday.com/2022/auth2_tactics/">OAuth 2.0-授权码模式（authorization code）仿微信设计（战术篇）</a> (DDD 领域驱动设计实现代码 Golang )</h4>
+<h4 id="在听到-oauth-20-这个名词时可能很多人只知道这个是用来授权的协议具体是怎么实现的以及解决了什么问题可能大家还不是很了解下面我给大家一个场景来体会下">在听到 OAuth 2.0 这个名词时可能很多人只知道这个是用来授权的协议，具体是怎么实现的，以及解决了什么问题，可能大家还不是很了解，下面我给大家一个场景来体会下</h4>
+<h2 id="假设我们有个-app-来统计用户-github-的使用情况">假设我们有个 APP 来统计用户 github 的使用情况</h2>
+<ul>
+<li>要从 Github 获取数据，用户必须同意把自己的 Github 信息给 APP，APP 才能得到 Github 的数据进行统计数据</li>
+<li>一般来说只有把用户名密码或者用户在 Github 的 Token ,Session 给 APP ，APP才能通过 Github 获取数据，但是当前的操作可能存在以下问题
+<ul>
+<li>Token , Session 这两兄弟的有效期不长，可能刚给了APP ，一会就又失效了</li>
+<li>给了用户名密码
+<ol>
+<li>APP 会把用户名密码都存在自己的服务器上，要是被破解或者拖库会造成密码泄露用这个密码进行保护的资源全部有泄露的风险</li>
+<li>APP 获取了用户在 Github 的全部权限，用户没办法限制授权的范围和时间</li>
+<li>想要回收在这个 APP 的权限，用户必须改密码，这样的话其他 APP 也不行使用了，造成很大的麻烦</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="什么是-oauth-20">什么是 OAuth 2.0</h2>
+<ul>
+<li>在了解上面的例子后大家也应该清楚为什么会出现 OAuth 2.0 ，以及 OAuth 2.0 的作用</li>
+<li>使用方=&ldquo;APP&rdquo; | 提供方 = &ldquo;Github&rdquo; | 授权层 =&ldquo;OAuth 2.0 服务&rdquo;</li>
+<li>其实就是使用方与提供方之前，添加一个授权层，使用方通过与授权层的交互拿到授权 (PS: 通过授权层的控制我们就能实现对不同的使用方的授权范围和时间进行控制)</li>
+<li>使用方通过授权层获取到了令牌就可以与提供方通信了</li>
+</ul>
+<h2 id="oauth-20-基本运行流程">OAuth 2.0 基本运行流程</h2>
+<ol>
+<li>用户打开使用方应用，应用要求用户给予授权</li>
+<li>用户同意给予应用授权</li>
+<li>应用使用上一步获得的授权，向授权服务器申请令牌</li>
+<li>授权服务器对授权进行认证，确认无误后发放令牌</li>
+<li>应用使用令牌，向提供方申请获取资源</li>
+<li>提供方确认令牌无误，同意向应用开放资源</li>
+</ol>
+<h4 id="在运行流程中第-2-步-在oauth-20-中有4种实现模式">在运行流程中第 2 步 在OAuth 2.0 中有4种实现模式</h4>
+<ul>
+<li>授权码模式（authorization code）</li>
+<li>简化模式（implicit）</li>
+<li>密码模式（resource owner password credentials）</li>
+<li>客户端模式（client credentials）</li>
+</ul>
+<h2 id="实现-oauth-20-授权码模式authorization-code">实现 OAuth 2.0-授权码模式（authorization code）</h2>
+<ol>
+<li>授权代码授权类型适用于那些向授权服务器进行认证时可以对其客户机凭证进行保密的 OAuth 客户机，可以说授权码模式（authorization code）流程最为合理，过程最为严密的模式，安全性也最高</li>
+<li>授权码模式（authorization code）指的是使用方应用先申请一个授权码，然后再用该码获取令牌</li>
+</ol>
+<h2 id="仿微信设计">仿微信设计</h2>
+<ul>
+<li>A: 使用方向授权服务器发起授权申请</li>
+<li>B: 用户选择是否给授权给使用方</li>
+<li>C: 假设用户同意授权，授权服务器将用户导向使用方事先指定的&quot;重定向URI&quot;（redirection URI），同时附上一个授权码以及透传参数</li>
+<li>D: 使用方收到授权码，将授权码传递给使用方服务器，使用方服务器向授权服务器申请令牌</li>
+<li>E: 授权服务器核对了授权码等信息，确认无误后，返回访问令牌（access token）和更新令牌（refresh token）</li>
+</ul>
+<h4 id="步骤a-分析">步骤A: 分析</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">https://域名/oauth2/authorize?appid=123&amp;redirect_uri=http://127.0.0.1:8888&amp;response_type=code&amp;scope=snsapi_userinfo&amp;state=123123
+</code></pre><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appid</td>
+<td>使用方唯一标识</td>
+</tr>
+<tr>
+<td>redirect_uri</td>
+<td>授权后重定向的回调链接地址</td>
+</tr>
+<tr>
+<td>response_type</td>
+<td>返回类型，请填写code</td>
+</tr>
+<tr>
+<td>scope</td>
+<td>应用授权作用域，snsapi_base （不弹出授权页面，直接跳转，只能获取用户openid），snsapi_userinfo （弹出授权页面，可通过openid拿到用户信息 ）</td>
+</tr>
+<tr>
+<td>state</td>
+<td>重定向后会带上state参数</td>
+</tr>
+</tbody>
+</table>
+<h4 id="步骤c分析-步骤b用户同意后">步骤C：分析 （步骤B：用户同意后）</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">https://步骤A的redirect_uri地址?code=123sdsat412wdqdqw&amp;state=123123
+</code></pre><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>code</td>
+<td>授权码，code只能使用一次，5分钟未被使用自动过期。</td>
+</tr>
+<tr>
+<td>state</td>
+<td>步骤A传递的state</td>
+</tr>
+</tbody>
+</table>
+<h4 id="步骤d分析">步骤D：分析</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">https://域名/oauth2/access_token?grant_type=authorization_code&amp;code=123sdsat412wdqdqw&amp;appid=123&amp;secret=123aseqwxq
+</code></pre><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appid</td>
+<td>使用方唯一标识</td>
+</tr>
+<tr>
+<td>secret</td>
+<td>颁发给使用方的秘钥</td>
+</tr>
+<tr>
+<td>code</td>
+<td>授权码，code只能使用一次，5分钟未被使用自动过期</td>
+</tr>
+<tr>
+<td>grant_type</td>
+<td>填写为authorization_code</td>
+</tr>
+</tbody>
+</table>
+<h4 id="步骤e分析">步骤E：分析</h4>
+<p>对步骤D传递的参数进行判断,无问题后颁发访问令牌（access token）和更新令牌（refresh token）等</p>
+<h3 id="其他">其他</h3>
+<h5 id="检验授权凭证access_token是否有效">检验授权凭证（access_token）是否有效</h5>
+<pre tabindex="0"><code class="language-base" data-lang="base">https://域名/oauth2/auth?openid=123&amp;access_token=颁发给用户的access_token
+</code></pre><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>openid</td>
+<td>在提供方的用户的唯一标识</td>
+</tr>
+<tr>
+<td>access_token</td>
+<td>访问令牌（access token）</td>
+</tr>
+</tbody>
+</table>
+<p>刷新 access_token</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">https://域名/oauth2/refresh_token?appid=123&amp;refresh_token=更新令牌（refresh token）&amp;grant_type=refresh_token
+</code></pre><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appid</td>
+<td>使用方唯一标识</td>
+</tr>
+<tr>
+<td>grant_type</td>
+<td>填写为refresh_token</td>
+</tr>
+<tr>
+<td>refresh_token</td>
+<td>更新令牌（refresh token）</td>
+</tr>
+</tbody>
+</table>
+<p>拉取用户信息(需scope为 snsapi_userinfo)</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">https://域名/oauth2/userinfo?openid=123&amp;access_token=颁发给用户的access_token
+</code></pre><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appid</td>
+<td>使用方唯一标识</td>
+</tr>
+<tr>
+<td>grant_type</td>
+<td>填写为refresh_token</td>
+</tr>
+<tr>
+<td>refresh_token</td>
+<td>更新令牌（refresh token）</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>206</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/auth/">
+                    #Auth</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2022/hconfig/" class="prev" rel="prev" title="hconfig 一个可插拔的 Golang 配置管理工具 支持（etcd/k8s(kubernetes)/apollo）"><i class="iconfont icon-dajiantou"></i>&nbsp;hconfig 一个可插拔的 Golang 配置管理工具 支持（etcd/k8s(kubernetes)/apollo）</a>
+         
+        
+        <a href="https://hwholiday.github.io/2022/auth2_tactics/" class="next" rel="next" title="OAuth 2.0-授权码模式（authorization code）仿微信设计（战术篇）">OAuth 2.0-授权码模式（authorization code）仿微信设计（战术篇）&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

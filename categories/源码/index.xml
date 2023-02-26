@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>源码 on hwholiday</title>
+    <link>https://hwholiday.github.io/categories/%E6%BA%90%E7%A0%81/</link>
+    <description>Recent content in 源码 on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 14 Dec 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/categories/%E6%BA%90%E7%A0%81/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>封装 zap 日志注入 trace 信息 Trace Id（内含 gin 例子）</title>
+      <link>https://hwholiday.github.io/2021/hlog/</link>
+      <pubDate>Tue, 14 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2021/hlog/</guid>
+      <description>hlog (源码地址) 实现自动切割文件 (基于 lumberjack 实现) 实现可传递 trace 信息 （基于 Context 实现） 配置 Development bool // 是否开发模式 LogFileDir string // 日志路径 AppName string // APP名字 MaxSize int //文件多大开始切分 MaxBackups int //保留文件个数 MaxAge int //文件保留最大实际 Level string // 日志打印等级 CtxKey string //通过 ctx 传递 hlog 信息 WriteFile bool // 是否写入文件 WriteConsole bool // 是否控制台打印 实现自动切割文件核心代码 zapcore.AddSync(&amp;amp;lumberjack.Logger{ Filename: l.opts.LogFileDir + &amp;#34;/&amp;#34; + l.opts.AppName + &amp;#34;.log&amp;#34;, MaxSize: l.opts.MaxSize, MaxBackups: l.opts.MaxBackups, MaxAge: l.opts.MaxAge, Compress: true, LocalTime: true, }) 实现可传递 trace 信息核心代码 func (l *Logger) GetCtx(ctx context.</description>
+    </item>
+    
+    <item>
+      <title>Golang 基于interface 实现中间件(middleware)</title>
+      <link>https://hwholiday.github.io/2019/middleware/</link>
+      <pubDate>Wed, 25 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/middleware/</guid>
+      <description>背景 我们在开发接口时会写大量的interface Service,但是有时候需要提供一个功能对已经写好的接口提供一个中间件进行业务处理
+我们已经写好的接口 type Service interface { Add(a, b int) int } type baseServer struct{} func NewBaseServer() Service { return baseServer{} } func (s baseServer) Add(a, b int) int { return a + b } 添加中间件1 type logServer struct { next Service log string } func LogMiddleware(name string) ServiceMiddleware { return func(next Service) Service { return logServer{ next: next, log: &amp;#34;日志中间件V1&amp;#34;, } } } 添加中间件2 type logV2Server struct { next Service log string } func LogV2Middleware(name string) ServiceMiddleware { return func(next Service) Service { return logV2Server{ next: next, log: &amp;#34;日志中间件V2&amp;#34;, } } } 结果 svc := NewService(&amp;#34;&amp;#34;) fmt.</description>
+    </item>
+    
+    <item>
+      <title>Golang 实践归档</title>
+      <link>https://hwholiday.github.io/2019/archive/</link>
+      <pubDate>Tue, 24 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/archive/</guid>
+      <description>learning_tools 源码地址 go-kit 微服务实践，从入门到精通系列 go-kit (go-kit微服务) 1: v1 go-kit 微服务 基础使用 （HTTP） 2: v2 go-kit 微服务 添加日志（user/zap ,并为每个请求添加UUID） 3: v3 go-kit 微服务 身份认证 （JWT） 4: v4 go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现） 5: v5 go-kit 微服务 使用GRPC（并为每个请求添加UUID） 6: v6 go-kit 微服务 服务注册与发现（etcd实现） 7: v7 go-kit 微服务 服务监控（prometheus 实现） 8: v8 go-kit 微服务 服务熔断（hystrix-go 实现） 9: v9 go-kit 微服务 服务链路追踪（jaeger 实现）(1) 10: v9 go-kit 微服务 服务链路追踪（jaeger 实现）(2) 11: v11 go-kit 微服务 添加一个简单网关 go_push 一个实用的消息推送服务 go_push (推送服务) ├── gateway // 长连接网关服务器 │ ├── push_job.</description>
+    </item>
+    
+    <item>
+      <title>Golang 高性能日志库 zap 封装工具类</title>
+      <link>https://hwholiday.github.io/2019/how_user_zap/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/how_user_zap/</guid>
+      <description>zap是uber开源的Go高性能日志库 //安装 go get -u go.uber.org/zap 封装日志库 支持日志文件分等级存放 支付日志文件自动分割 支持日志文件自动压缩 支持日志文件自定义目录 type Options struct { LogFileDir string //文件保存地方 AppName string //日志文件前缀 ErrorFileName string WarnFileName string InfoFileName string DebugFileName string Level zapcore.Level //日志等级 MaxSize int //日志文件小大（M） MaxBackups int // 最多存在多少个切片文件 MaxAge int //保存的最大天数 Development bool //是否是开发模式 zap.Config } 使用 lg := NewLogger(SetAppName(&amp;#34;test_app&amp;#34;), SetDevelopment(true), SetLevel(zap.DebugLevel), SetErrorFileName(&amp;#34;error_e_e_e_e.log&amp;#34;)) lg.Debug(fmt.Sprint(&amp;#34;debug log &amp;#34;, 1), zap.Int(&amp;#34;line&amp;#34;, 47)) lg.Info(fmt.Sprint(&amp;#34;Info log &amp;#34;, 2), zap.Any(&amp;#34;level&amp;#34;, &amp;#34;1231231231&amp;#34;)) lg.Warn(fmt.Sprint(&amp;#34;warn log &amp;#34;, 3), zap.</description>
+    </item>
+    
+    <item>
+      <title>Golang 实现Google 内购以及订阅代码</title>
+      <link>https://hwholiday.github.io/2019/google_py/</link>
+      <pubDate>Thu, 24 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2019/google_py/</guid>
+      <description>内购 先检查签名是否正确 再查询google该订单信息是否正确 具体细节请联系我的QQ func VerifyGoogleSign(data, id string, sign string) (bool, error) { decodePublic, err := base64.StdEncoding.DecodeString(publicKey) if err != nil { return false, err } pubInterface, err := x509.ParsePKIXPublicKey(decodePublic) if err != nil { return false, err } pub := pubInterface.(*rsa.PublicKey) decodeSign, err := base64.StdEncoding.DecodeString(sign) if err != nil { return false, err } sh1 := sha1.New() sh1.Write([]byte(data)) hashData := sh1.Sum(nil) result := rsa.VerifyPKCS1v15(pub, crypto.SHA1, hashData, decodeSign) if result !</description>
+    </item>
+    
+  </channel>
+</rss>

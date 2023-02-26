@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  
+  <link rel="next" href="https://hwholiday.github.io/2016/android_idea_plugin/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2016/android_adb/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Android开发 你应该知道的adb 命令 | hwholiday
+       
+  </title>
+  <meta name="title" content="Android开发 你应该知道的adb 命令 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Android开发 你应该知道的adb 命令"/>
+<meta name="twitter:description" content="Android开发 你应该知道的adb 命令"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Android开发 你应该知道的adb 命令",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https:\/\/hwholiday.github.io\/2016\/android_adb\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "android",
+  "wordcount":  130 ,
+  "url": "https:\/\/hwholiday.github.io\/2016\/android_adb\/",
+  "datePublished": "2016-03-03T00:00:00\u002b00:00",
+  "dateModified": "2016-03-03T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "Android开发 你应该知道的adb 命令"
+}
+</script>
+</head>
+
+  
+             
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">Android开发 你应该知道的adb 命令</h1>
+        <div class="post-meta">
+            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2016-03-03 >3 March 2016</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/android/"> Android </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                1 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p>个人建议配置环境变量时在Path类加入 <br>
+你sdk的存放目录\platform-tools</p>
+<p>启动cmd</p>
+<p>1：启动adb</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb start-service
+</code></pre><p>2：停止 adb server</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb kill-server
+</code></pre><p>3：显示当前运行的全部模拟器</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb devices
+</code></pre><p>4：列出手机装的所有app的包名</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb shell pm list packages
+</code></pre><p>5：列出系统应用的所有包名</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb shell pm list packages -s
+</code></pre><p>6：列出除了系统应用的第三方应用包名</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb shell pm list packages -3
+</code></pre><p>7：安装应用程序</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb install -r 应用程序.apk 如果不是当前目录，则后面要跟路径名
+</code></pre><p>8： 卸载软件</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb uninstall 应用程序.apk
+adb uninstall -k 应用程序.apk如果加 -k 参数,为卸载软件但是保留配置和缓存文件.如果不是当前目录，则后面要跟路径名
+</code></pre><p>9：获取序列号</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb get-serialno
+</code></pre><p>10： 获取管理员权限：</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb root
+</code></pre><p>11：查看adb命令帮助信息：</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb help
+</code></pre><p>12： 进入模拟器的shell模式：</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb shell
+</code></pre><p>13：查看最上层成activity名字</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb shell dumpsys activity | findstr &#34;mFocusedActivity&#34;
+</code></pre><p>14：获取 MAC 地址</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb shell  cat /sys/class/net/wlan0/address
+</code></pre><p>15：查看设备型号</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb shell getprop ro.product.model
+</code></pre><p>16：查看 Android 系统版本</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb shell getprop ro.build.version.release
+</code></pre><p>17：查看屏幕分辨率</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb shell wm size
+</code></pre><p>18：查看屏幕密度</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb shell wm density
+</code></pre><p>19 :命令获取手机的IMEI</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb shell dumpsys iphonesubinfo
+</code></pre><p>20 :重启手机命令</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb shell am broadcast -a   android.intent.action.BOOT_COMPLETED 
+</code></pre><p>21 :冻结/启动冻结应用</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb shell pm disable/enable  包名
+</code></pre><p>22：查看手机剩余内存和总内存的大小</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">adb chat  proc/meminfo 
+</code></pre><h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>130</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/android/">
+                    #android</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+         
+        
+        <a href="https://hwholiday.github.io/2016/android_idea_plugin/" class="next" rel="next" title="Android实用插件">Android实用插件&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

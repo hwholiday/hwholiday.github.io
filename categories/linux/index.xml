@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux on hwholiday</title>
+    <link>https://hwholiday.github.io/categories/linux/</link>
+    <description>Recent content in Linux on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 17 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NFS (Kubernetes) 高可用方案（NFS&#43;keepalived&#43;Sersync)</title>
+      <link>https://hwholiday.github.io/2021/nsf/</link>
+      <pubDate>Mon, 17 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2021/nsf/</guid>
+      <description>简介 本方案 NFS 的高可用方案，客户端为 k8s集群 ，三台文件服务器分别Master和 Slave，使用 keepalived 生成一个虚拟 IP，使用 Sersync 进行 Master 与 Slave 之间文件相互同步，确保高可用。
+角色 系统 IP 虚拟IP 172.12.17.200 Client k8s集群 172.12.17.163,172.12.17.164,172.12.17.165 Master centos 7.5 172.12.17.166 Slave centos 7.5 172.12.17.167 查看内核版本 uname -smr 建议升级到最新的长期支持版本 升级内核
+安装nfs 在master和slave上面创建共享目录 mkdir -p /fs/nsf-data 在master和slave上安装nfs服务 // 下载nfs yum -y install nfs-utils rpcbind //写入配置（配置要改动需要reload nfs 服务） echo &amp;#39;/fs/nsf-data 172.12.17.163 172.12.17.164 172.12.17.165(rw,sync,all_squash)&amp;#39; &amp;gt;&amp;gt; /etc/exports //开启服务 systemctl start rpcbind &amp;amp;&amp;amp; systemctl start nfs //设置开机自启动 systemctl enable rpcbind &amp;amp;&amp;amp; systemctl enable nfs 在k8s集群里面找个node 测试是否能链接上nfs服务 // 下载nfs yum -y install nfs-utils rpcbind // 挂载目录 mkdir /test-nsf-data // 挂载nfs mount -t nfs 172.</description>
+    </item>
+    
+    <item>
+      <title>centos7 升级内核</title>
+      <link>https://hwholiday.github.io/2021/centos7/</link>
+      <pubDate>Tue, 02 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2021/centos7/</guid>
+      <description>查看内核版本 &amp;mdash;这里的内核版本（3.10）和系统架构（64位） uname -smr 更新软件包仓库 yum update 启用Elrepo库 rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org 安装 Elrepo 软件库 rpm -Uvh https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm 列出可用的内核版本 yum list available --disablerepo=&amp;#39;*&amp;#39; --enablerepo=elrepo-kernel kernel-lt表示一个稳定的LTS（长期支持）版本，而kernel-ml表示一个提供短期支持但提供更频繁更新的主线版本 Loaded plugins: fastestmirror Loading mirror speeds from cached hostfile * elrepo-kernel: mirror.rackspace.com elrepo-kernel | 3.0 kB 00:00:00 elrepo-kernel/primary_db | 2.0 MB 00:00:00 Available Packages elrepo-release.noarch 7.0-5.el7.elrepo elrepo-kernel kernel-lt.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-devel.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-doc.noarch 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-headers.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-tools.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-tools-libs.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-tools-libs-devel.x86_64 5.</description>
+    </item>
+    
+    <item>
+      <title>ubuntu 删除,修改,忘记passwd导致无法开机解决</title>
+      <link>https://hwholiday.github.io/2018/del_or_update_passwd/</link>
+      <pubDate>Mon, 22 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/del_or_update_passwd/</guid>
+      <description>重启ubuntu，随即长按shirft进入grub菜单 选择ubuntu高级模式,选择一个带recovery mode的选项,有的人显示不太一样，选择最新内核回车即可 选择 root Drop to root shell prompt 依次执行如下命令 //修改权限 mount -o rw,remount / // 系统中的用户 ls /home //修改密码 passwd 用户名 //重启 reboot 如果修改文件过程中提示权限不够 lsattr /etc/passwd ----i---------e--- /etc/passwd chattr -i /etc/passwd //去掉不得任意更动文件或目录该效果 chattr +i /etc/passwd //添加不得任意更动文件或目录该效果 a：让文件或目录仅供附加用途。 b：不更新文件或目录的最后存取时间。 c：将文件或目录压缩后存放。 d：将文件或目录排除在倾倒操作之外。 i：不得任意更动文件或目录。包括root账户 s：保密性删除文件或目录。 S：即时更新文件或目录。 u：预防意外删除。 联系 QQ: 3355168235 </description>
+    </item>
+    
+    <item>
+      <title>进程管理supervisor使用详解</title>
+      <link>https://hwholiday.github.io/2018/supervisor/</link>
+      <pubDate>Mon, 02 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/supervisor/</guid>
+      <description>安装 apt-get install supervisor
+配置文件地址 /etc/supervisor/supervisord.conf 开始给自己需要的脚本程序编写一个子进程配置文件，让supervisor来管理它 放在/etc/supervisor/conf.d/目录下，以.conf作为扩展名（每个进程的配置文件都可以单独分拆也可以把相关的脚本放一起） 如任意定义一个和脚本相关的项目名称的选项组（/etc/supervisor/conf.d/etcd.conf） #项目名 [program:etcd] #脚本目录 directory=/home/howie/go/bin #脚本执行命令 command=/home/howie/go/bin/etcd -listen-client-urls http://192.168.2.28:2379 --advertise-client-urls http://192.168.2.28:2380 #supervisor启动的时候是否随着同时启动，默认True autostart=true #当程序exit的时候，这个program不会自动重启,默认unexpected #设置子进程挂掉后自动重启的情况，有三个选项，false,unexpected和true。如果为false的时候，无论什么情况下，都不会被重新启动，如果为unexpected，只有当进程的退出码不在下面的exitcodes里面定义的 autorestart=false #这个选项是子进程启动多少秒之后，此时状态如果是running，则我们认为启动成功了。默认值为1 startsecs=1 #日志输出 stderr_logfile=/tmp/etcd_stderr.log stdout_logfile=/tmp/etcd_stdout.log #脚本运行的用户身份 user = howie #把 stderr 重定向到 stdout，默认 false redirect_stderr = true #stdout 日志文件大小，默认 50MB stdout_logfile_maxbytes = 20M #stdout 日志文件备份数 stdout_logfile_backups = 20 运行 sudo /etc/init.d/supervisor start //启动 sudo /etc/init.d/supervisor stop //停止 sudo supervisorctl status //查看所有子进程的状态 sudo supervisorctl start etcd //开启指定的子进程： sudo supervisorctl stop etcd //关闭指定的子进程： sudo supervisorctl stop all //关闭所有的子进程： sudo supervisorctl start all //开启所有的子进程： web界面操作 需要在supervisor的配置文件里添加[inet_http_server]选项组</description>
+    </item>
+    
+    <item>
+      <title>程序火焰图</title>
+      <link>https://hwholiday.github.io/2017/flame_map_analysis/</link>
+      <pubDate>Mon, 23 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2017/flame_map_analysis/</guid>
+      <description>程序火焰图 - git clone https://github.com/brendangregg/FlameGraph.git - 以下命令在FlameGraph里面执行 - yum install perf -y - perf record -F 99 -p 进程pid -g -- sleep 30 - perf report -n --stdio - perf script -i perf.data &amp;amp;&amp;gt; perf.unfold - ./stackcollapse-perf.pl perf.unfold &amp;amp;&amp;gt; perf.folded - ./flamegraph.pl perf.folded &amp;gt; perf.svg 联系 QQ: 3355168235 </description>
+    </item>
+    
+    <item>
+      <title>ubuntu使用shadowsocks</title>
+      <link>https://hwholiday.github.io/2017/ubuntu_use_shadowsocks/</link>
+      <pubDate>Fri, 07 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2017/ubuntu_use_shadowsocks/</guid>
+      <description>安装shadowsocks 用PIP安装 sudo apt-get update sudo apt-get install python-pip sudo apt-get install python-setuptools m2crypto pip install shadowsocks 如果是ubuntu16.04 直接 (16.04 里可以直接用apt 而不用 apt-get 这是一项改进） sudo apt install shadowsocks shadowsock使用 推荐在/etc/shadowsocks下 新建config.json { &amp;#34;server&amp;#34;:&amp;#34;118.193.178.111&amp;#34;,//你的服务器IP &amp;#34;server_port&amp;#34;:60010,//服务器端口 &amp;#34;local_address&amp;#34;: &amp;#34;127.0.0.1&amp;#34;,//本地代理IP &amp;#34;local_port&amp;#34;:1080,//本地代理端口 &amp;#34;password&amp;#34;:&amp;#34;123qeq&amp;#34;,//密码 &amp;#34;timeout&amp;#34;:300,//过期时间 &amp;#34;method&amp;#34;:&amp;#34;aes-256-cfb&amp;#34;,//加密方式 &amp;#34;fast_open&amp;#34;: false, //默认 &amp;#34;workers&amp;#34;: 1//默认 } 使用命令:nohup sslocal -c /etc/shadowsocks/config.json &amp;gt;/dev/null 2&amp;gt;&amp;amp;1 &amp;amp; 启动代理 如果使用supervosor控制程序可参考如下配置
+[program:shadowsocks] command=sslocal -c /etc/shadowsocks.json autorestart=true user=nobody google浏览器配置 下载 https://github.com/FelisCatus/SwitchyOmega/releases 后缀为crx 打开chrome的设置&amp;gt;扩展程序，然后把插件拖进来安装 切换到switchyOmega主界面 &amp;gt; 新建情景模式 &amp;gt; 选择代理服务器 &amp;gt; 名称自己定义(shadowcocks) &amp;gt; 创建 &amp;gt; 应用选项 选择新建的情景模式 &amp;gt; 代理协议选择为SOCKS5 &amp;gt; 代理服务器输入127.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>微服务 on hwholiday</title>
+    <link>https://hwholiday.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
+    <description>Recent content in 微服务 on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 22 Oct 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>从零开始微服务构建</title>
+      <link>https://hwholiday.github.io/2018/micro_server/</link>
+      <pubDate>Mon, 22 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://hwholiday.github.io/2018/micro_server/</guid>
+      <description>代码演示地址 点击这里 是使用Micro,etcd,nsq,grpc,gin等相关技术的一个微服务实例
+只有一个gateway服务器，api节点,db节点,log节点都可以自由添加 log节点采用nsq,其他节点采用grpc,网关服务对外默认http #TODO 添加令牌服务器,链路追踪等功能,prometheus 架构图 启动命令 etcd nsqlookupd nsqd --lookupd-tcp-address=127.0.0.1:4160 nsqadmin --lookupd-http-address=127.0.0.1:4161 micro --registry=etcdv3 --broker=nsq api --handler=http 执行conf中的文件将配置信息读取到etcd中 启动api_agent,log_agent,db_agent curl http://127.0.0.1:8080/api/v1/test 查看整个程序的运行情况 log_agent db_agent api_agent 关于 Micro Micro 是一个微服务工具集。它被用来实现它的特性和接口，同时提供强大的可插拔的架构来保证基础组件可以被替换掉。 Micro 专注于解决构建微服务系统的基础需求。它采用了深思熟虑地富有预见性的方式来实现它的设计。 如果你想深入研究 Micro 工具集请点击这里 联系 QQ: 3355168235 </description>
+    </item>
+    
+  </channel>
+</rss>

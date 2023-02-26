@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="https://hwholiday.github.io/2020/golang_for_docker_compose/" />
+  <link rel="next" href="https://hwholiday.github.io/2020/go_kit_v12/" />
+  <link rel="canonical" href="https://hwholiday.github.io/2020/go_push/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           golang 消息推送系统 | hwholiday
+       
+  </title>
+  <meta name="title" content="golang 消息推送系统 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="golang 消息推送系统"/>
+<meta name="twitter:description" content="golang 消息推送系统"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "golang 消息推送系统",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https:\/\/hwholiday.github.io\/2020\/go_push\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang, push",
+  "wordcount":  212 ,
+  "url": "https:\/\/hwholiday.github.io\/2020\/go_push\/",
+  "datePublished": "2020-03-09T00:00:00\u002b00:00",
+  "dateModified": "2020-03-09T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "golang 消息推送系统"
+}
+</script>
+</head>
+
+  
+             
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="https://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">golang 消息推送系统</h1>
+        <div class="post-meta">
+            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2020-03-09 >9 March 2020</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
+                        <a href="https://hwholiday.github.io/categories/push/"> push </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                1 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="golang-消息推送系统">Golang 消息推送系统</h2>
+<ul>
+<li>
+<p>使用 websocket 协议，实现全局推送，和分房间推送,实现用户加入房间，退出房间</p>
+</li>
+<li>
+<p>gateway 长连接网关服务器，管理全部的链接，以及房间等相关操作</p>
+</li>
+<li>
+<p>logic 逻辑服务器 管理发送全局推送，单个房间推送，加入房间，离开房间等相关操作</p>
+</li>
+<li>
+<p>代码目录详情</p>
+</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">├── gateway // 长连接网关服务器
+│   ├── push_job.go    // 分发任务
+│   ├── room.go        // 房间，可作为某一类型的推送管理中心
+│   ├── room_manage.go // 房间管理
+│   ├── ws_conn.go     // 简单封装的websocket方法
+│   ├── ws_handle.go   // 处理websocket协议方法
+│   └── ws_server.go   // websocket服务
+├── logic  //逻辑服务器    
+│   ├── http_handle.go // 推送，房间相关
+│   └── http_server.go // http服务
+└── main.go
+</code></pre><h3 id="websocket相关">websocket相关</h3>
+<ul>
+<li>定义WsConnection结构体</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">type WsConnection struct {
+	mu        sync.Mutex 
+	connId    string            // 链接ID
+	ws        *websocket.Conn   // ws链接
+	readChan  chan *WSMessage   // 读取数据的管道
+	writeChan chan *WSMessage   // 写数据的管道
+	closeChan chan bool         // 关闭链接的管道
+	isOpen    bool              // 链接是否有效
+	addRoom   *sync.Map         // 该链接加入了那些房间
+	clientIp  string            // 客户端IP
+}
+</code></pre><ul>
+<li>维持心跳</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">switch {
+   case msg.Type == 1://{&#34;type&#34;:1,&#34;data&#34;:&#34;PING&#34;},{&#34;type&#34;:1,&#34;data&#34;:&#34;PONG&#34;}
+	_ = w.ws.SetReadDeadline(time.Now().Add(time.Second * 10))
+	_ = w.SendMsg(&amp;WSMessage{Type: 1, Data: &#34;PONG&#34;})
+   default:
+	fmt.Println(&#34;OTHER&#34;, msg.Type, msg.Data)
+}
+</code></pre><h3 id="房间管理">房间管理</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">//一个房间代表一个订阅推送类型
+type Room struct {
+	id    int       // 房间ID
+	title string    // 房间标题
+	RConn sync.Map  // 加入该房间的链接
+}
+
+type RoomManage struct {
+	AllRoom sync.Map   // 所有的房间
+	AllConn sync.Map   // 该网关的上的全部链接
+}
+</code></pre><h2 id="gateway-协议-在线测试wshttpwwweasyswoolecomwstoolhtml">gateway 协议 <a href="http://www.easyswoole.com/wstool.html">在线测试WS</a></h2>
+<ul>
+<li>
+<p>ws://0.0.0.0:8888/connect</p>
+</li>
+<li>
+<p>PING   Client -&gt; Server</p>
+</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">{&#34;type&#34;:1,&#34;data&#34;:&#34;PING&#34;}
+</code></pre><ul>
+<li>PONG   Server -&gt; Client</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">{&#34;type&#34;:1,&#34;data&#34;:&#34;PONG&#34;}
+</code></pre><h2 id="logic-协议">logic 协议</h2>
+<ul>
+<li>全部推送</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">curl  http://0.0.0.0:9999/push/all -X POST -d &#34;val=test push&amp;tag=3&#34;
+</code></pre><ul>
+<li>单个房间推送</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">curl  http://0.0.0.0:9999/push/room -X POST -d &#34;val=test push&amp;tag=3&amp;id=1&#34;
+</code></pre><ul>
+<li>加入房间 (wsId 在用户链接上gateway时可以得到)</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">curl http://0.0.0.0:9999/room/join -X POST -d &#34;id=1&amp;wsId=3cc97117-aa4d-55bb-86db-a1d77e51283b&#34;
+</code></pre><ul>
+<li>离开房间</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">curl http://0.0.0.0:9999/room/leave -X POST -d &#34;id=1&amp;wsId=3cc97117-aa4d-55bb-86db-a1d77e51283b&#34;
+</code></pre><h3 id="demo-代码地址httpsgithubcomhwholidaylearning_toolstreemastergo_push">DEMO <a href="https://github.com/hwholiday/learning_tools/tree/master/go_push">代码地址</a></h3>
+<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>212</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="https://hwholiday.github.io/tags/push/">
+                    #push</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="https://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://hwholiday.github.io/2020/golang_for_docker_compose/" class="prev" rel="prev" title="golang 插上docker_compose的翅膀"><i class="iconfont icon-dajiantou"></i>&nbsp;golang 插上docker_compose的翅膀</a>
+         
+        
+        <a href="https://hwholiday.github.io/2020/go_kit_v12/" class="next" rel="next" title="go-kit 微服务 日志分析管理 （ELK &#43; Filebeat）">go-kit 微服务 日志分析管理 （ELK &#43; Filebeat）&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

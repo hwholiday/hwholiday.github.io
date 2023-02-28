@@ -1,164 +1,18 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noodp"/>
-  
-  
-  
-  
-  
-  <link rel="prev" href="https://hwholiday.github.io/2019/signal_prorocol/" />
-  <link rel="next" href="https://hwholiday.github.io/2019/consistency_hash/" />
-  <link rel="canonical" href="https://hwholiday.github.io/2019/google_py/" />
-  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>
-       
-       
-           Golang 实现Google 内购以及订阅代码 | hwholiday
-       
-  </title>
-  <meta name="title" content="Golang 实现Google 内购以及订阅代码 | hwholiday">
-    
-  
-  <link rel="stylesheet" href="/font/iconfont.css">
-  <link rel="stylesheet" href="/css/main.min.css">
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Golang 实现Google 内购以及订阅代码"/>
-<meta name="twitter:description" content="Golang 实现Google 内购以及订阅代码"/>
-
-  <script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Golang 实现Google 内购以及订阅代码",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https:\/\/hwholiday.github.io\/2019\/google_py\/"
-  },
-  
-  "genre": "posts",
-  "keywords": "golang, 源码",
-  "wordcount":  278 ,
-  "url": "https:\/\/hwholiday.github.io\/2019\/google_py\/",
-  "datePublished": "2019-10-24T00:00:00\u002b00:00",
-  "dateModified": "2019-10-24T00:00:00\u002b00:00",
-  
-  
-  
-  "description": "Golang 实现Google 内购以及订阅代码"
-}
-</script>
-</head>
-
-  
-             
-  
-
-
-
-  <body class="">
-    <div class="wrapper">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-header header-logo">
-        	<a href="https://hwholiday.github.io/">hwholiday</a>
-        </div>
-        <div class="menu navbar-right">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
-        </div>
-    </div>
-</nav>
-<nav class="navbar-mobile" id="nav-mobile" style="display: none">
-     <div class="container">
-        <div class="navbar-header">
-            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
-            <div class="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-     
-          <div class="menu" id="mobile-menu">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-        </div>
-    </div>
-</nav>
-
-    	 <main class="main">
-          <div class="container">
-      		
-<article class="post-warp">
-    <header class="post-header">
-        <h1 class="post-title">Golang 实现Google 内购以及订阅代码</h1>
-        <div class="post-meta">
-            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
-                <span class="post-time">
-                    on <time datetime=2019-10-24 >24 October 2019</time>
-                </span>
-                in
-                <i class="iconfont icon-folder"></i>
-                <span class="post-category">
-                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
-                        <a href="https://hwholiday.github.io/categories/%E6%BA%90%E7%A0%81/"> 源码 </a>
-                        
-                </span>
-                <i class="iconfont icon-timer"></i>
-                2 min
-        </div>
-    </header>
-    <div class="post-content">
-        
-
-        
-
-        
-        
-     
-          
-          
-          
-
-          
-          
-          
-
-          <h3 id="内购">内购</h3>
-<ul>
-<li>先检查签名是否正确</li>
-<li>再查询google该订单信息是否正确</li>
-<li>具体细节请联系我的QQ</li>
-</ul>
-<pre tabindex="0"><code class="language-base" data-lang="base">func VerifyGoogleSign(data, id string, sign string) (bool, error) {
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2019/signal_prorocol/><link rel=next href=http://hwholiday.github.io/2019/consistency_hash/><link rel=canonical href=http://hwholiday.github.io/2019/google_py/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>Golang 实现Google 内购以及订阅代码 | hwholiday</title><meta name=title content="Golang 实现Google 内购以及订阅代码 | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="Golang 实现Google 内购以及订阅代码"><meta name=twitter:description content="Golang 实现Google 内购以及订阅代码"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Golang 实现Google 内购以及订阅代码","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2019\/google_py\/"},"genre":"posts","keywords":"golang, 源码","wordcount":278,"url":"http:\/\/hwholiday.github.io\/2019\/google_py\/","datePublished":"2019-10-24T00:00:00\u002b00:00","dateModified":"2019-10-24T00:00:00\u002b00:00","description":"Golang 实现Google 内购以及订阅代码"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a>
+<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>Golang 实现Google 内购以及订阅代码</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
+<span class=post-time>on <time datetime=2019-10-24>24 October 2019</time></span>
+in
+<i class="iconfont icon-folder"></i>
+<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a>
+<a href=http://hwholiday.github.io/categories/%E6%BA%90%E7%A0%81/>源码</a></span>
+<i class="iconfont icon-timer"></i>
+2 min</div></header><div class=post-content><h3 id=内购>内购</h3><ul><li>先检查签名是否正确</li><li>再查询google该订单信息是否正确</li><li>具体细节请联系我的QQ</li></ul><pre tabindex=0><code class=language-base data-lang=base>func VerifyGoogleSign(data, id string, sign string) (bool, error) {
     decodePublic, err := base64.StdEncoding.DecodeString(publicKey)
 	if err != nil {
 		return false, err
@@ -213,11 +67,7 @@
 		return false, errors.New(&#34;call.PurchaseState != 0&#34;)
 	}
 	return true, nil
-</code></pre><h3 id="订阅">订阅</h3>
-<ul>
-<li>具体细节请联系我的QQ</li>
-</ul>
-<pre tabindex="0"><code class="language-base" data-lang="base">func VerifyGoogleSignV3(id string, token string) (string, int64, error) {
+</code></pre><h3 id=订阅>订阅</h3><ul><li>具体细节请联系我的QQ</li></ul><pre tabindex=0><code class=language-base data-lang=base>func VerifyGoogleSignV3(id string, token string) (string, int64, error) {
 server, err := androidpublisher.NewService(context.Background(), option.WithCredentialsJSON([]byte(`{
     &#34;type&#34;: &#34;service_account&#34;,
     &#34;project_id&#34;: &#34;&#34;,
@@ -246,119 +96,14 @@ server, err := androidpublisher.NewService(context.Background(), option.WithCred
 	}
 	return  string(res), call.ExpiryTimeMillis / 1000, nil
 }
-</code></pre><h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
-
-    </div>
-    
-    <div class="post-copyright">
-             
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>hwholiday </span>
-                </p>
-            
-           
-            <p class="copyright-item">
-                    <span>Words:</span>
-                   <span>278</span>
-            </p>
-
-            <p class="copyright-item">
-                
-            </p>
-
-            
-    </div>
-
-  
-    <div class="post-tags">
-        
-            <section>
-            <i class="iconfont icon-icon-tag"></i>Tag: 
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
-                    #golang</a></span>
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/%E6%BA%90%E7%A0%81/">
-                    #源码</a></span>
-            
-            </section>
-        
-        <section>
-                <a href="javascript:window.history.back();">Back</a></span> · 
-                <span><a href="https://hwholiday.github.io/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-        
-        <a href="https://hwholiday.github.io/2019/signal_prorocol/" class="prev" rel="prev" title="Golang 双棘轮算法"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang 双棘轮算法</a>
-         
-        
-        <a href="https://hwholiday.github.io/2019/consistency_hash/" class="next" rel="next" title="一致性hash算法原理及Golang实现">一致性hash算法原理及Golang实现&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
-        
-    </div>
-
-    <div class="post-comment">
-          
-          
-
- 
-
-          
-    </div>
-</article>
-          </div>
-		   </main>
-      <footer class="footer">
-    <div class="copyright">
-        &copy;
-        
-        <span itemprop="copyrightYear">2016 - 2023</span>
-        
-         
-            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
-         
-
-		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
-    </div>
-</footer>
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    <script src="/js/vendor_no_gallery.min.js" async=""></script>
-    
-  
-
-
-
-
-
-
-
-<script>
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-</script>
-
-
-
-     </div>
-  </body>
-</html>
+</code></pre><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
+<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
+<span>278</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
+<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#golang</a></span>
+<span class=tag><a href=http://hwholiday.github.io/tags/%E6%BA%90%E7%A0%81/>#源码</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
+<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2019/signal_prorocol/ class=prev rel=prev title="Golang 双棘轮算法"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang 双棘轮算法</a>
+<a href=http://hwholiday.github.io/2019/consistency_hash/ class=next rel=next title=一致性hash算法原理及Golang实现>一致性hash算法原理及Golang实现&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
+<span itemprop=copyrightYear>2016 - 2023</span>
+<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
+<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
+<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>

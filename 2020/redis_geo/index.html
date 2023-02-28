@@ -1,172 +1,18 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noodp"/>
-  
-  
-  
-  
-  
-  <link rel="prev" href="https://hwholiday.github.io/2020/go_kit_v12/" />
-  <link rel="next" href="https://hwholiday.github.io/2020/go_protoc_gen_go/" />
-  <link rel="canonical" href="https://hwholiday.github.io/2020/redis_geo/" />
-  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>
-       
-       
-           golang 通过 Redis GEO 实现 LBS 功能 | hwholiday
-       
-  </title>
-  <meta name="title" content="golang 通过 Redis GEO 实现 LBS 功能 | hwholiday">
-    
-  
-  <link rel="stylesheet" href="/font/iconfont.css">
-  <link rel="stylesheet" href="/css/main.min.css">
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="golang 通过 Redis GEO 实现 LBS 功能"/>
-<meta name="twitter:description" content="golang 通过 Redis GEO 实现 LBS 功能"/>
-
-  <script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "BlogPosting",
-  "headline": "golang 通过 Redis GEO 实现 LBS 功能",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https:\/\/hwholiday.github.io\/2020\/redis_geo\/"
-  },
-  
-  "genre": "posts",
-  "keywords": "golang, redis",
-  "wordcount":  236 ,
-  "url": "https:\/\/hwholiday.github.io\/2020\/redis_geo\/",
-  "datePublished": "2020-03-17T00:00:00\u002b00:00",
-  "dateModified": "2020-03-17T00:00:00\u002b00:00",
-  
-  
-  
-  "description": "golang 通过 Redis GEO 实现 LBS 功能"
-}
-</script>
-</head>
-
-  
-             
-  
-
-
-
-  <body class="">
-    <div class="wrapper">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-header header-logo">
-        	<a href="https://hwholiday.github.io/">hwholiday</a>
-        </div>
-        <div class="menu navbar-right">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
-        </div>
-    </div>
-</nav>
-<nav class="navbar-mobile" id="nav-mobile" style="display: none">
-     <div class="container">
-        <div class="navbar-header">
-            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
-            <div class="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-     
-          <div class="menu" id="mobile-menu">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-        </div>
-    </div>
-</nav>
-
-    	 <main class="main">
-          <div class="container">
-      		
-<article class="post-warp">
-    <header class="post-header">
-        <h1 class="post-title">golang 通过 Redis GEO 实现 LBS 功能</h1>
-        <div class="post-meta">
-            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
-                <span class="post-time">
-                    on <time datetime=2020-03-17 >17 March 2020</time>
-                </span>
-                in
-                <i class="iconfont icon-folder"></i>
-                <span class="post-category">
-                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
-                        <a href="https://hwholiday.github.io/categories/redis/"> redis </a>
-                        
-                </span>
-                <i class="iconfont icon-timer"></i>
-                2 min
-        </div>
-    </header>
-    <div class="post-content">
-        
-
-        
-
-        
-        
-     
-          
-          
-          
-
-          
-          
-          
-
-          <h2 id="lbs">LBS</h2>
-<ul>
-<li>基于位置的服务（Location Based Services，LBS），是利用各类型的定位技术来获取定位设备当前的所在位置，通过移动互联网向定位设备提供信息资源和基础服务。LBS首先读者可利用定位技术确定自身的空间位置，随后读者便可通过移动互联网来获取与位置相关资源和信息。LBS服务中融合了移动通讯、互联网络、空间定位、位置信息、大数据等多种信息技术，利用移动互联网络服务平台进行数据更新和交互，使用户可以通过空间定位来获取相应的服务。</li>
-</ul>
-<h2 id="redis-中关于-geo-的方法">redis 中关于 GEO 的方法</h2>
-<ul>
-<li>geoadd：增加某个位置的坐标。</li>
-<li>geopos：获取某个位置的坐标。</li>
-<li>geohash：获取某个位置的geohash值。</li>
-<li>geodist：获取两个位置的距离。</li>
-<li>georadius：根据给定位置坐标获取指定范围内的位置集合。</li>
-<li>georadiusbymember：根据给定位置获取指定范围内的位置集合。</li>
-</ul>
-<h3 id="geoadd-使用方法">geoadd 使用方法</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">res, err := GlobalClient.GeoAdd(&#34;geo_hash_test&#34;, &amp;redis.GeoLocation{
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2020/go_kit_v12/><link rel=next href=http://hwholiday.github.io/2020/go_protoc_gen_go/><link rel=canonical href=http://hwholiday.github.io/2020/redis_geo/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>golang 通过 Redis GEO 实现 LBS 功能 | hwholiday</title><meta name=title content="golang 通过 Redis GEO 实现 LBS 功能 | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="golang 通过 Redis GEO 实现 LBS 功能"><meta name=twitter:description content="golang 通过 Redis GEO 实现 LBS 功能"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"golang 通过 Redis GEO 实现 LBS 功能","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2020\/redis_geo\/"},"genre":"posts","keywords":"golang, redis","wordcount":236,"url":"http:\/\/hwholiday.github.io\/2020\/redis_geo\/","datePublished":"2020-03-17T00:00:00\u002b00:00","dateModified":"2020-03-17T00:00:00\u002b00:00","description":"golang 通过 Redis GEO 实现 LBS 功能"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a>
+<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>golang 通过 Redis GEO 实现 LBS 功能</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
+<span class=post-time>on <time datetime=2020-03-17>17 March 2020</time></span>
+in
+<i class="iconfont icon-folder"></i>
+<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a>
+<a href=http://hwholiday.github.io/categories/redis/>redis</a></span>
+<i class="iconfont icon-timer"></i>
+2 min</div></header><div class=post-content><h2 id=lbs>LBS</h2><ul><li>基于位置的服务（Location Based Services，LBS），是利用各类型的定位技术来获取定位设备当前的所在位置，通过移动互联网向定位设备提供信息资源和基础服务。LBS首先读者可利用定位技术确定自身的空间位置，随后读者便可通过移动互联网来获取与位置相关资源和信息。LBS服务中融合了移动通讯、互联网络、空间定位、位置信息、大数据等多种信息技术，利用移动互联网络服务平台进行数据更新和交互，使用户可以通过空间定位来获取相应的服务。</li></ul><h2 id=redis-中关于-geo-的方法>redis 中关于 GEO 的方法</h2><ul><li>geoadd：增加某个位置的坐标。</li><li>geopos：获取某个位置的坐标。</li><li>geohash：获取某个位置的geohash值。</li><li>geodist：获取两个位置的距离。</li><li>georadius：根据给定位置坐标获取指定范围内的位置集合。</li><li>georadiusbymember：根据给定位置获取指定范围内的位置集合。</li></ul><h3 id=geoadd-使用方法>geoadd 使用方法</h3><pre tabindex=0><code class=language-base data-lang=base>res, err := GlobalClient.GeoAdd(&#34;geo_hash_test&#34;, &amp;redis.GeoLocation{
 		Name:      &#34;天府广场&#34;,
 		Longitude: 104.072833,
 		Latitude:  30.663422,
@@ -198,24 +44,20 @@
 
 //输出
 //[GeoAdd] 7	
-</code></pre><h3 id="geopos-使用方法">geopos 使用方法</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">resPos, err := GlobalClient.GeoPos(&#34;geo_hash_test&#34;, &#34;天府广场&#34;, &#34;宽窄巷子&#34;).Result()
+</code></pre><h3 id=geopos-使用方法>geopos 使用方法</h3><pre tabindex=0><code class=language-base data-lang=base>resPos, err := GlobalClient.GeoPos(&#34;geo_hash_test&#34;, &#34;天府广场&#34;, &#34;宽窄巷子&#34;).Result()
 
 //输出
 //[GeoPos] Longitude :  104.07283455133438 Latitude :  30.663422957895442
 //[GeoPos] Longitude :  104.05982583761215 Latitude :  30.66988396213059
-</code></pre><h3 id="geohash-使用方法">geohash 使用方法</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">resHash, err := GlobalClient.GeoHash(&#34;geo_hash_test&#34;, &#34;天府广场&#34;).Result()
+</code></pre><h3 id=geohash-使用方法>geohash 使用方法</h3><pre tabindex=0><code class=language-base data-lang=base>resHash, err := GlobalClient.GeoHash(&#34;geo_hash_test&#34;, &#34;天府广场&#34;).Result()
 
 //输出
 //[GeoHash] [wm6n2npe2u0]	
-</code></pre><h3 id="geodist-使用方法">geodist 使用方法</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">resDist, err := GlobalClient.GeoDist(&#34;geo_hash_test&#34;, &#34;天府广场&#34;, &#34;宽窄巷子&#34;, &#34;m&#34;).Result()
+</code></pre><h3 id=geodist-使用方法>geodist 使用方法</h3><pre tabindex=0><code class=language-base data-lang=base>resDist, err := GlobalClient.GeoDist(&#34;geo_hash_test&#34;, &#34;天府广场&#34;, &#34;宽窄巷子&#34;, &#34;m&#34;).Result()
 
 //输出
 //[GeoDist] 1437.137
-</code></pre><h3 id="georadius-使用方法">georadius 使用方法</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">resRadiu, err := GlobalClient.GeoRadius(&#34;geo_hash_test&#34;, 104.072833, 30.663422, &amp;redis.GeoRadiusQuery{
+</code></pre><h3 id=georadius-使用方法>georadius 使用方法</h3><pre tabindex=0><code class=language-base data-lang=base>resRadiu, err := GlobalClient.GeoRadius(&#34;geo_hash_test&#34;, 104.072833, 30.663422, &amp;redis.GeoRadiusQuery{
 		Radius:      800,   //radius表示范围距离，
 		Unit:        &#34;m&#34;,   //距离单位是 m|km|ft|mi
 		WithCoord:   true, //传入WITHCOORD参数，则返回结果会带上匹配位置的经纬度
@@ -230,8 +72,7 @@
 //[GeoRadiu] {手工茶 104.07240003347397 30.664120006214254 87.9964 4026137800481654}
 //[GeoRadiu] {四川大剧院 104.07437950372696 30.664804380927272 213.3854 4026137806216312}
 //[GeoRadiu] {新华文轩 104.0700826048851 30.664649762936556 296.4651 4026137800049783}
-</code></pre><h3 id="georadiusbymember-使用方法">georadiusbymember 使用方法</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">resRadiusByMember, err := GlobalClient.GeoRadiusByMember(&#34;geo_hash_test&#34;, &#34;天府广场&#34;, &amp;redis.GeoRadiusQuery{
+</code></pre><h3 id=georadiusbymember-使用方法>georadiusbymember 使用方法</h3><pre tabindex=0><code class=language-base data-lang=base>resRadiusByMember, err := GlobalClient.GeoRadiusByMember(&#34;geo_hash_test&#34;, &#34;天府广场&#34;, &amp;redis.GeoRadiusQuery{
 		Radius:      800,
 		Unit:        &#34;m&#34;,
 		WithCoord:   true,
@@ -246,147 +87,15 @@
 //[GeoRadiusByMember] {手工茶 104.07240003347397 30.664120006214254 87.9725 4026137800481654}
 //[GeoRadiusByMember] {四川大剧院 104.07437950372696 30.664804380927272 213.2058 4026137806216312}
 //[GeoRadiusByMember] {新华文轩 104.0700826048851 30.664649762936556 296.5478 4026137800049783}
-</code></pre><h2 id="结语">结语</h2>
-<ul>
-<li>使用LBS我们可以很方便的编写关于附近相关的业务逻辑</li>
-<li>欢迎添加QQ一起讨论</li>
-</ul>
-<h3 id="完整代码地址httpsgithubcomhwholidaylearning_toolstreemastergeoredis"><a href="https://github.com/hwholiday/learning_tools/tree/master/geo/redis">完整代码地址</a></h3>
-<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
-
-    </div>
-    
-    <div id="gitalk-container"></div>
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script>
-        const gitalk = new Gitalk({
-            clientID: '64d60a02f98e01e31e2f',
-            clientSecret: 'b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58',
-            repo: 'hwholiday.github.io',
-            owner: 'hwholiday',
-            admin: 'hwholiday',
-            id: 'redis_geo', 
-            distractionFreeMode: false 
-        });
-        (function() {
-            if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-                document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
-                return;
-            }
-            gitalk.render('gitalk-container');
-        })();
-    </script>
-    
-    <div class="post-copyright">
-             
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>hwholiday </span>
-                </p>
-            
-           
-            <p class="copyright-item">
-                    <span>Words:</span>
-                   <span>236</span>
-            </p>
-
-            <p class="copyright-item">
-                
-            </p>
-
-            
-    </div>
-
-  
-    <div class="post-tags">
-        
-            <section>
-            <i class="iconfont icon-icon-tag"></i>Tag: 
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
-                    #golang</a></span>
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/redis/">
-                    #redis</a></span>
-            
-            </section>
-        
-        <section>
-                <a href="javascript:window.history.back();">Back</a></span> · 
-                <span><a href="https://hwholiday.github.io/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-        
-        <a href="https://hwholiday.github.io/2020/go_kit_v12/" class="prev" rel="prev" title="go-kit 微服务 日志分析管理 （ELK &#43; Filebeat）"><i class="iconfont icon-dajiantou"></i>&nbsp;go-kit 微服务 日志分析管理 （ELK &#43; Filebeat）</a>
-         
-        
-        <a href="https://hwholiday.github.io/2020/go_protoc_gen_go/" class="next" rel="next" title="golang 解决 protobuf 因为 XXX 插入数据库报错的情况">golang 解决 protobuf 因为 XXX 插入数据库报错的情况&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
-        
-    </div>
-
-    <div class="post-comment">
-          
-          
-
- 
-
-          
-    </div>
-</article>
-          </div>
-		   </main>
-      <footer class="footer">
-    <div class="copyright">
-        &copy;
-        
-        <span itemprop="copyrightYear">2016 - 2023</span>
-        
-         
-            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
-         
-
-		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
-    </div>
-</footer>
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    <script src="/js/vendor_no_gallery.min.js" async=""></script>
-    
-  
-
-
-
-
-
-
-
-<script>
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-</script>
-
-
-
-     </div>
-  </body>
-</html>
+</code></pre><h2 id=结语>结语</h2><ul><li>使用LBS我们可以很方便的编写关于附近相关的业务逻辑</li><li>欢迎添加QQ一起讨论</li></ul><h3 id=完整代码地址httpsgithubcomhwholidaylearning_toolstreemastergeoredis><a href=https://github.com/hwholiday/learning_tools/tree/master/geo/redis>完整代码地址</a></h3><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div id=gitalk-container></div><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css><script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
+<script>const gitalk=new Gitalk({clientID:"64d60a02f98e01e31e2f",clientSecret:"b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58",repo:"hwholiday.github.io",owner:"hwholiday",admin:"hwholiday",id:"redis_geo",distractionFreeMode:!1});(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("gitalk-container").innerHTML="Gitalk comments not available by default when the website is previewed locally.";return}gitalk.render("gitalk-container")})()</script><div class=post-copyright><p class=copyright-item><span>Author:</span>
+<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
+<span>236</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
+<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#golang</a></span>
+<span class=tag><a href=http://hwholiday.github.io/tags/redis/>#redis</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
+<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2020/go_kit_v12/ class=prev rel=prev title="go-kit 微服务 日志分析管理 （ELK + Filebeat）"><i class="iconfont icon-dajiantou"></i>&nbsp;go-kit 微服务 日志分析管理 （ELK + Filebeat）</a>
+<a href=http://hwholiday.github.io/2020/go_protoc_gen_go/ class=next rel=next title="golang 解决 protobuf 因为 XXX 插入数据库报错的情况">golang 解决 protobuf 因为 XXX 插入数据库报错的情况&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
+<span itemprop=copyrightYear>2016 - 2023</span>
+<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
+<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
+<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>

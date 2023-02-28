@@ -1,24 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>push on hwholiday</title>
-    <link>https://hwholiday.github.io/categories/push/</link>
-    <description>Recent content in push on hwholiday</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Mon, 09 Mar 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/categories/push/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>golang 消息推送系统</title>
-      <link>https://hwholiday.github.io/2020/go_push/</link>
-      <pubDate>Mon, 09 Mar 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/go_push/</guid>
-      <description>Golang 消息推送系统 使用 websocket 协议，实现全局推送，和分房间推送,实现用户加入房间，退出房间
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>push on hwholiday</title><link>http://hwholiday.github.io/categories/push/</link><description>Recent content in push on hwholiday</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 09 Mar 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/categories/push/index.xml" rel="self" type="application/rss+xml"/><item><title>golang 消息推送系统</title><link>http://hwholiday.github.io/2020/go_push/</link><pubDate>Mon, 09 Mar 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/go_push/</guid><description>Golang 消息推送系统 使用 websocket 协议，实现全局推送，和分房间推送,实现用户加入房间，退出房间
 gateway 长连接网关服务器，管理全部的链接，以及房间等相关操作
 logic 逻辑服务器 管理发送全局推送，单个房间推送，加入房间，离开房间等相关操作
 代码目录详情
-├── gateway // 长连接网关服务器 │ ├── push_job.go // 分发任务 │ ├── room.go // 房间，可作为某一类型的推送管理中心 │ ├── room_manage.go // 房间管理 │ ├── ws_conn.go // 简单封装的websocket方法 │ ├── ws_handle.go // 处理websocket协议方法 │ └── ws_server.go // websocket服务 ├── logic //逻辑服务器 │ ├── http_handle.go // 推送，房间相关 │ └── http_server.go // http服务 └── main.go websocket相关 定义WsConnection结构体 type WsConnection struct { mu sync.Mutex connId string // 链接ID ws *websocket.</description>
-    </item>
-    
-  </channel>
-</rss>
+├── gateway // 长连接网关服务器 │ ├── push_job.go // 分发任务 │ ├── room.go // 房间，可作为某一类型的推送管理中心 │ ├── room_manage.go // 房间管理 │ ├── ws_conn.go // 简单封装的websocket方法 │ ├── ws_handle.go // 处理websocket协议方法 │ └── ws_server.go // websocket服务 ├── logic //逻辑服务器 │ ├── http_handle.go // 推送，房间相关 │ └── http_server.go // http服务 └── main.go websocket相关 定义WsConnection结构体 type WsConnection struct { mu sync.Mutex connId string // 链接ID ws *websocket.</description></item></channel></rss>

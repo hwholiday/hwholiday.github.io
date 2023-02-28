@@ -1,31 +1,7 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>其他 on hwholiday</title>
-    <link>https://hwholiday.github.io/tags/%E5%85%B6%E4%BB%96/</link>
-    <description>Recent content in 其他 on hwholiday</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Sun, 11 Sep 2016 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/tags/%E5%85%B6%E4%BB%96/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>我的博客是如何构建的</title>
-      <link>https://hwholiday.github.io/2016/first/</link>
-      <pubDate>Sun, 11 Sep 2016 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2016/first/</guid>
-      <description>安装hugo（需要先安装go,git环境） 下载 https://github.com/gohugoio/hugo/releases 二进制文件或者hugo.exe Mac下直接使用 Homebrew 安装： brew install hugo 创建项目 hugo new howie /path/howie //创建项目howie,/path/howie为路径 进入 /path/howie 目录 结构为 ▸ archetypes/ ▸ content/ ▸ layouts/ ▸ static/ config.toml 创建第一篇文章，放到 post 目录，方便之后生成聚合页面。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>其他 on hwholiday</title><link>http://hwholiday.github.io/tags/%E5%85%B6%E4%BB%96/</link><description>Recent content in 其他 on hwholiday</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sun, 11 Sep 2016 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/tags/%E5%85%B6%E4%BB%96/index.xml" rel="self" type="application/rss+xml"/><item><title>我的博客是如何构建的</title><link>http://hwholiday.github.io/2016/first/</link><pubDate>Sun, 11 Sep 2016 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2016/first/</guid><description>安装hugo（需要先安装go,git环境） 下载 https://github.com/gohugoio/hugo/releases 二进制文件或者hugo.exe Mac下直接使用 Homebrew 安装： brew install hugo 创建项目 hugo new howie /path/howie //创建项目howie,/path/howie为路径 进入 /path/howie 目录 结构为 ▸ archetypes/ ▸ content/ ▸ layouts/ ▸ static/ config.toml 创建第一篇文章，放到 post 目录，方便之后生成聚合页面。
 hugo new post/first.md 打开编辑 post/first.md ：
 --- date: &amp;#34;2018-10-12&amp;#34; title: &amp;#34;first&amp;#34; --- testtesttesttesttesttest 安装皮肤这里以（Leaveit）为例子 cd themes git clone https://github.com/liuzc/LeaveIt.git 为了更好的使用该主题我们将post/first.md的头部改为
---- date: 2018-10-11 title: &amp;#34;我的博客是如何构建的&amp;#34; description: &amp;#34;我的博客是如何构建的&amp;#34; tags: [&amp;#34;其他&amp;#34;, &amp;#34;golang&amp;#34;] categories: [&amp;#34;其他&amp;#34;] --- 启动 hugo server --theme=LeaveIt --buildDrafts 浏览器里打开： http://localhost:1313 配置 根据主题配置分享下我的配置 baseurl = &amp;#34;http://hwholiday.</description>
-    </item>
-    
-    <item>
-      <title>常用开源协议</title>
-      <link>https://hwholiday.github.io/2016/open_source_agreement/</link>
-      <pubDate>Sat, 03 Sep 2016 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2016/open_source_agreement/</guid>
-      <description>常用协议： Apache License 2.0
+--- date: 2018-10-11 title: &amp;#34;我的博客是如何构建的&amp;#34; description: &amp;#34;我的博客是如何构建的&amp;#34; tags: [&amp;#34;其他&amp;#34;, &amp;#34;golang&amp;#34;] categories: [&amp;#34;其他&amp;#34;] --- 启动 hugo server --theme=LeaveIt --buildDrafts 浏览器里打开： http://localhost:1313 配置 根据主题配置分享下我的配置 baseurl = &amp;#34;http://hwholiday.</description></item><item><title>常用开源协议</title><link>http://hwholiday.github.io/2016/open_source_agreement/</link><pubDate>Sat, 03 Sep 2016 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2016/open_source_agreement/</guid><description>常用协议： Apache License 2.0
 要点：Apache Licence是对商业应用友好的许可。使用者也可以在需要的时候修改代码来满足需要并作为开源或商业产品发布/销售。
 BSD开源协议（Berkerley Software Distribution）
 要点：商业软件可以使用，也可以修改使用BSD协议的代码。
@@ -41,8 +17,4 @@ CDDL (Common Development and Distribution License )
 要点：商业软件可以使用，也可以修改CDDL协议的代码。
 EPL (Eclipse Public License 1.0 )
 要点：商业软件可以使用，也可以修改EPL协议的代码，但要承担代码产生的侵权责任。
-联系 QQ: 3355168235 </description>
-    </item>
-    
-  </channel>
-</rss>
+联系 QQ: 3355168235</description></item></channel></rss>

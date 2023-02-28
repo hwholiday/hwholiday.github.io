@@ -1,28 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>go-kit on hwholiday</title>
-    <link>https://hwholiday.github.io/tags/go-kit/</link>
-    <description>Recent content in go-kit on hwholiday</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Fri, 13 Mar 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/tags/go-kit/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>go-kit 微服务 日志分析管理 （ELK &#43; Filebeat）</title>
-      <link>https://hwholiday.github.io/2020/go_kit_v12/</link>
-      <pubDate>Fri, 13 Mar 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/go_kit_v12/</guid>
-      <description>ELK ELK 不是一款软件，而是 Elasticsearch、Logstash 和 Kibana 三种软件产品的首字母缩写 Elasticsearch：分布式搜索和分析引擎，具有高可伸缩、高可靠和易管理等特点 Logstash：数据收集引擎,它支持动态的从各种数据源搜集数据并处理数据 Kibana：数据分析，可视化平台 Filebeat Filebeat 是一个轻量型的服务对服务器压力比较小，用于采集数据，并上报到Logstash或Elasticsearch Beats Packetbeat =&amp;gt; 搜集网络流量数据 Topbeat =&amp;gt; 搜集系统、进程和文件系统级别的 CPU 和内存使用情况等数据 Filebeat =&amp;gt; 搜集文件数据 Winlogbeat =&amp;gt; 搜集 Windows 事件日志数据 Metricbeat =&amp;gt; Ship and analyze metrics. Heartbeat =&amp;gt; Ping your Infrastructure. Auditbeat =&amp;gt; Send audit data to Elasticsearch. Functionbeat =&amp;gt; Ship cloud data with serverless infrastructure. Journalbeat =&amp;gt; Analyze Journald logs. 架构 Filebeat -&amp;gt; -&amp;gt; Filebeat -&amp;gt; -&amp;gt; -&amp;gt; -&amp;gt; Logstash -&amp;gt; Elasticsearch -&amp;gt; Kibana -&amp;gt; Filebeat -&amp;gt; 安装 elasticsearch 下载 地址</description>
-    </item>
-    
-    <item>
-      <title>go-kit 微服务 系列文章归档</title>
-      <link>https://hwholiday.github.io/2020/go_kit_11/</link>
-      <pubDate>Tue, 14 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/go_kit_11/</guid>
-      <description>go-kit 微服务 系列文章归档 go-kit 里面核心的东西有三层分别是：Transport、Endpoint、Service Transport 层主要负责与网络层相关逻辑 Endpoint 层主要负责请求数据与返回数据格式的转换，以及公用中间件逻辑 Service 层业务逻辑 go-kit 更像是一个微服务的工具集，而不是一个完整的框架，里面包含了限流，日志，服务注册与发现，熔断，服务监控，链路追踪等相关工具方法 归档 go-kit 微服务 基础使用 （HTTP）
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>go-kit on hwholiday</title><link>http://hwholiday.github.io/tags/go-kit/</link><description>Recent content in go-kit on hwholiday</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 13 Mar 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/tags/go-kit/index.xml" rel="self" type="application/rss+xml"/><item><title>go-kit 微服务 日志分析管理 （ELK + Filebeat）</title><link>http://hwholiday.github.io/2020/go_kit_v12/</link><pubDate>Fri, 13 Mar 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/go_kit_v12/</guid><description>ELK ELK 不是一款软件，而是 Elasticsearch、Logstash 和 Kibana 三种软件产品的首字母缩写 Elasticsearch：分布式搜索和分析引擎，具有高可伸缩、高可靠和易管理等特点 Logstash：数据收集引擎,它支持动态的从各种数据源搜集数据并处理数据 Kibana：数据分析，可视化平台 Filebeat Filebeat 是一个轻量型的服务对服务器压力比较小，用于采集数据，并上报到Logstash或Elasticsearch Beats Packetbeat =&amp;gt; 搜集网络流量数据 Topbeat =&amp;gt; 搜集系统、进程和文件系统级别的 CPU 和内存使用情况等数据 Filebeat =&amp;gt; 搜集文件数据 Winlogbeat =&amp;gt; 搜集 Windows 事件日志数据 Metricbeat =&amp;gt; Ship and analyze metrics. Heartbeat =&amp;gt; Ping your Infrastructure. Auditbeat =&amp;gt; Send audit data to Elasticsearch. Functionbeat =&amp;gt; Ship cloud data with serverless infrastructure. Journalbeat =&amp;gt; Analyze Journald logs. 架构 Filebeat -&amp;gt; -&amp;gt; Filebeat -&amp;gt; -&amp;gt; -&amp;gt; -&amp;gt; Logstash -&amp;gt; Elasticsearch -&amp;gt; Kibana -&amp;gt; Filebeat -&amp;gt; 安装 elasticsearch 下载 地址</description></item><item><title>go-kit 微服务 系列文章归档</title><link>http://hwholiday.github.io/2020/go_kit_11/</link><pubDate>Tue, 14 Jan 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/go_kit_11/</guid><description>go-kit 微服务 系列文章归档 go-kit 里面核心的东西有三层分别是：Transport、Endpoint、Service Transport 层主要负责与网络层相关逻辑 Endpoint 层主要负责请求数据与返回数据格式的转换，以及公用中间件逻辑 Service 层业务逻辑 go-kit 更像是一个微服务的工具集，而不是一个完整的框架，里面包含了限流，日志，服务注册与发现，熔断，服务监控，链路追踪等相关工具方法 归档 go-kit 微服务 基础使用 （HTTP）
 go-kit 微服务 添加日志（user/zap ,并为每个请求添加UUID）
 go-kit 微服务 身份认证 （JWT）
 go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）
@@ -33,108 +9,14 @@ go-kit 微服务 服务熔断（hystrix-go 实现）
 go-kit 微服务 服务链路追踪（jaeger 实现）(1)
 go-kit 微服务 服务链路追踪（jaeger 实现）(2)
 go-kit 微服务 日志分析管理 （ELK + Filebeat）
-完整代码示例 (go-kit微服务) 联系 QQ: 3355168235 </description>
-    </item>
-    
-    <item>
-      <title>go-kit 微服务 服务链路追踪（jaeger 实现）（2）</title>
-      <link>https://hwholiday.github.io/2020/go_kit_v10/</link>
-      <pubDate>Mon, 13 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/go_kit_v10/</guid>
-      <description>go-kit 微服务 服务链路追踪（jaeger 实现）（2） 《go-kit 微服务 服务链路追踪（jaeger 实现）（1）》 中实现了grpc服务端，客户端的链路追踪 在以前的1.0版本的基础上我们加上对service,endpoint层的链路追踪 endpoint层 中间件 func NewTracerEndpointMiddleware(tracer opentracing.Tracer) endpoint.Middleware { return func(next endpoint.Endpoint) endpoint.Endpoint { return func(ctx context.Context, request interface{}) (response interface{}, err error) { span, ctxContext := opentracing.StartSpanFromContextWithTracer(ctx, tracer, &amp;#34;endpoint&amp;#34;, opentracing.Tag{ Key: string(ext.Component), Value: &amp;#34;NewTracerEndpointMiddleware&amp;#34;, }) defer span.Finish() return next(ctxContext, request) } } } 添加到登录EndPoint中 func NewEndPointServer(svc Service, limit *rate.Limiter,tracer opentracing.Tracer) EndPointServer { var loginEndPoint endpoint.Endpoint { loginEndPoint = MakeLoginEndPoint(svc) loginEndPoint = NewGolangRateAllowMiddleware(limit)(loginEndPoint) loginEndPoint = NewTracerEndpointMiddleware(tracer)(loginEndPoint) } return EndPointServer{LoginEndPoint: loginEndPoint} } service层修改 中间件 type tracerMiddlewareServer struct { next Service tracer opentracing.</description>
-    </item>
-    
-    <item>
-      <title>go-kit 微服务 服务熔断（hystrix-go 实现）</title>
-      <link>https://hwholiday.github.io/2020/go_kit_v8/</link>
-      <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/go_kit_v8/</guid>
-      <description>go-kit 微服务 服务熔断（hystrix-go 实现） 对客户端请求login方法添加熔断 Hystrix 在微服务架构中，每个服务都是相互关联的，比如我们下单服务和扣钱服务是分开的，现在扣钱服务出现的bug不能正常服务 Hystrix可以让我们在在微服务架构中对服务间的调用进行控制，加入一些调用延迟或者服务降级的容错机制。 Hystrix的设计原则 对依赖服务调用时出现的调用延迟和调用失败进行控制和容错保护 在复杂的分布式系统中，阻止某一个依赖服务的故障在整个系统中蔓延 提供fail-fast（快速失败）和快速恢复的支持 提供fallback优雅降级的支持 支持近实时的监控、报警以及运维操作 编写Hystrix类 import ( &amp;#34;errors&amp;#34; &amp;#34;github.com/afex/hystrix-go/hystrix&amp;#34; &amp;#34;sync&amp;#34; ) var config = hystrix.CommandConfig{ Timeout: 5000, //执行command的超时时间(毫秒) MaxConcurrentRequests: 8, //command的最大并发量 SleepWindow: 1000, //过多长时间，熔断器再次检测是否开启。单位毫秒 ErrorPercentThreshold: 30, //错误率 请求数量大于等于RequestVolumeThreshold并且错误率到达这个百分比后就会启动 RequestVolumeThreshold: 5, //请求阈值(一个统计窗口10秒内请求数量) 熔断器是否打开首先要满足这个条件；这里的设置表示至少有5个请求才进行ErrorPercentThreshold错误百分比计算 } type runFunc func() error type Hystrix struct { loadMap *sync.Map //储存每个调用函数对应的 Hystrix fallback string //降级信息 } func NewHystrix(msg string) *Hystrix { return &amp;amp;Hystrix{ loadMap: new(sync.Map), fallback: msg, } } func (s *Hystrix) Run(name string, run runFunc) error { if _, ok := s.</description>
-    </item>
-    
-    <item>
-      <title>go-kit 微服务 服务链路追踪（jaeger 实现）（1）</title>
-      <link>https://hwholiday.github.io/2020/go_kit_v9/</link>
-      <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/go_kit_v9/</guid>
-      <description>go-kit 微服务 服务链路追踪（jaeger 实现）（1） 对grpc调用添加链路追踪 部署 jaeger 生产环境部署
+完整代码示例 (go-kit微服务) 联系 QQ: 3355168235</description></item><item><title>go-kit 微服务 服务链路追踪（jaeger 实现）（2）</title><link>http://hwholiday.github.io/2020/go_kit_v10/</link><pubDate>Mon, 13 Jan 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/go_kit_v10/</guid><description>go-kit 微服务 服务链路追踪（jaeger 实现）（2） 《go-kit 微服务 服务链路追踪（jaeger 实现）（1）》 中实现了grpc服务端，客户端的链路追踪 在以前的1.0版本的基础上我们加上对service,endpoint层的链路追踪 endpoint层 中间件 func NewTracerEndpointMiddleware(tracer opentracing.Tracer) endpoint.Middleware { return func(next endpoint.Endpoint) endpoint.Endpoint { return func(ctx context.Context, request interface{}) (response interface{}, err error) { span, ctxContext := opentracing.StartSpanFromContextWithTracer(ctx, tracer, &amp;#34;endpoint&amp;#34;, opentracing.Tag{ Key: string(ext.Component), Value: &amp;#34;NewTracerEndpointMiddleware&amp;#34;, }) defer span.Finish() return next(ctxContext, request) } } } 添加到登录EndPoint中 func NewEndPointServer(svc Service, limit *rate.Limiter,tracer opentracing.Tracer) EndPointServer { var loginEndPoint endpoint.Endpoint { loginEndPoint = MakeLoginEndPoint(svc) loginEndPoint = NewGolangRateAllowMiddleware(limit)(loginEndPoint) loginEndPoint = NewTracerEndpointMiddleware(tracer)(loginEndPoint) } return EndPointServer{LoginEndPoint: loginEndPoint} } service层修改 中间件 type tracerMiddlewareServer struct { next Service tracer opentracing.</description></item><item><title>go-kit 微服务 服务熔断（hystrix-go 实现）</title><link>http://hwholiday.github.io/2020/go_kit_v8/</link><pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/go_kit_v8/</guid><description>go-kit 微服务 服务熔断（hystrix-go 实现） 对客户端请求login方法添加熔断 Hystrix 在微服务架构中，每个服务都是相互关联的，比如我们下单服务和扣钱服务是分开的，现在扣钱服务出现的bug不能正常服务 Hystrix可以让我们在在微服务架构中对服务间的调用进行控制，加入一些调用延迟或者服务降级的容错机制。 Hystrix的设计原则 对依赖服务调用时出现的调用延迟和调用失败进行控制和容错保护 在复杂的分布式系统中，阻止某一个依赖服务的故障在整个系统中蔓延 提供fail-fast（快速失败）和快速恢复的支持 提供fallback优雅降级的支持 支持近实时的监控、报警以及运维操作 编写Hystrix类 import ( &amp;#34;errors&amp;#34; &amp;#34;github.com/afex/hystrix-go/hystrix&amp;#34; &amp;#34;sync&amp;#34; ) var config = hystrix.CommandConfig{ Timeout: 5000, //执行command的超时时间(毫秒) MaxConcurrentRequests: 8, //command的最大并发量 SleepWindow: 1000, //过多长时间，熔断器再次检测是否开启。单位毫秒 ErrorPercentThreshold: 30, //错误率 请求数量大于等于RequestVolumeThreshold并且错误率到达这个百分比后就会启动 RequestVolumeThreshold: 5, //请求阈值(一个统计窗口10秒内请求数量) 熔断器是否打开首先要满足这个条件；这里的设置表示至少有5个请求才进行ErrorPercentThreshold错误百分比计算 } type runFunc func() error type Hystrix struct { loadMap *sync.Map //储存每个调用函数对应的 Hystrix fallback string //降级信息 } func NewHystrix(msg string) *Hystrix { return &amp;amp;Hystrix{ loadMap: new(sync.Map), fallback: msg, } } func (s *Hystrix) Run(name string, run runFunc) error { if _, ok := s.</description></item><item><title>go-kit 微服务 服务链路追踪（jaeger 实现）（1）</title><link>http://hwholiday.github.io/2020/go_kit_v9/</link><pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/go_kit_v9/</guid><description>go-kit 微服务 服务链路追踪（jaeger 实现）（1） 对grpc调用添加链路追踪 部署 jaeger 生产环境部署
 Docker Hub 中有官方打好的 Image https://hub.docker.com/u/jaegertracing/ 本地测试
 可以直接用 Jaeger 的 all-in-one
 ```base sudo docker pull jaegertracing/all-in-one sudo docker run -d -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 -p5775:5775/udp -p6831:6831/udp -p6832:6832/udp -p5778:5778 -p16686:16686 -p14268:14268 -p9411:9411 jaegertracing/all-in-one:latest ```
 能正常访问 http://127.0.0.1:16686/ 则安装成功
-编写jaeger 关于grpc代码 初始化客户端 func NewJaegerTracer(serviceName string) (tracer opentracing.Tracer, closer io.Closer, err error) { cfg := &amp;amp;jaegerConfig.Configuration{ Sampler: &amp;amp;jaegerConfig.SamplerConfig{ Type: &amp;#34;const&amp;#34;, //固定采样 Param: 1, //1=全采样、0=不采样 }, Reporter: &amp;amp;jaegerConfig.ReporterConfig{ LogSpans: true, LocalAgentHostPort: &amp;#34;127.</description>
-    </item>
-    
-    <item>
-      <title>go-kit 微服务 服务监控（prometheus 实现）</title>
-      <link>https://hwholiday.github.io/2020/go_kit_v7/</link>
-      <pubDate>Thu, 09 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/go_kit_v7/</guid>
-      <description>go-kit 微服务 服务监控（prometheus 实现） 实现对登录方法的请求次数,与请求耗时进行监控 prometheus 相关介绍使用请看文章《docker安装prometheus（普罗米修斯）》 Prometheus 的四种数据类型 Counter(计数器) 它是一个只能递增的数值,重启进程后会被重置 (例如记录：请求次数、任务完成数、错误发生次数) Gauge(测量器) 它表示一个既可以递增, 又可以递减的值,重启进程后，会被重置 (例如 温度变化、CPU,内存,网络使用变化) Histogram(柱状图) 每个采样点进行统计，打到各个分类值中(bucket) 对每个采样点值累计和(sum) 对采样点的次数累计和(count) 例如：请求耗时、响应大小。 Summary 类似histogram柱状图，summary是采样点分位图统计 有一个quantiles的功能，可以按%比划分跟踪的结果。例如：quantile取值0.85，表示取采样值里面的85%数据。 例如：请求耗时、响应大小。 具体区别可看文档histogram和summaries 定义统计服务中间件 创建metricsMiddlewareServer结构体 type metricsMiddlewareServer struct { next Service counter metrics.Counter histogram metrics.Histogram } 创建NewMetricsMiddlewareServer把统计对象嵌入中间件（其实就是对Service添加了一层装饰） func NewMetricsMiddlewareServer(counter metrics.Counter, histogram metrics.Histogram) NewMiddlewareServer { return func(service Service) Service { return metricsMiddlewareServer{ next: service, counter: counter, histogram: histogram, } } } 让metricsMiddlewareServer实现Service中的全部方法 func (l metricsMiddlewareServer) Login(ctx context.Context, in *pb.</description>
-    </item>
-    
-    <item>
-      <title>go-kit 微服务 服务注册与发现（etcd实现）</title>
-      <link>https://hwholiday.github.io/2020/go_kit_v6/</link>
-      <pubDate>Wed, 08 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/go_kit_v6/</guid>
-      <description>go-kit 微服务 服务注册与发现 (etcd 实现 ) etcd 相关介绍使用请看文章《Golang etcd 服务发现与负载均衡》 对服务注册，发现，与负载均衡提供了思路 简介 通过grpc实现一个用户中心实现简单的鉴权中心并返回用户token 上篇文章《go-kit 微服务 使用Grpc（并传递请求ID）》，我们已经实现了一个grpc的服务 我们这次主要是添加基于 go-kit 服务注册,发现,负载均衡 服务注册 使用go-kit初始化一个etcdV3客户端 options := etcdv3.ClientOptions{ DialTimeout: ttl, DialKeepAlive: ttl, } etcdClient, err := etcdv3.NewClient(context.Background(), etcdAddrs, options) if err != nil { utils.GetLogger().Error(&amp;#34;[user_agent] NewClient&amp;#34;, zap.Error(err)) return } Registar := etcdv3.NewRegistrar(etcdClient, etcdv3.Service{ Key: fmt.Sprintf(&amp;#34;%s/%s&amp;#34;,serName,grpcAddr), Value: grpcAddr, }, log.NewNopLogger()) 将节点注册到服务器 Registar.Register() 将节点注销 Registar.Deregister() 服务发现与负载均衡 在基于《go-kit 微服务 使用Grpc（并传递请求ID）》 我们已经实现了一个grpc客户端，现在我们只需要为这个客户端添加服务发现，与负载均衡等相关操作
+编写jaeger 关于grpc代码 初始化客户端 func NewJaegerTracer(serviceName string) (tracer opentracing.Tracer, closer io.Closer, err error) { cfg := &amp;amp;jaegerConfig.Configuration{ Sampler: &amp;amp;jaegerConfig.SamplerConfig{ Type: &amp;#34;const&amp;#34;, //固定采样 Param: 1, //1=全采样、0=不采样 }, Reporter: &amp;amp;jaegerConfig.ReporterConfig{ LogSpans: true, LocalAgentHostPort: &amp;#34;127.</description></item><item><title>go-kit 微服务 服务监控（prometheus 实现）</title><link>http://hwholiday.github.io/2020/go_kit_v7/</link><pubDate>Thu, 09 Jan 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/go_kit_v7/</guid><description>go-kit 微服务 服务监控（prometheus 实现） 实现对登录方法的请求次数,与请求耗时进行监控 prometheus 相关介绍使用请看文章《docker安装prometheus（普罗米修斯）》 Prometheus 的四种数据类型 Counter(计数器) 它是一个只能递增的数值,重启进程后会被重置 (例如记录：请求次数、任务完成数、错误发生次数) Gauge(测量器) 它表示一个既可以递增, 又可以递减的值,重启进程后，会被重置 (例如 温度变化、CPU,内存,网络使用变化) Histogram(柱状图) 每个采样点进行统计，打到各个分类值中(bucket) 对每个采样点值累计和(sum) 对采样点的次数累计和(count) 例如：请求耗时、响应大小。 Summary 类似histogram柱状图，summary是采样点分位图统计 有一个quantiles的功能，可以按%比划分跟踪的结果。例如：quantile取值0.85，表示取采样值里面的85%数据。 例如：请求耗时、响应大小。 具体区别可看文档histogram和summaries 定义统计服务中间件 创建metricsMiddlewareServer结构体 type metricsMiddlewareServer struct { next Service counter metrics.Counter histogram metrics.Histogram } 创建NewMetricsMiddlewareServer把统计对象嵌入中间件（其实就是对Service添加了一层装饰） func NewMetricsMiddlewareServer(counter metrics.Counter, histogram metrics.Histogram) NewMiddlewareServer { return func(service Service) Service { return metricsMiddlewareServer{ next: service, counter: counter, histogram: histogram, } } } 让metricsMiddlewareServer实现Service中的全部方法 func (l metricsMiddlewareServer) Login(ctx context.Context, in *pb.</description></item><item><title>go-kit 微服务 服务注册与发现（etcd实现）</title><link>http://hwholiday.github.io/2020/go_kit_v6/</link><pubDate>Wed, 08 Jan 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/go_kit_v6/</guid><description>go-kit 微服务 服务注册与发现 (etcd 实现 ) etcd 相关介绍使用请看文章《Golang etcd 服务发现与负载均衡》 对服务注册，发现，与负载均衡提供了思路 简介 通过grpc实现一个用户中心实现简单的鉴权中心并返回用户token 上篇文章《go-kit 微服务 使用Grpc（并传递请求ID）》，我们已经实现了一个grpc的服务 我们这次主要是添加基于 go-kit 服务注册,发现,负载均衡 服务注册 使用go-kit初始化一个etcdV3客户端 options := etcdv3.ClientOptions{ DialTimeout: ttl, DialKeepAlive: ttl, } etcdClient, err := etcdv3.NewClient(context.Background(), etcdAddrs, options) if err != nil { utils.GetLogger().Error(&amp;#34;[user_agent] NewClient&amp;#34;, zap.Error(err)) return } Registar := etcdv3.NewRegistrar(etcdClient, etcdv3.Service{ Key: fmt.Sprintf(&amp;#34;%s/%s&amp;#34;,serName,grpcAddr), Value: grpcAddr, }, log.NewNopLogger()) 将节点注册到服务器 Registar.Register() 将节点注销 Registar.Deregister() 服务发现与负载均衡 在基于《go-kit 微服务 使用Grpc（并传递请求ID）》 我们已经实现了一个grpc客户端，现在我们只需要为这个客户端添加服务发现，与负载均衡等相关操作
 创建一个UserAgent结构体，里面包含一个 etcdv3.Instancer 对象和一个 log.Logger对象
-type UserAgent struct { instancerm *etcdv3.</description>
-    </item>
-    
-    <item>
-      <title>go-kit 微服务 使用GRPC（并为每个请求添加UUID） </title>
-      <link>https://hwholiday.github.io/2020/go_kit_v5/</link>
-      <pubDate>Tue, 07 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/go_kit_v5/</guid>
-      <description>go-kit 微服务 使用Grpc（并传递请求ID） grpc gRPC是一个高性能、通用的开源RPC框架，其由Google主要面向移动应用开发并基于HTTP/2协议标准而设计，基于ProtoBuf(Protocol Buffers)序列化协议开发 grpc使用 案例 简介 通过grpc实现一个用户中心实现简单的鉴权中心并返回用户token 上篇文章《go-kit 微服务 身份认证（JWT）》已经实现的一个http的鉴权中心，所以我们只需要改变transport层逻辑 编写ProtoBuf //service.proto syntax = &amp;#34;proto3&amp;#34;; package pb; import &amp;#34;user.proto&amp;#34;; service User { rpc RpcUserLogin (Login) returns (LoginAck) { } } //user.proto message Login { string Account = 1; string Password = 2; } message LoginAck { string Token = 1; } 编译ProtoBuf protoc --go_out=plugins=grpc:. *.proto transport层修改 定义grpcServer结构体 type grpcServer struct { login grpctransport.Handler } 实现RpcUserLogin接口 func (s *grpcServer) RpcUserLogin(ctx context.</description>
-    </item>
-    
-    <item>
-      <title>go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）</title>
-      <link>https://hwholiday.github.io/2020/go_kit_v4/</link>
-      <pubDate>Sat, 04 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/go_kit_v4/</guid>
-      <description>go-kit 微服务 限流 (uber/ratelimit 和 golang/rate 实现) golang/rate 简介（golang.org/x/time/rate） golang 标准库中就自带的限流算法 该限流器是基于 Token Bucket(令牌桶) 实现的 //第一个参数是 r Limit。代表每秒可以向 Token 桶中产生多少 token //第二个参数是 b int。b 代表 Token 桶的容量大小 golangLimit := rate.NewLimiter(10, 1) //golangLimit 其令牌桶大小为 1, 以每秒 10 个 Token 的速率向桶中放置 Token。 Wait/WaitN Wait 实际上就是 WaitN(ctx,1) 当使用 Wait 方法时，如果令牌桶内Token（大于or等于 N）直接返回，如果当时令牌桶内 Token 不足(小于 N)，那么 Wait 方法将会阻塞，直到能从令牌桶内获得 Token Allow/AllowN Allow 实际上就是 AllowN(time.Now(),1)。 当使用使用 AllowN 方法时，截止到time.Now()这一时刻(time可以自己传入)令牌桶中数目必须（大于or等于 N），满足则返回正确，同时从令牌桶中消费 N 个 Token 应用场景请求速度太快就直接丢掉一些请求 Reserve/ReserveN Reserve 相当于 ReserveN(time.Now(), 1) 当使用使用 ReserveN 方法时，不管能不能从令牌桶内获取到Token都会返回一个Reservation对象 Reservation对象的 Ok() 方法返回了令牌桶是否可以在最大等待时间内提供请求的令牌数量，如果OK为false，则Delay()返回InfDuration Reservation对象的 Delay() 方法返回了需要等待的时间，如果时间为0则不需要等待 如果不想等待就调用 Reservation对象的 Cancel() uber/ratelimit 简介（go.</description>
-    </item>
-    
-    <item>
-      <title>go-kit 微服务 身份认证 （JWT）</title>
-      <link>https://hwholiday.github.io/2020/go_kit_v3/</link>
-      <pubDate>Fri, 03 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/go_kit_v3/</guid>
-      <description>go-kit 微服务 身份认证（JWT） Jwt官网介绍 JSON Web令牌（JWT）是一个开放标准（RFC 7519），它定义了一种紧凑且自包含的方式，用于在各方之间作为JSON对象安全地传输信息。由于此信息是经过数字签名的，因此可以被验证和信任。可以使用秘密（使用HMAC算法）或使用RSA或ECDSA的公钥/私钥对对JWT进行签名。 简介 在上篇文章中go-kit 微服务 添加日志（并为每个请求添加UUID）中我们学会了如何使用中间件 这次我们在程序中加入jwt身份验证 使sum接口需要传入token才能实现访问 开始 下载依赖
-jwt库 go get github.com/dgrijalva/jwt-go jwt编写 jwtSecret 生成token的密钥 CreateJwtToken 生成token ParseToken 解析token var jwtSecret = []byte(&amp;#34;jwtSecret_v3&amp;#34;) const JWT_CONTEXT_KEY = &amp;#34;jwt_context_key&amp;#34; type Token struct { Name string DcId int jwt.StandardClaims } func CreateJwtToken(name string, dcId int) (string, error) { var token Token token.StandardClaims = jwt.StandardClaims{ Audience: &amp;#34;&amp;#34;, // 受众群体 ExpiresAt: time.Now().Add(30 * time.Second).Unix(), // 到期时间 Id: &amp;#34;&amp;#34;, // 编号 IssuedAt: time.</description>
-    </item>
-    
-    <item>
-      <title>go-kit 微服务 添加日志（user/zap ,并为每个请求添加UUID） </title>
-      <link>https://hwholiday.github.io/2020/git_kit_v2/</link>
-      <pubDate>Thu, 02 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/git_kit_v2/</guid>
-      <description>go-kit 微服务 添加日志（并为每个请求添加UUID） 通过日志我们可以了解到我们关心的数据在软件内的执行情况，同时出问题时可以分析与定位系统故障 用户的每个请求都添加请求ID(我使用的UUID)，我们可以更好的了解到每个请求的执行过程，更利于分析与定位问题 简介 在上篇文章中go-kit 微服务 基础使用（HTTP）我们实现了使用go-kit 构建一个简单的加法的http服务 这篇文章中我们将实现使用go-kit中间件机制为其增加日志功能 开始 下载依赖
-uuid库 go get github.com/satori/go. 日志库使用的是以前文章 Golang 高性能日志库 zap 封装工具类的日志工具 Server层修改 在Server层文件夹中创建middleware.go文件 定义服务中间件 type NewMiddlewareServer func(Service) Service 创建logMiddlewareServer结构体 type logMiddlewareServer struct { logger *zap.Logger next Service } 创建NewLogMiddlewareServer把日志记录对象嵌入中间件（其实就是对Service添加了一层装饰） func NewLogMiddlewareServer(log *zap.Logger) NewMiddlewareServer { return func(service Service) Service { return logMiddlewareServer{ logger: log, next: service, } } } 让logMiddlewareServer实现Service中的全部方法 func (l logMiddlewareServer) TestAdd(ctx context.Context, in Add) (out AddAck) { defer func() { l.</description>
-    </item>
-    
-    <item>
-      <title>go-kit 微服务 基础使用 （HTTP）</title>
-      <link>https://hwholiday.github.io/2019/go_kit_v1/</link>
-      <pubDate>Mon, 30 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2019/go_kit_v1/</guid>
-      <description>使用go-kit 构建一个简单的加法，对方暴露一个请求接口 URL格式为：http://127.0.0.1:8888/sum?a=参数&amp;amp;b=参数 请求方法为 GET 开始 go-kit 安装：go get github.com/go-kit/kit 创建Service 定义接口 type Service interface { TestAdd(ctx context.Context,in Add) AddAck } 定义model type Add struct { A int `json:&amp;#34;a&amp;#34;` B int `json:&amp;#34;b&amp;#34;` } type AddAck struct { Res int `json:&amp;#34;res&amp;#34;` } 创建结构体baseServer来实现Service接口 type baseServer struct { } func NewService() Service { return &amp;amp;baseServer{} } func (s baseServer) TestAdd(ctx context.Context,in Add) AddAck { return AddAck{Res:in.A+in.B} } 创建Endpoint 把Service的方法封装到Endpoint中
-把Service中的TestAdd，转换成endpoint.Endpoint func MakeAddEndPoint(s v1_service.</description>
-    </item>
-    
-  </channel>
-</rss>
+type UserAgent struct { instancerm *etcdv3.</description></item><item><title>go-kit 微服务 使用GRPC（并为每个请求添加UUID）</title><link>http://hwholiday.github.io/2020/go_kit_v5/</link><pubDate>Tue, 07 Jan 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/go_kit_v5/</guid><description>go-kit 微服务 使用Grpc（并传递请求ID） grpc gRPC是一个高性能、通用的开源RPC框架，其由Google主要面向移动应用开发并基于HTTP/2协议标准而设计，基于ProtoBuf(Protocol Buffers)序列化协议开发 grpc使用 案例 简介 通过grpc实现一个用户中心实现简单的鉴权中心并返回用户token 上篇文章《go-kit 微服务 身份认证（JWT）》已经实现的一个http的鉴权中心，所以我们只需要改变transport层逻辑 编写ProtoBuf //service.proto syntax = &amp;#34;proto3&amp;#34;; package pb; import &amp;#34;user.proto&amp;#34;; service User { rpc RpcUserLogin (Login) returns (LoginAck) { } } //user.proto message Login { string Account = 1; string Password = 2; } message LoginAck { string Token = 1; } 编译ProtoBuf protoc --go_out=plugins=grpc:. *.proto transport层修改 定义grpcServer结构体 type grpcServer struct { login grpctransport.Handler } 实现RpcUserLogin接口 func (s *grpcServer) RpcUserLogin(ctx context.</description></item><item><title>go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）</title><link>http://hwholiday.github.io/2020/go_kit_v4/</link><pubDate>Sat, 04 Jan 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/go_kit_v4/</guid><description>go-kit 微服务 限流 (uber/ratelimit 和 golang/rate 实现) golang/rate 简介（golang.org/x/time/rate） golang 标准库中就自带的限流算法 该限流器是基于 Token Bucket(令牌桶) 实现的 //第一个参数是 r Limit。代表每秒可以向 Token 桶中产生多少 token //第二个参数是 b int。b 代表 Token 桶的容量大小 golangLimit := rate.NewLimiter(10, 1) //golangLimit 其令牌桶大小为 1, 以每秒 10 个 Token 的速率向桶中放置 Token。 Wait/WaitN Wait 实际上就是 WaitN(ctx,1) 当使用 Wait 方法时，如果令牌桶内Token（大于or等于 N）直接返回，如果当时令牌桶内 Token 不足(小于 N)，那么 Wait 方法将会阻塞，直到能从令牌桶内获得 Token Allow/AllowN Allow 实际上就是 AllowN(time.Now(),1)。 当使用使用 AllowN 方法时，截止到time.Now()这一时刻(time可以自己传入)令牌桶中数目必须（大于or等于 N），满足则返回正确，同时从令牌桶中消费 N 个 Token 应用场景请求速度太快就直接丢掉一些请求 Reserve/ReserveN Reserve 相当于 ReserveN(time.Now(), 1) 当使用使用 ReserveN 方法时，不管能不能从令牌桶内获取到Token都会返回一个Reservation对象 Reservation对象的 Ok() 方法返回了令牌桶是否可以在最大等待时间内提供请求的令牌数量，如果OK为false，则Delay()返回InfDuration Reservation对象的 Delay() 方法返回了需要等待的时间，如果时间为0则不需要等待 如果不想等待就调用 Reservation对象的 Cancel() uber/ratelimit 简介（go.</description></item><item><title>go-kit 微服务 身份认证 （JWT）</title><link>http://hwholiday.github.io/2020/go_kit_v3/</link><pubDate>Fri, 03 Jan 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/go_kit_v3/</guid><description>go-kit 微服务 身份认证（JWT） Jwt官网介绍 JSON Web令牌（JWT）是一个开放标准（RFC 7519），它定义了一种紧凑且自包含的方式，用于在各方之间作为JSON对象安全地传输信息。由于此信息是经过数字签名的，因此可以被验证和信任。可以使用秘密（使用HMAC算法）或使用RSA或ECDSA的公钥/私钥对对JWT进行签名。 简介 在上篇文章中go-kit 微服务 添加日志（并为每个请求添加UUID）中我们学会了如何使用中间件 这次我们在程序中加入jwt身份验证 使sum接口需要传入token才能实现访问 开始 下载依赖
+jwt库 go get github.com/dgrijalva/jwt-go jwt编写 jwtSecret 生成token的密钥 CreateJwtToken 生成token ParseToken 解析token var jwtSecret = []byte(&amp;#34;jwtSecret_v3&amp;#34;) const JWT_CONTEXT_KEY = &amp;#34;jwt_context_key&amp;#34; type Token struct { Name string DcId int jwt.StandardClaims } func CreateJwtToken(name string, dcId int) (string, error) { var token Token token.StandardClaims = jwt.StandardClaims{ Audience: &amp;#34;&amp;#34;, // 受众群体 ExpiresAt: time.Now().Add(30 * time.Second).Unix(), // 到期时间 Id: &amp;#34;&amp;#34;, // 编号 IssuedAt: time.</description></item><item><title>go-kit 微服务 添加日志（user/zap ,并为每个请求添加UUID）</title><link>http://hwholiday.github.io/2020/git_kit_v2/</link><pubDate>Thu, 02 Jan 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/git_kit_v2/</guid><description>go-kit 微服务 添加日志（并为每个请求添加UUID） 通过日志我们可以了解到我们关心的数据在软件内的执行情况，同时出问题时可以分析与定位系统故障 用户的每个请求都添加请求ID(我使用的UUID)，我们可以更好的了解到每个请求的执行过程，更利于分析与定位问题 简介 在上篇文章中go-kit 微服务 基础使用（HTTP）我们实现了使用go-kit 构建一个简单的加法的http服务 这篇文章中我们将实现使用go-kit中间件机制为其增加日志功能 开始 下载依赖
+uuid库 go get github.com/satori/go. 日志库使用的是以前文章 Golang 高性能日志库 zap 封装工具类的日志工具 Server层修改 在Server层文件夹中创建middleware.go文件 定义服务中间件 type NewMiddlewareServer func(Service) Service 创建logMiddlewareServer结构体 type logMiddlewareServer struct { logger *zap.Logger next Service } 创建NewLogMiddlewareServer把日志记录对象嵌入中间件（其实就是对Service添加了一层装饰） func NewLogMiddlewareServer(log *zap.Logger) NewMiddlewareServer { return func(service Service) Service { return logMiddlewareServer{ logger: log, next: service, } } } 让logMiddlewareServer实现Service中的全部方法 func (l logMiddlewareServer) TestAdd(ctx context.Context, in Add) (out AddAck) { defer func() { l.</description></item><item><title>go-kit 微服务 基础使用 （HTTP）</title><link>http://hwholiday.github.io/2019/go_kit_v1/</link><pubDate>Mon, 30 Dec 2019 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2019/go_kit_v1/</guid><description>使用go-kit 构建一个简单的加法，对方暴露一个请求接口 URL格式为：http://127.0.0.1:8888/sum?a=参数&amp;amp;b=参数 请求方法为 GET 开始 go-kit 安装：go get github.com/go-kit/kit 创建Service 定义接口 type Service interface { TestAdd(ctx context.Context,in Add) AddAck } 定义model type Add struct { A int `json:&amp;#34;a&amp;#34;` B int `json:&amp;#34;b&amp;#34;` } type AddAck struct { Res int `json:&amp;#34;res&amp;#34;` } 创建结构体baseServer来实现Service接口 type baseServer struct { } func NewService() Service { return &amp;amp;baseServer{} } func (s baseServer) TestAdd(ctx context.Context,in Add) AddAck { return AddAck{Res:in.A+in.B} } 创建Endpoint 把Service的方法封装到Endpoint中
+把Service中的TestAdd，转换成endpoint.Endpoint func MakeAddEndPoint(s v1_service.</description></item></channel></rss>

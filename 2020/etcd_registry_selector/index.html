@@ -1,182 +1,22 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noodp"/>
-  
-  
-  
-  
-  
-  <link rel="prev" href="https://hwholiday.github.io/2020/go_kit_v4/" />
-  <link rel="next" href="https://hwholiday.github.io/2020/go_kit_v5/" />
-  <link rel="canonical" href="https://hwholiday.github.io/2020/etcd_registry_selector/" />
-  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>
-       
-       
-           Golang etcd 服务发现与负载均衡 | hwholiday
-       
-  </title>
-  <meta name="title" content="Golang etcd 服务发现与负载均衡 | hwholiday">
-    
-  
-  <link rel="stylesheet" href="/font/iconfont.css">
-  <link rel="stylesheet" href="/css/main.min.css">
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Golang etcd 服务发现与负载均衡"/>
-<meta name="twitter:description" content="Golang etcd 服务发现与负载均衡"/>
-
-  <script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Golang etcd 服务发现与负载均衡",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https:\/\/hwholiday.github.io\/2020\/etcd_registry_selector\/"
-  },
-  
-  "genre": "posts",
-  "keywords": "golang",
-  "wordcount":  682 ,
-  "url": "https:\/\/hwholiday.github.io\/2020\/etcd_registry_selector\/",
-  "datePublished": "2020-01-06T00:00:00\u002b00:00",
-  "dateModified": "2020-01-06T00:00:00\u002b00:00",
-  
-  
-  
-  "description": "Golang etcd 服务发现与负载均衡"
-}
-</script>
-</head>
-
-  
-             
-  
-
-
-
-  <body class="">
-    <div class="wrapper">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-header header-logo">
-        	<a href="https://hwholiday.github.io/">hwholiday</a>
-        </div>
-        <div class="menu navbar-right">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
-        </div>
-    </div>
-</nav>
-<nav class="navbar-mobile" id="nav-mobile" style="display: none">
-     <div class="container">
-        <div class="navbar-header">
-            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
-            <div class="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-     
-          <div class="menu" id="mobile-menu">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-        </div>
-    </div>
-</nav>
-
-    	 <main class="main">
-          <div class="container">
-      		
-<article class="post-warp">
-    <header class="post-header">
-        <h1 class="post-title">Golang etcd 服务发现与负载均衡</h1>
-        <div class="post-meta">
-            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
-                <span class="post-time">
-                    on <time datetime=2020-01-06 >6 January 2020</time>
-                </span>
-                in
-                <i class="iconfont icon-folder"></i>
-                <span class="post-category">
-                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
-                        
-                </span>
-                <i class="iconfont icon-timer"></i>
-                4 min
-        </div>
-    </header>
-    <div class="post-content">
-        
-
-        
-
-        
-        
-     
-          
-          
-          
-
-          
-          
-          
-
-          <h2 id="golang-etcd-服务发现与负载均衡">Golang etcd 服务发现与负载均衡</h2>
-<ol>
-<li>注册： 同一服务下的所有节点注册到相同目录下，节点启动后将自己的信息注册到所属服务的目录中。</li>
-<li>健康： 服务节点定时发送心跳，注册到服务目录中的信息设置一个较短的 TTL，运行正常的服务节点每隔一段时间会去更新信息的 TTL。</li>
-<li>发现： 通过名称能查询到服务提供外部访问的 IP 和端口号。比如网关代理服务时能够及时的发现服务中新增节点、丢弃不可用的服务节点，同时各个服务间也能感知对方的存在。</li>
-</ol>
-<h3 id="etcdhttpsgithubcometcd-ioetcd"><a href="https://github.com/etcd-io/etcd">etcd</a></h3>
-<ul>
-<li>是由CoreOS开发，用于可靠地存储集群的配置数据的一种持久性，轻量型的，分布式的键-值数据存储组件。该组件可表示在任何给定时间点处的集群的整体状态。其他组件在注意到存储的变化之后，会变成相应的状态。采用raft协议作为一致性算法，etcd基于Go语言实现。</li>
-</ul>
-<h2 id="服务注册">服务注册</h2>
-<ul>
-<li>下载依赖</li>
-</ul>
-<pre tabindex="0"><code class="language-base" data-lang="base">go get go.etcd.io/etcd/clientv3
-</code></pre><ul>
-<li>创建注册接口</li>
-</ul>
-<pre tabindex="0"><code class="language-base" data-lang="base">type Registry interface {
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2020/go_kit_v4/><link rel=next href=http://hwholiday.github.io/2020/go_kit_v5/><link rel=canonical href=http://hwholiday.github.io/2020/etcd_registry_selector/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>Golang etcd 服务发现与负载均衡 | hwholiday</title><meta name=title content="Golang etcd 服务发现与负载均衡 | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="Golang etcd 服务发现与负载均衡"><meta name=twitter:description content="Golang etcd 服务发现与负载均衡"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Golang etcd 服务发现与负载均衡","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2020\/etcd_registry_selector\/"},"genre":"posts","keywords":"golang","wordcount":682,"url":"http:\/\/hwholiday.github.io\/2020\/etcd_registry_selector\/","datePublished":"2020-01-06T00:00:00\u002b00:00","dateModified":"2020-01-06T00:00:00\u002b00:00","description":"Golang etcd 服务发现与负载均衡"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a>
+<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>Golang etcd 服务发现与负载均衡</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
+<span class=post-time>on <time datetime=2020-01-06>6 January 2020</time></span>
+in
+<i class="iconfont icon-folder"></i>
+<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a></span>
+<i class="iconfont icon-timer"></i>
+4 min</div></header><div class=post-content><h2 id=golang-etcd-服务发现与负载均衡>Golang etcd 服务发现与负载均衡</h2><ol><li>注册： 同一服务下的所有节点注册到相同目录下，节点启动后将自己的信息注册到所属服务的目录中。</li><li>健康： 服务节点定时发送心跳，注册到服务目录中的信息设置一个较短的 TTL，运行正常的服务节点每隔一段时间会去更新信息的 TTL。</li><li>发现： 通过名称能查询到服务提供外部访问的 IP 和端口号。比如网关代理服务时能够及时的发现服务中新增节点、丢弃不可用的服务节点，同时各个服务间也能感知对方的存在。</li></ol><h3 id=etcdhttpsgithubcometcd-ioetcd><a href=https://github.com/etcd-io/etcd>etcd</a></h3><ul><li>是由CoreOS开发，用于可靠地存储集群的配置数据的一种持久性，轻量型的，分布式的键-值数据存储组件。该组件可表示在任何给定时间点处的集群的整体状态。其他组件在注意到存储的变化之后，会变成相应的状态。采用raft协议作为一致性算法，etcd基于Go语言实现。</li></ul><h2 id=服务注册>服务注册</h2><ul><li>下载依赖</li></ul><pre tabindex=0><code class=language-base data-lang=base>go get go.etcd.io/etcd/clientv3
+</code></pre><ul><li>创建注册接口</li></ul><pre tabindex=0><code class=language-base data-lang=base>type Registry interface {
 	RegistryNode(node PutNode) error
 	UnRegistry()
 }
-</code></pre><ul>
-<li>具体代码实现</li>
-</ul>
-<pre tabindex="0"><code class="language-base" data-lang="base">var prefix = &#34;/registry/server/&#34;
+</code></pre><ul><li>具体代码实现</li></ul><pre tabindex=0><code class=language-base data-lang=base>var prefix = &#34;/registry/server/&#34;
 type Registry interface {
 	RegistryNode(node PutNode) error
 	UnRegistry()
@@ -280,8 +120,7 @@ func (s *registryServer) GetVal(node Node) (string, error) {
 func (e *registryServer) HashKey(addr string) uint32 {
 	return crc32.ChecksumIEEE([]byte(addr))
 }
-</code></pre><h2 id="服务发现与负载均衡">服务发现与负载均衡</h2>
-<pre tabindex="0"><code class="language-base" data-lang="base">func init() {
+</code></pre><h2 id=服务发现与负载均衡>服务发现与负载均衡</h2><pre tabindex=0><code class=language-base data-lang=base>func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 type Selector interface {
@@ -390,144 +229,14 @@ func (s *selectorServer) GetVal(val []byte) (Node, error) {
 	}
 	return node, nil
 }
-</code></pre><h2 id="结语">结语</h2>
-<ul>
-<li>文中只实现了简单的服务注册，发现，负载均衡更加高级的用法欢迎添加QQ一起讨论</li>
-<li>有任何疑问请联系我QQ</li>
-</ul>
-<h3 id="完整代码地址httpsgithubcomhwholidaylearning_toolstreemasterall_packaged_libraryregistryselector"><a href="https://github.com/hwholiday/learning_tools/tree/master/all_packaged_library/registrySelector">完整代码地址</a></h3>
-<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
-
-    </div>
-    
-    <div id="gitalk-container"></div>
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script>
-        const gitalk = new Gitalk({
-            clientID: '64d60a02f98e01e31e2f',
-            clientSecret: 'b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58',
-            repo: 'hwholiday.github.io',
-            owner: 'hwholiday',
-            admin: 'hwholiday',
-            id: 'etcd_registry_selector', 
-            distractionFreeMode: false 
-        });
-        (function() {
-            if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-                document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
-                return;
-            }
-            gitalk.render('gitalk-container');
-        })();
-    </script>
-    
-    <div class="post-copyright">
-             
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>hwholiday </span>
-                </p>
-            
-           
-            <p class="copyright-item">
-                    <span>Words:</span>
-                   <span>682</span>
-            </p>
-
-            <p class="copyright-item">
-                
-            </p>
-
-            
-    </div>
-
-  
-    <div class="post-tags">
-        
-            <section>
-            <i class="iconfont icon-icon-tag"></i>Tag: 
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
-                    #golang</a></span>
-            
-            </section>
-        
-        <section>
-                <a href="javascript:window.history.back();">Back</a></span> · 
-                <span><a href="https://hwholiday.github.io/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-        
-        <a href="https://hwholiday.github.io/2020/go_kit_v4/" class="prev" rel="prev" title="go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）"><i class="iconfont icon-dajiantou"></i>&nbsp;go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）</a>
-         
-        
-        <a href="https://hwholiday.github.io/2020/go_kit_v5/" class="next" rel="next" title="go-kit 微服务 使用GRPC（并为每个请求添加UUID） ">go-kit 微服务 使用GRPC（并为每个请求添加UUID） &nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
-        
-    </div>
-
-    <div class="post-comment">
-          
-          
-
- 
-
-          
-    </div>
-</article>
-          </div>
-		   </main>
-      <footer class="footer">
-    <div class="copyright">
-        &copy;
-        
-        <span itemprop="copyrightYear">2016 - 2023</span>
-        
-         
-            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
-         
-
-		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
-    </div>
-</footer>
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    <script src="/js/vendor_no_gallery.min.js" async=""></script>
-    
-  
-
-
-
-
-
-
-
-<script>
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-</script>
-
-
-
-     </div>
-  </body>
-</html>
+</code></pre><h2 id=结语>结语</h2><ul><li>文中只实现了简单的服务注册，发现，负载均衡更加高级的用法欢迎添加QQ一起讨论</li><li>有任何疑问请联系我QQ</li></ul><h3 id=完整代码地址httpsgithubcomhwholidaylearning_toolstreemasterall_packaged_libraryregistryselector><a href=https://github.com/hwholiday/learning_tools/tree/master/all_packaged_library/registrySelector>完整代码地址</a></h3><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div id=gitalk-container></div><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css><script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
+<script>const gitalk=new Gitalk({clientID:"64d60a02f98e01e31e2f",clientSecret:"b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58",repo:"hwholiday.github.io",owner:"hwholiday",admin:"hwholiday",id:"etcd_registry_selector",distractionFreeMode:!1});(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("gitalk-container").innerHTML="Gitalk comments not available by default when the website is previewed locally.";return}gitalk.render("gitalk-container")})()</script><div class=post-copyright><p class=copyright-item><span>Author:</span>
+<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
+<span>682</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
+<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#golang</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
+<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2020/go_kit_v4/ class=prev rel=prev title="go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）"><i class="iconfont icon-dajiantou"></i>&nbsp;go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）</a>
+<a href=http://hwholiday.github.io/2020/go_kit_v5/ class=next rel=next title="go-kit 微服务 使用GRPC（并为每个请求添加UUID） ">go-kit 微服务 使用GRPC（并为每个请求添加UUID） &nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
+<span itemprop=copyrightYear>2016 - 2023</span>
+<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
+<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
+<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>

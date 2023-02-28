@@ -1,164 +1,18 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noodp"/>
-  
-  
-  
-  
-  
-  <link rel="prev" href="https://hwholiday.github.io/2017/docker_deploy/" />
-  <link rel="next" href="https://hwholiday.github.io/2018/supervisor/" />
-  <link rel="canonical" href="https://hwholiday.github.io/2017/docker_install_gitlab/" />
-  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>
-       
-       
-           docker安装gitlab | hwholiday
-       
-  </title>
-  <meta name="title" content="docker安装gitlab | hwholiday">
-    
-  
-  <link rel="stylesheet" href="/font/iconfont.css">
-  <link rel="stylesheet" href="/css/main.min.css">
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="docker安装gitlab"/>
-<meta name="twitter:description" content="docker安装gitlab"/>
-
-  <script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "BlogPosting",
-  "headline": "docker安装gitlab",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https:\/\/hwholiday.github.io\/2017\/docker_install_gitlab\/"
-  },
-  
-  "genre": "posts",
-  "keywords": "git, docker, DevOps",
-  "wordcount":  155 ,
-  "url": "https:\/\/hwholiday.github.io\/2017\/docker_install_gitlab\/",
-  "datePublished": "2017-12-02T00:00:00\u002b00:00",
-  "dateModified": "2017-12-02T00:00:00\u002b00:00",
-  
-  
-  
-  "description": "docker安装gitlab"
-}
-</script>
-</head>
-
-  
-             
-  
-
-
-
-  <body class="">
-    <div class="wrapper">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-header header-logo">
-        	<a href="https://hwholiday.github.io/">hwholiday</a>
-        </div>
-        <div class="menu navbar-right">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
-        </div>
-    </div>
-</nav>
-<nav class="navbar-mobile" id="nav-mobile" style="display: none">
-     <div class="container">
-        <div class="navbar-header">
-            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
-            <div class="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-     
-          <div class="menu" id="mobile-menu">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-        </div>
-    </div>
-</nav>
-
-    	 <main class="main">
-          <div class="container">
-      		
-<article class="post-warp">
-    <header class="post-header">
-        <h1 class="post-title">docker安装gitlab</h1>
-        <div class="post-meta">
-            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
-                <span class="post-time">
-                    on <time datetime=2017-12-02 >2 December 2017</time>
-                </span>
-                in
-                <i class="iconfont icon-folder"></i>
-                <span class="post-category">
-                        <a href="https://hwholiday.github.io/categories/docker/"> Docker </a>
-                        <a href="https://hwholiday.github.io/categories/devops/"> DevOps </a>
-                        
-                </span>
-                <i class="iconfont icon-timer"></i>
-                1 min
-        </div>
-    </header>
-    <div class="post-content">
-        
-
-        
-
-        
-        
-     
-          
-          
-          
-
-          
-          
-          
-
-          <h2 id="gitlab简介">Gitlab简介</h2>
-<ul>
-<li>GitLab是由GitLab Inc.开发，使用MIT许可证的基于网络的Git仓库管理工具，且具有wiki和issue跟踪功能。</li>
-<li>GitLab是一个Git的代码托管工具，有免费的社区版允许我们在本地搭建代码托管网站，也有付费的企业版网站，能够在线托管代码。</li>
-</ul>
-<h3 id="搜索-gitlab-docker镜像">搜索 gitlab Docker镜像</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">sudo docker search gitlab
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2017/docker_deploy/><link rel=next href=http://hwholiday.github.io/2018/supervisor/><link rel=canonical href=http://hwholiday.github.io/2017/docker_install_gitlab/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>docker安装gitlab | hwholiday</title><meta name=title content="docker安装gitlab | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="docker安装gitlab"><meta name=twitter:description content="docker安装gitlab"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"docker安装gitlab","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2017\/docker_install_gitlab\/"},"genre":"posts","keywords":"git, docker, DevOps","wordcount":155,"url":"http:\/\/hwholiday.github.io\/2017\/docker_install_gitlab\/","datePublished":"2017-12-02T00:00:00\u002b00:00","dateModified":"2017-12-02T00:00:00\u002b00:00","description":"docker安装gitlab"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a>
+<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>docker安装gitlab</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
+<span class=post-time>on <time datetime=2017-12-02>2 December 2017</time></span>
+in
+<i class="iconfont icon-folder"></i>
+<span class=post-category><a href=http://hwholiday.github.io/categories/docker/>Docker</a>
+<a href=http://hwholiday.github.io/categories/devops/>DevOps</a></span>
+<i class="iconfont icon-timer"></i>
+1 min</div></header><div class=post-content><h2 id=gitlab简介>Gitlab简介</h2><ul><li>GitLab是由GitLab Inc.开发，使用MIT许可证的基于网络的Git仓库管理工具，且具有wiki和issue跟踪功能。</li><li>GitLab是一个Git的代码托管工具，有免费的社区版允许我们在本地搭建代码托管网站，也有付费的企业版网站，能够在线托管代码。</li></ul><h3 id=搜索-gitlab-docker镜像>搜索 gitlab Docker镜像</h3><pre tabindex=0><code class=language-base data-lang=base>sudo docker search gitlab
 
 //输出结果部分截图
 NAME                                         DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED
@@ -170,144 +24,21 @@ gitlab/gitlab-ee                             GitLab Enterprise Edition docker im
 jangrewe/gitlab-ci-android                   GitLab CI image for building Android apps       46                                      [OK]
 centurylink/gitlab                           This image uses the image from sameersbn / g…   26                                      [OK]
 gitlab/dind                                                                                  24                                      [OK]
-</code></pre><h3 id="拉取-gitlab-docker镜像">拉取 gitlab Docker镜像</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">sudo docker pull gitlab/gitlab-ce 
-</code></pre><h3 id="启动gitlab">启动Gitlab</h3>
-<ul>
-<li>启动一个默认配置的Gitlab。在本机测试使用的话，将-h替换为127.0.0.1。如果需要让外部系统也能访问的话使用外网IP地址。</li>
-</ul>
-<pre tabindex="0"><code class="language-base" data-lang="base">sudo docker run -d  -h 192.168.2.28 -p 443:443 -p 80:80 -p 22:22 --name gitlab --restart always --volume /srv/gitlab/config:/etc/gitlab --volume /srv/gitlab/logs:/var/log/gitlab --volume /srv/gitlab/data:/var/opt/gitlab gitlab/gitlab-ce
-</code></pre><ul>
-<li>使用sudo docker ps -a 命令查看当前所有Docker容器的状态。当它的状态由starting变为运行时间时，说明成功启动了</li>
-<li>使用上面配置的IP地址（如192.168.2.28）访问即可</li>
-<li>初次使用创建默认管理员密码。然后我们注册一个普通用户,就可以开始你的工作了</li>
-</ul>
-<h3 id="配置gitlab">配置Gitlab</h3>
-<ul>
-<li>刚刚启动Gitlab的时候需要我们输入一个密码，这个密码是管理员用户的密码。我们在登录那里使用root作为用户名，然后用刚刚设置的密码，就可以以管理员身份登录Gitlab。</li>
-<li>sudo docker exec -it gitlab /bin/bash  然后编辑/etc/gitlab/gitlab.rb文件，这是Gitlab的全局配置文件。<a href="https://docs.gitlab.com/omnibus/settings/configuration.html">配置方法</a></li>
-</ul>
-<h3 id="更新gitlab">更新Gitlab</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">sudo docker stop gitlab //停止容器
+</code></pre><h3 id=拉取-gitlab-docker镜像>拉取 gitlab Docker镜像</h3><pre tabindex=0><code class=language-base data-lang=base>sudo docker pull gitlab/gitlab-ce 
+</code></pre><h3 id=启动gitlab>启动Gitlab</h3><ul><li>启动一个默认配置的Gitlab。在本机测试使用的话，将-h替换为127.0.0.1。如果需要让外部系统也能访问的话使用外网IP地址。</li></ul><pre tabindex=0><code class=language-base data-lang=base>sudo docker run -d  -h 192.168.2.28 -p 443:443 -p 80:80 -p 22:22 --name gitlab --restart always --volume /srv/gitlab/config:/etc/gitlab --volume /srv/gitlab/logs:/var/log/gitlab --volume /srv/gitlab/data:/var/opt/gitlab gitlab/gitlab-ce
+</code></pre><ul><li>使用sudo docker ps -a 命令查看当前所有Docker容器的状态。当它的状态由starting变为运行时间时，说明成功启动了</li><li>使用上面配置的IP地址（如192.168.2.28）访问即可</li><li>初次使用创建默认管理员密码。然后我们注册一个普通用户,就可以开始你的工作了</li></ul><h3 id=配置gitlab>配置Gitlab</h3><ul><li>刚刚启动Gitlab的时候需要我们输入一个密码，这个密码是管理员用户的密码。我们在登录那里使用root作为用户名，然后用刚刚设置的密码，就可以以管理员身份登录Gitlab。</li><li>sudo docker exec -it gitlab /bin/bash 然后编辑/etc/gitlab/gitlab.rb文件，这是Gitlab的全局配置文件。<a href=https://docs.gitlab.com/omnibus/settings/configuration.html>配置方法</a></li></ul><h3 id=更新gitlab>更新Gitlab</h3><pre tabindex=0><code class=language-base data-lang=base>sudo docker stop gitlab //停止容器
 sudo docker rm gitlab  //移出容器
 sudo docker pull gitlab/gitlab-ce //拉取最新的gitlab
 //在使用上次的配置运行Gitlab即可。不用担心数据会丢失。只要你的volume参数指定还和上次一样，Gitlab就会自动读取这些配置。
-</code></pre><h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
-
-    </div>
-    
-    <div class="post-copyright">
-             
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>hwholiday </span>
-                </p>
-            
-           
-            <p class="copyright-item">
-                    <span>Words:</span>
-                   <span>155</span>
-            </p>
-
-            <p class="copyright-item">
-                
-            </p>
-
-            
-    </div>
-
-  
-    <div class="post-tags">
-        
-            <section>
-            <i class="iconfont icon-icon-tag"></i>Tag: 
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/git/">
-                    #git</a></span>
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/docker/">
-                    #docker</a></span>
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/devops/">
-                    #DevOps</a></span>
-            
-            </section>
-        
-        <section>
-                <a href="javascript:window.history.back();">Back</a></span> · 
-                <span><a href="https://hwholiday.github.io/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-        
-        <a href="https://hwholiday.github.io/2017/docker_deploy/" class="prev" rel="prev" title="使用dockerfile部署你的第一个服务"><i class="iconfont icon-dajiantou"></i>&nbsp;使用dockerfile部署你的第一个服务</a>
-         
-        
-        <a href="https://hwholiday.github.io/2018/supervisor/" class="next" rel="next" title="进程管理supervisor使用详解">进程管理supervisor使用详解&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
-        
-    </div>
-
-    <div class="post-comment">
-          
-          
-
- 
-
-          
-    </div>
-</article>
-          </div>
-		   </main>
-      <footer class="footer">
-    <div class="copyright">
-        &copy;
-        
-        <span itemprop="copyrightYear">2016 - 2023</span>
-        
-         
-            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
-         
-
-		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
-    </div>
-</footer>
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    <script src="/js/vendor_no_gallery.min.js" async=""></script>
-    
-  
-
-
-
-
-
-
-
-<script>
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-</script>
-
-
-
-     </div>
-  </body>
-</html>
+</code></pre><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
+<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
+<span>155</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
+<span class=tag><a href=http://hwholiday.github.io/tags/git/>#git</a></span>
+<span class=tag><a href=http://hwholiday.github.io/tags/docker/>#docker</a></span>
+<span class=tag><a href=http://hwholiday.github.io/tags/devops/>#DevOps</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
+<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2017/docker_deploy/ class=prev rel=prev title=使用dockerfile部署你的第一个服务><i class="iconfont icon-dajiantou"></i>&nbsp;使用dockerfile部署你的第一个服务</a>
+<a href=http://hwholiday.github.io/2018/supervisor/ class=next rel=next title=进程管理supervisor使用详解>进程管理supervisor使用详解&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
+<span itemprop=copyrightYear>2016 - 2023</span>
+<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
+<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
+<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>

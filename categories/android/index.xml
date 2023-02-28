@@ -1,19 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Android on hwholiday</title>
-    <link>https://hwholiday.github.io/categories/android/</link>
-    <description>Recent content in Android on hwholiday</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Sun, 10 Apr 2016 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/categories/android/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Android实用插件</title>
-      <link>https://hwholiday.github.io/2016/android_idea_plugin/</link>
-      <pubDate>Sun, 10 Apr 2016 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2016/android_idea_plugin/</guid>
-      <description>top：1 Android ButterKnife Zelezny ButterKnife是一个专注于Android系统的View注入框架,可以减少大量的findViewById以及 setOnClickListener代码，可视化一键生成。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Android on hwholiday</title><link>http://hwholiday.github.io/categories/android/</link><description>Recent content in Android on hwholiday</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sun, 10 Apr 2016 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/categories/android/index.xml" rel="self" type="application/rss+xml"/><item><title>Android实用插件</title><link>http://hwholiday.github.io/2016/android_idea_plugin/</link><pubDate>Sun, 10 Apr 2016 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2016/android_idea_plugin/</guid><description>top：1 Android ButterKnife Zelezny ButterKnife是一个专注于Android系统的View注入框架,可以减少大量的findViewById以及 setOnClickListener代码，可视化一键生成。
 top:2 GsonFormat GsonFormat是一个快速格式化json数据,自动生成实体类参数的插件。(对于返回的数据格式是json，简直不能再好用)
 top:3 Android Postfix Completion 可根据后缀快速完成代码。(log,toast，神技能)
 top:4 Codota 基于安卓代码搜索引擎是有以色列理工大学毕业生制造的一个可以在网上发现的代码案例，帮助开发人员可以节省开发者大量的工作时间，通过专业的代码搜索引擎可以更方便的查询想要的代码。
@@ -25,16 +10,7 @@ top：9 Sexy Editor 设置Android Stuido 代码编辑区的背景图
 top:10 JsonOnlineViewer 可实现直接在android studio中调试接口数据，可以选择请求类型，自定义请求头及请求体，json数据格式化后展示
 top:11 CodeGlance 在右边可以预览代码，实现快速定位
 top：12 SelectorChapek for Android 通过资源文件命名自动生成Selector文件
-top:13 .ignore .gitignore 配置文件用于配置不需要加入版本管理的文件，配置好该文件可以为我们的版本管理带来很大的便利 1、配置语法： 以斜杠“/”开头表示目录； 以星号“*”通配多个字符； 以问号“?”通配单个字符 以方括号“[]”包含单个字符的匹配列表； 以叹号“!”表示不忽略(跟踪)匹配到的文件或目录； top:14 Material Design Icon Generator 第三方的图标库，很多实用好看的icon提供使用</description>
-    </item>
-    
-    <item>
-      <title>Android开发 你应该知道的adb 命令</title>
-      <link>https://hwholiday.github.io/2016/android_adb/</link>
-      <pubDate>Thu, 03 Mar 2016 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2016/android_adb/</guid>
-      <description>个人建议配置环境变量时在Path类加入 你sdk的存放目录\platform-tools
+top:13 .ignore .gitignore 配置文件用于配置不需要加入版本管理的文件，配置好该文件可以为我们的版本管理带来很大的便利 1、配置语法： 以斜杠“/”开头表示目录； 以星号“*”通配多个字符； 以问号“?”通配单个字符 以方括号“[]”包含单个字符的匹配列表； 以叹号“!”表示不忽略(跟踪)匹配到的文件或目录； top:14 Material Design Icon Generator 第三方的图标库，很多实用好看的icon提供使用</description></item><item><title>Android开发 你应该知道的adb 命令</title><link>http://hwholiday.github.io/2016/android_adb/</link><pubDate>Thu, 03 Mar 2016 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2016/android_adb/</guid><description>个人建议配置环境变量时在Path类加入 你sdk的存放目录\platform-tools
 启动cmd
 1：启动adb
 adb start-service 2：停止 adb server
@@ -49,8 +25,4 @@ adb get-serialno 10： 获取管理员权限：
 adb root 11：查看adb命令帮助信息：
 adb help 12： 进入模拟器的shell模式：
 adb shell 13：查看最上层成activity名字
-adb shell dumpsys activity | findstr &amp;#34;mFocusedActivity&amp;#34; 14：获取 MAC 地址</description>
-    </item>
-    
-  </channel>
-</rss>
+adb shell dumpsys activity | findstr &amp;#34;mFocusedActivity&amp;#34; 14：获取 MAC 地址</description></item></channel></rss>

@@ -1,166 +1,17 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noodp"/>
-  
-  
-  
-  
-  
-  <link rel="prev" href="https://hwholiday.github.io/2018/del_or_update_passwd/" />
-  <link rel="next" href="https://hwholiday.github.io/2018/go_cn_fullname/" />
-  <link rel="canonical" href="https://hwholiday.github.io/2018/docker_install_minio/" />
-  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>
-       
-       
-           docker和二进制安装minio单机和集群 | hwholiday
-       
-  </title>
-  <meta name="title" content="docker和二进制安装minio单机和集群 | hwholiday">
-    
-  
-  <link rel="stylesheet" href="/font/iconfont.css">
-  <link rel="stylesheet" href="/css/main.min.css">
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="docker和二进制安装minio单机和集群"/>
-<meta name="twitter:description" content="docker和二进制安装minio单机或集群"/>
-
-  <script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "BlogPosting",
-  "headline": "docker和二进制安装minio单机和集群",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https:\/\/hwholiday.github.io\/2018\/docker_install_minio\/"
-  },
-  
-  "genre": "posts",
-  "keywords": "文件服务, docker",
-  "wordcount":  487 ,
-  "url": "https:\/\/hwholiday.github.io\/2018\/docker_install_minio\/",
-  "datePublished": "2018-10-24T00:00:00\u002b00:00",
-  "dateModified": "2018-10-24T00:00:00\u002b00:00",
-  
-  
-  
-  "description": "docker和二进制安装minio单机或集群"
-}
-</script>
-</head>
-
-  
-             
-  
-
-
-
-  <body class="">
-    <div class="wrapper">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-header header-logo">
-        	<a href="https://hwholiday.github.io/">hwholiday</a>
-        </div>
-        <div class="menu navbar-right">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
-        </div>
-    </div>
-</nav>
-<nav class="navbar-mobile" id="nav-mobile" style="display: none">
-     <div class="container">
-        <div class="navbar-header">
-            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
-            <div class="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-     
-          <div class="menu" id="mobile-menu">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-        </div>
-    </div>
-</nav>
-
-    	 <main class="main">
-          <div class="container">
-      		
-<article class="post-warp">
-    <header class="post-header">
-        <h1 class="post-title">docker和二进制安装minio单机和集群</h1>
-        <div class="post-meta">
-            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
-                <span class="post-time">
-                    on <time datetime=2018-10-24 >24 October 2018</time>
-                </span>
-                in
-                <i class="iconfont icon-folder"></i>
-                <span class="post-category">
-                        <a href="https://hwholiday.github.io/categories/docker/"> Docker </a>
-                        
-                </span>
-                <i class="iconfont icon-timer"></i>
-                3 min
-        </div>
-    </header>
-    <div class="post-content">
-        
-
-        
-
-        
-        
-     
-          
-          
-          
-
-          
-          
-          
-
-          <h2 id="minio简介">Minio简介</h2>
-<ul>
-<li>Minio是一款高性能的分布式对象存储服务器，专为大规模私有云基础架构而设计</li>
-<li>Minio是一个分布式对象存储服务器，Amazon S3兼容,用Go编写，在Apache License Version 2.0下开源</li>
-<li>Minio为加密数据提供机密性，完整性和真实性保证，而性能开销可忽略不计。使用AES-256-GCM，ChaCha20-Poly1305和AES-CBC支持服务器端和客户端加密。加密对象使用AEAD服务器端加密进行防篡改。</li>
-<li>详细简介请 <a href="https://www.minio.io/">点击这里</a></li>
-</ul>
-<h3 id="以下命令都需要管理员权限---sudohttpsbaikebaiducomitemsudo7337623fraladdin">以下命令都需要管理员权限   <a href="https://baike.baidu.com/item/sudo/7337623?fr=aladdin">sudo</a></h3>
-<h2 id="搜索-gitlab-docker镜像">搜索 gitlab Docker镜像</h2>
-<pre tabindex="0"><code class="language-base" data-lang="base">docker search minio
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2018/del_or_update_passwd/><link rel=next href=http://hwholiday.github.io/2018/go_cn_fullname/><link rel=canonical href=http://hwholiday.github.io/2018/docker_install_minio/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>docker和二进制安装minio单机和集群 | hwholiday</title><meta name=title content="docker和二进制安装minio单机和集群 | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="docker和二进制安装minio单机和集群"><meta name=twitter:description content="docker和二进制安装minio单机或集群"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"docker和二进制安装minio单机和集群","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2018\/docker_install_minio\/"},"genre":"posts","keywords":"文件服务, docker","wordcount":487,"url":"http:\/\/hwholiday.github.io\/2018\/docker_install_minio\/","datePublished":"2018-10-24T00:00:00\u002b00:00","dateModified":"2018-10-24T00:00:00\u002b00:00","description":"docker和二进制安装minio单机或集群"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a>
+<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>docker和二进制安装minio单机和集群</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
+<span class=post-time>on <time datetime=2018-10-24>24 October 2018</time></span>
+in
+<i class="iconfont icon-folder"></i>
+<span class=post-category><a href=http://hwholiday.github.io/categories/docker/>Docker</a></span>
+<i class="iconfont icon-timer"></i>
+3 min</div></header><div class=post-content><h2 id=minio简介>Minio简介</h2><ul><li>Minio是一款高性能的分布式对象存储服务器，专为大规模私有云基础架构而设计</li><li>Minio是一个分布式对象存储服务器，Amazon S3兼容,用Go编写，在Apache License Version 2.0下开源</li><li>Minio为加密数据提供机密性，完整性和真实性保证，而性能开销可忽略不计。使用AES-256-GCM，ChaCha20-Poly1305和AES-CBC支持服务器端和客户端加密。加密对象使用AEAD服务器端加密进行防篡改。</li><li>详细简介请 <a href=https://www.minio.io/>点击这里</a></li></ul><h3 id=以下命令都需要管理员权限---sudohttpsbaikebaiducomitemsudo7337623fraladdin>以下命令都需要管理员权限 <a href="https://baike.baidu.com/item/sudo/7337623?fr=aladdin">sudo</a></h3><h2 id=搜索-gitlab-docker镜像>搜索 gitlab Docker镜像</h2><pre tabindex=0><code class=language-base data-lang=base>docker search minio
 
 //输出结果部分截图
 NAME                        DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED
@@ -174,32 +25,12 @@ opennms/minion              Application container runs Minion by OpenNMS…   1 
 jarfil/salt-minion          Salt minion only                                1                                       [OK]
 icereed/openshift-minio     Minio packaged and compatible to Openshift a…   1                                       [OK]
 webcenter/alpine-minio      The Minio Cloud Storage that work on Rancher.   1                                       [OK]
-</code></pre><h3 id="拉取-gitlab-docker镜像">拉取 gitlab Docker镜像</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">docker pull minio/minio
-</code></pre><h3 id="docker启动单个minio">Docker启动单个Minio</h3>
-<ul>
-<li>启动一个Minio。在本机测试使用的话，将-h替换为127.0.0.1。如果需要让外部系统也能访问的话使用外网IP地址。</li>
-<li>分布式Minio使用的磁盘里必须是干净的，里面没有数据</li>
-<li>分布式Minio里所有的节点需要有同样的access秘钥和secret秘钥，这样这些节点才能建立联接</li>
-<li>MINIO_ACCESS_KEY=L0DELXP9EP8JRAZLQJ90   使用自定义方便分布式</li>
-<li>MINIO_SECRET_KEY=6FgMGySzbI+6MExdUzS0r9HjdWx9tz1teLsXH1C2  使用自定义方便分布式</li>
-<li>分布式Minio里的节点时间差不能超过3秒，你可以使用NTP 来保证时间一致</li>
-</ul>
-<pre tabindex="0"><code class="language-base" data-lang="base"> //挂载一个盘 
+</code></pre><h3 id=拉取-gitlab-docker镜像>拉取 gitlab Docker镜像</h3><pre tabindex=0><code class=language-base data-lang=base>docker pull minio/minio
+</code></pre><h3 id=docker启动单个minio>Docker启动单个Minio</h3><ul><li>启动一个Minio。在本机测试使用的话，将-h替换为127.0.0.1。如果需要让外部系统也能访问的话使用外网IP地址。</li><li>分布式Minio使用的磁盘里必须是干净的，里面没有数据</li><li>分布式Minio里所有的节点需要有同样的access秘钥和secret秘钥，这样这些节点才能建立联接</li><li>MINIO_ACCESS_KEY=L0DELXP9EP8JRAZLQJ90 使用自定义方便分布式</li><li>MINIO_SECRET_KEY=6FgMGySzbI+6MExdUzS0r9HjdWx9tz1teLsXH1C2 使用自定义方便分布式</li><li>分布式Minio里的节点时间差不能超过3秒，你可以使用NTP 来保证时间一致</li></ul><pre tabindex=0><code class=language-base data-lang=base> //挂载一个盘 
 docker run -d -p 9000:9000 -h 192.168.2.28 --name minio -e MINIO_ACCESS_KEY=L0DELXP9EP8JRAZLQJ90 -e MINIO_SECRET_KEY=6FgMGySzbI+6MExdUzS0r9HjdWx9tz1teLsXH1C2  -v /mnt/data:/data/minio -v /mnt/config:/root/.minio  minio/minio server /data/minio     
 //挂载多个盘必须大于或等于4的偶数个盘
 docker run -d -p 9000:9000 -h 192.168.2.28 --name minio -e MINIO_ACCESS_KEY=L0DELXP9EP8JRAZLQJ90 -e MINIO_SECRET_KEY=6FgMGySzbI+6MExdUzS0r9HjdWx9tz1teLsXH1C2  -v /mnt/data1:/data/minio_a -v /mnt/data2:/data/minio_b -v /mnt/data3:/data/minio_c -v /mnt/data4:/data/minio_d -v /mnt/config:/root/.minio  minio/minio server /data/minio_a /data/minio_b /data/minio_c /data/minio_d      
-</code></pre><ul>
-<li>使用sudo docker ps -a 命令查看当前所有Docker容器的状态。当它的状态由starting变为运行时间时，说明成功启动</li>
-<li>使用上面配置的IP地址（如192.168.2.28:9000）访问即可</li>
-<li>初次使用需要输入MINIO_ACCESS_KEY,MINIO_SECRET_KEY的值,就可以开始你的工作了</li>
-</ul>
-<h2 id="可以通过docker-compose或swarm模式部署分布式minio-这两者之间的主要区别在于docker-compose创建了一个主机多容器部署而swarm模式创建了一个多主机多容器部署">可以通过Docker Compose或Swarm模式部署分布式Minio 。这两者之间的主要区别在于，Docker Compose创建了一个主机，多容器部署，而Swarm模式创建了一个多主机，多容器部署。</h2>
-<h3 id="docker-compose-如果没安装和不了解使用-请点击这里httpsdocsdockercomcomposeinstallprerequisites">Docker Compose 如果没安装和不了解使用 <a href="https://docs.docker.com/compose/install/#prerequisites">请点击这里</a></h3>
-<ul>
-<li>编写minio-compose.yaml <a href="https://www.minio.io/docker.html">使用工具</a></li>
-</ul>
-<pre tabindex="0"><code class="language-base" data-lang="base">version: &#39;2&#39;
+</code></pre><ul><li>使用sudo docker ps -a 命令查看当前所有Docker容器的状态。当它的状态由starting变为运行时间时，说明成功启动</li><li>使用上面配置的IP地址（如192.168.2.28:9000）访问即可</li><li>初次使用需要输入MINIO_ACCESS_KEY,MINIO_SECRET_KEY的值,就可以开始你的工作了</li></ul><h2 id=可以通过docker-compose或swarm模式部署分布式minio-这两者之间的主要区别在于docker-compose创建了一个主机多容器部署而swarm模式创建了一个多主机多容器部署>可以通过Docker Compose或Swarm模式部署分布式Minio 。这两者之间的主要区别在于，Docker Compose创建了一个主机，多容器部署，而Swarm模式创建了一个多主机，多容器部署。</h2><h3 id=docker-compose-如果没安装和不了解使用-请点击这里httpsdocsdockercomcomposeinstallprerequisites>Docker Compose 如果没安装和不了解使用 <a href=https://docs.docker.com/compose/install/#prerequisites>请点击这里</a></h3><ul><li>编写minio-compose.yaml <a href=https://www.minio.io/docker.html>使用工具</a></li></ul><pre tabindex=0><code class=language-base data-lang=base>version: &#39;2&#39;
 
 services:
 minio1:
@@ -251,15 +82,8 @@ minio1:
 minio2:
 minio3:
 minio4:
-</code></pre><ul>
-<li>Docker Compose启动集群Minio</li>
-</ul>
-<pre tabindex="0"><code class="language-base" data-lang="base">docker-compose -f minio-compose.yaml up  //需要后台运行请加上 -d
-</code></pre><h3 id="docker-swarm-笔者没使用过该方式如果遇到问题-请点击这里httpsdocsminioiodocsdeploy-minio-on-docker-swarm">Docker Swarm 笔者没使用过该方式如果遇到问题 <a href="https://docs.minio.io/docs/deploy-minio-on-docker-swarm">请点击这里</a></h3>
-<ul>
-<li>编写minio-swarm.yaml <a href="https://www.minio.io/docker.html">使用工具</a></li>
-</ul>
-<pre tabindex="0"><code class="language-base" data-lang="base">version: &#39;3&#39;
+</code></pre><ul><li>Docker Compose启动集群Minio</li></ul><pre tabindex=0><code class=language-base data-lang=base>docker-compose -f minio-compose.yaml up  //需要后台运行请加上 -d
+</code></pre><h3 id=docker-swarm-笔者没使用过该方式如果遇到问题-请点击这里httpsdocsminioiodocsdeploy-minio-on-docker-swarm>Docker Swarm 笔者没使用过该方式如果遇到问题 <a href=https://docs.minio.io/docs/deploy-minio-on-docker-swarm>请点击这里</a></h3><ul><li>编写minio-swarm.yaml <a href=https://www.minio.io/docker.html>使用工具</a></li></ul><pre tabindex=0><code class=language-base data-lang=base>version: &#39;3&#39;
 
 services:
 minio1:
@@ -343,139 +167,26 @@ minio4:
 networks:
 minio_distributed:
 driver: overlay
-</code></pre><ul>
-<li>Docker Swarm启动集群Minio</li>
-</ul>
-<pre tabindex="0"><code class="language-base" data-lang="base">docker stack deploy --compose-file=minio-swarm.yaml minio
-</code></pre><h3 id="查看logs">查看logs</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">docker logs -f -t --tail 10 容器ID //实时查看该容器ID最后10行日志
-</code></pre><h3 id="监视容器使用的资源">监视容器使用的资源</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">docker stats 容器ID
-</code></pre><h2 id="拉取二进制minio">拉取二进制Minio</h2>
-<pre tabindex="0"><code class="language-base" data-lang="base">wget https://dl.minio.io/server/minio/release/linux-amd64/minio
-</code></pre><h3 id="二进制启动minio">二进制启动Minio</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base"> //挂载一个盘
+</code></pre><ul><li>Docker Swarm启动集群Minio</li></ul><pre tabindex=0><code class=language-base data-lang=base>docker stack deploy --compose-file=minio-swarm.yaml minio
+</code></pre><h3 id=查看logs>查看logs</h3><pre tabindex=0><code class=language-base data-lang=base>docker logs -f -t --tail 10 容器ID //实时查看该容器ID最后10行日志
+</code></pre><h3 id=监视容器使用的资源>监视容器使用的资源</h3><pre tabindex=0><code class=language-base data-lang=base>docker stats 容器ID
+</code></pre><h2 id=拉取二进制minio>拉取二进制Minio</h2><pre tabindex=0><code class=language-base data-lang=base>wget https://dl.minio.io/server/minio/release/linux-amd64/minio
+</code></pre><h3 id=二进制启动minio>二进制启动Minio</h3><pre tabindex=0><code class=language-base data-lang=base> //挂载一个盘
 ./minio server /data/minio_a 
 //挂载多个盘必须大于或等于4的偶数个盘
 ./minio server /data/minio_a /data/minio_b /data/minio_c /data/minio_d 
-</code></pre><h3 id="二进制启动集群minio编写miniosh启动脚本每个节点执行相同的操作">二进制启动集群Minio(编写minio.sh启动脚本每个节点执行相同的操作)</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">#!/bin/bash
+</code></pre><h3 id=二进制启动集群minio编写miniosh启动脚本每个节点执行相同的操作>二进制启动集群Minio(编写minio.sh启动脚本每个节点执行相同的操作)</h3><pre tabindex=0><code class=language-base data-lang=base>#!/bin/bash
 export MINIO_ACCESS_KEY=L0DELXP9EP8JRAZLQJ90
 export MINIO_SECRET_KEY=6FgMGySzbI+6MExdUzS0r9HjdWx9tz1teLsXH1C2
 ./minio server  http://192.168.2.28/data/minio http://192.168.2.29/data/minio http://192.168.2.30/data/minio http://192.168.2.21/data/minio
-</code></pre><h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
-
-    </div>
-    
-    <div class="post-copyright">
-             
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>hwholiday </span>
-                </p>
-            
-           
-            <p class="copyright-item">
-                    <span>Words:</span>
-                   <span>487</span>
-            </p>
-
-            <p class="copyright-item">
-                
-            </p>
-
-            
-    </div>
-
-  
-    <div class="post-tags">
-        
-            <section>
-            <i class="iconfont icon-icon-tag"></i>Tag: 
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1/">
-                    #文件服务</a></span>
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/docker/">
-                    #docker</a></span>
-            
-            </section>
-        
-        <section>
-                <a href="javascript:window.history.back();">Back</a></span> · 
-                <span><a href="https://hwholiday.github.io/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-        
-        <a href="https://hwholiday.github.io/2018/del_or_update_passwd/" class="prev" rel="prev" title="ubuntu 删除,修改,忘记passwd导致无法开机解决"><i class="iconfont icon-dajiantou"></i>&nbsp;ubuntu 删除,修改,忘记passwd导致无法开机解决</a>
-         
-        
-        <a href="https://hwholiday.github.io/2018/go_cn_fullname/" class="next" rel="next" title="随机生成中国人姓名">随机生成中国人姓名&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
-        
-    </div>
-
-    <div class="post-comment">
-          
-          
-
- 
-
-          
-    </div>
-</article>
-          </div>
-		   </main>
-      <footer class="footer">
-    <div class="copyright">
-        &copy;
-        
-        <span itemprop="copyrightYear">2016 - 2023</span>
-        
-         
-            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
-         
-
-		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
-    </div>
-</footer>
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    <script src="/js/vendor_no_gallery.min.js" async=""></script>
-    
-  
-
-
-
-
-
-
-
-<script>
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-</script>
-
-
-
-     </div>
-  </body>
-</html>
+</code></pre><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
+<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
+<span>487</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
+<span class=tag><a href=http://hwholiday.github.io/tags/%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1/>#文件服务</a></span>
+<span class=tag><a href=http://hwholiday.github.io/tags/docker/>#docker</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
+<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2018/del_or_update_passwd/ class=prev rel=prev title="ubuntu 删除,修改,忘记passwd导致无法开机解决"><i class="iconfont icon-dajiantou"></i>&nbsp;ubuntu 删除,修改,忘记passwd导致无法开机解决</a>
+<a href=http://hwholiday.github.io/2018/go_cn_fullname/ class=next rel=next title=随机生成中国人姓名>随机生成中国人姓名&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
+<span itemprop=copyrightYear>2016 - 2023</span>
+<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
+<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
+<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>

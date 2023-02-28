@@ -1,168 +1,23 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noodp"/>
-  
-  
-  
-  
-  
-  <link rel="prev" href="https://hwholiday.github.io/2021/install_rancher_rke1/" />
-  <link rel="next" href="https://hwholiday.github.io/2021/install_rancher_rke2/" />
-  <link rel="canonical" href="https://hwholiday.github.io/2021/centos7/" />
-  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>
-       
-       
-           centos7 升级内核 | hwholiday
-       
-  </title>
-  <meta name="title" content="centos7 升级内核 | hwholiday">
-    
-  
-  <link rel="stylesheet" href="/font/iconfont.css">
-  <link rel="stylesheet" href="/css/main.min.css">
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="centos7 升级内核"/>
-<meta name="twitter:description" content="查看内核版本 &mdash;这里的内核版本（3.10）和系统架构（64位） uname -smr 更新软件包仓库 yum update 启用Elrepo库 rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org 安装 Elrepo 软件库 rpm -Uvh https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm 列出可用的内核版本 yum list available --disablerepo=&#39;*&#39; --enablerepo=elrepo-kernel kernel-lt表示一个稳定的LTS（长期支持）版本，而kernel-ml表示一个提供短期支持但提供更频繁更新的主线版本 Loaded plugins: fastestmirror Loading mirror speeds from cached hostfile * elrepo-kernel: mirror.rackspace.com elrepo-kernel | 3.0 kB 00:00:00 elrepo-kernel/primary_db | 2.0 MB 00:00:00 Available Packages elrepo-release.noarch 7.0-5.el7.elrepo elrepo-kernel kernel-lt.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-devel.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-doc.noarch 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-headers.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-tools.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-tools-libs.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-tools-libs-devel.x86_64 5."/>
-
-  <script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "BlogPosting",
-  "headline": "centos7 升级内核",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https:\/\/hwholiday.github.io\/2021\/centos7\/"
-  },
-  
-  "genre": "posts",
-  "keywords": "linux",
-  "wordcount":  171 ,
-  "url": "https:\/\/hwholiday.github.io\/2021\/centos7\/",
-  "datePublished": "2021-02-02T00:00:00\u002b00:00",
-  "dateModified": "2021-02-02T00:00:00\u002b00:00",
-  
-  
-  
-  "description": ""
-}
-</script>
-</head>
-
-  
-             
-  
-
-
-
-  <body class="">
-    <div class="wrapper">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-header header-logo">
-        	<a href="https://hwholiday.github.io/">hwholiday</a>
-        </div>
-        <div class="menu navbar-right">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
-        </div>
-    </div>
-</nav>
-<nav class="navbar-mobile" id="nav-mobile" style="display: none">
-     <div class="container">
-        <div class="navbar-header">
-            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
-            <div class="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-     
-          <div class="menu" id="mobile-menu">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-        </div>
-    </div>
-</nav>
-
-    	 <main class="main">
-          <div class="container">
-      		
-<article class="post-warp">
-    <header class="post-header">
-        <h1 class="post-title">centos7 升级内核</h1>
-        <div class="post-meta">
-            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
-                <span class="post-time">
-                    on <time datetime=2021-02-02 >2 February 2021</time>
-                </span>
-                in
-                <i class="iconfont icon-folder"></i>
-                <span class="post-category">
-                        <a href="https://hwholiday.github.io/categories/linux/"> Linux </a>
-                        
-                </span>
-                <i class="iconfont icon-timer"></i>
-                1 min
-        </div>
-    </header>
-    <div class="post-content">
-        
-
-        
-
-        
-        
-     
-          
-          
-          
-
-          
-          
-          
-
-          <h4 id="查看内核版本----这里的内核版本310和系统架构64位">查看内核版本 &mdash;这里的内核版本（3.10）和系统架构（64位）</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">uname -smr 
-</code></pre><h4 id="更新软件包仓库">更新软件包仓库</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">yum update
-</code></pre><h4 id="启用elrepo库">启用Elrepo库</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
-</code></pre><h4 id="安装-elrepo-软件库">安装 Elrepo 软件库</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">rpm -Uvh https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm
-</code></pre><h4 id="列出可用的内核版本">列出可用的内核版本</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">yum list available --disablerepo=&#39;*&#39; --enablerepo=elrepo-kernel
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2021/install_rancher_rke1/><link rel=next href=http://hwholiday.github.io/2021/install_rancher_rke2/><link rel=canonical href=http://hwholiday.github.io/2021/centos7/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>centos7 升级内核 | hwholiday</title><meta name=title content="centos7 升级内核 | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="centos7 升级内核"><meta name=twitter:description content="查看内核版本 &mdash;这里的内核版本（3.10）和系统架构（64位） uname -smr 更新软件包仓库 yum update 启用Elrepo库 rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org 安装 Elrepo 软件库 rpm -Uvh https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm 列出可用的内核版本 yum list available --disablerepo='*' --enablerepo=elrepo-kernel kernel-lt表示一个稳定的LTS（长期支持）版本，而kernel-ml表示一个提供短期支持但提供更频繁更新的主线版本 Loaded plugins: fastestmirror Loading mirror speeds from cached hostfile * elrepo-kernel: mirror.rackspace.com elrepo-kernel | 3.0 kB 00:00:00 elrepo-kernel/primary_db | 2.0 MB 00:00:00 Available Packages elrepo-release.noarch 7.0-5.el7.elrepo elrepo-kernel kernel-lt.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-devel.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-doc.noarch 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-headers.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-tools.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-tools-libs.x86_64 5.4.94-1.el7.elrepo elrepo-kernel kernel-lt-tools-libs-devel.x86_64 5."><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"centos7 升级内核","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2021\/centos7\/"},"genre":"posts","keywords":"linux","wordcount":171,"url":"http:\/\/hwholiday.github.io\/2021\/centos7\/","datePublished":"2021-02-02T00:00:00\u002b00:00","dateModified":"2021-02-02T00:00:00\u002b00:00","description":""}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a>
+<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>centos7 升级内核</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
+<span class=post-time>on <time datetime=2021-02-02>2 February 2021</time></span>
+in
+<i class="iconfont icon-folder"></i>
+<span class=post-category><a href=http://hwholiday.github.io/categories/linux/>Linux</a></span>
+<i class="iconfont icon-timer"></i>
+1 min</div></header><div class=post-content><h4 id=查看内核版本----这里的内核版本310和系统架构64位>查看内核版本 &mdash;这里的内核版本（3.10）和系统架构（64位）</h4><pre tabindex=0><code class=language-base data-lang=base>uname -smr 
+</code></pre><h4 id=更新软件包仓库>更新软件包仓库</h4><pre tabindex=0><code class=language-base data-lang=base>yum update
+</code></pre><h4 id=启用elrepo库>启用Elrepo库</h4><pre tabindex=0><code class=language-base data-lang=base>rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+</code></pre><h4 id=安装-elrepo-软件库>安装 Elrepo 软件库</h4><pre tabindex=0><code class=language-base data-lang=base>rpm -Uvh https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm
+</code></pre><h4 id=列出可用的内核版本>列出可用的内核版本</h4><pre tabindex=0><code class=language-base data-lang=base>yum list available --disablerepo=&#39;*&#39; --enablerepo=elrepo-kernel
 kernel-lt表示一个稳定的LTS（长期支持）版本，而kernel-ml表示一个提供短期支持但提供更频繁更新的主线版本
-</code></pre><pre tabindex="0"><code class="language-base" data-lang="base">Loaded plugins: fastestmirror
+</code></pre><pre tabindex=0><code class=language-base data-lang=base>Loaded plugins: fastestmirror
 Loading mirror speeds from cached hostfile
  * elrepo-kernel: mirror.rackspace.com
 elrepo-kernel                                                                                                                                     | 3.0 kB  00:00:00     
@@ -185,135 +40,27 @@ kernel-ml-tools-libs.x86_64                                                     
 kernel-ml-tools-libs-devel.x86_64                                                   5.10.12-1.el7.elrepo                                                    elrepo-kernel
 perf.x86_64                                                                         5.10.12-1.el7.elrepo                                                    elrepo-kernel
 python-perf.x86_64                                                                  5.10.12-1.el7.elrepo                                                    elrepo-kernel
-</code></pre><h4 id="建议安装最新的版本长期支持">建议安装最新的版本（长期支持）</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">yum --enablerepo=elrepo-kernel install kernel-lt
+</code></pre><h4 id=建议安装最新的版本长期支持>建议安装最新的版本（长期支持）</h4><pre tabindex=0><code class=language-base data-lang=base>yum --enablerepo=elrepo-kernel install kernel-lt
 //这里安装的是 等会需要选择 5.4.94-1.el7.elrepo
-</code></pre><h6 id="安装最新的版本短期支持">安装最新的版本（短期支持）</h6>
-<pre tabindex="0"><code class="language-base" data-lang="base">yum --enablerepo=elrepo-kernel install kernel-ml
-</code></pre><h4 id="重建grub2引导">重建Grub2引导</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">grub2-mkconfig -o /boot/grub2/grub.cfg
-</code></pre><h4 id="查看有那些版本">查看有那些版本</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">awk -F\&#39; &#39;$1==&#34;menuentry &#34; {print i++ &#34; : &#34; $2}&#39; /etc/grub2.cfg
-</code></pre><pre tabindex="0"><code class="language-base" data-lang="base">0 : CentOS Linux (5.4.94-1.el7.elrepo.x86_64) 7 (Core)
+</code></pre><h6 id=安装最新的版本短期支持>安装最新的版本（短期支持）</h6><pre tabindex=0><code class=language-base data-lang=base>yum --enablerepo=elrepo-kernel install kernel-ml
+</code></pre><h4 id=重建grub2引导>重建Grub2引导</h4><pre tabindex=0><code class=language-base data-lang=base>grub2-mkconfig -o /boot/grub2/grub.cfg
+</code></pre><h4 id=查看有那些版本>查看有那些版本</h4><pre tabindex=0><code class=language-base data-lang=base>awk -F\&#39; &#39;$1==&#34;menuentry &#34; {print i++ &#34; : &#34; $2}&#39; /etc/grub2.cfg
+</code></pre><pre tabindex=0><code class=language-base data-lang=base>0 : CentOS Linux (5.4.94-1.el7.elrepo.x86_64) 7 (Core)
 1 : CentOS Linux (3.10.0-1160.11.1.el7.x86_64) 7 (Core)
 2 : CentOS Linux (3.10.0-1160.el7.x86_64) 7 (Core)
 3 : CentOS Linux (0-rescue-407d72b6f7b74133bab8599fbb634d67) 7 (Core)
-</code></pre><h4 id="设置新的默认启动项">设置新的默认启动项</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">grub2-set-default 0
+</code></pre><h4 id=设置新的默认启动项>设置新的默认启动项</h4><pre tabindex=0><code class=language-base data-lang=base>grub2-set-default 0
 //这里也可以选择其他内核
-</code></pre><h4 id="重启后查看版本">重启后查看版本</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">reboot //重启
+</code></pre><h4 id=重启后查看版本>重启后查看版本</h4><pre tabindex=0><code class=language-base data-lang=base>reboot //重启
 uname -smr  //查看版本
 eg : Linux 5.4.94-1.el7.elrepo.x86_64 x86_6
-</code></pre>
-    </div>
-    
-    <div class="post-copyright">
-             
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>hwholiday </span>
-                </p>
-            
-           
-            <p class="copyright-item">
-                    <span>Words:</span>
-                   <span>171</span>
-            </p>
-
-            <p class="copyright-item">
-                
-            </p>
-
-            
-    </div>
-
-  
-    <div class="post-tags">
-        
-            <section>
-            <i class="iconfont icon-icon-tag"></i>Tag: 
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/linux/">
-                    #linux</a></span>
-            
-            </section>
-        
-        <section>
-                <a href="javascript:window.history.back();">Back</a></span> · 
-                <span><a href="https://hwholiday.github.io/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-        
-        <a href="https://hwholiday.github.io/2021/install_rancher_rke1/" class="prev" rel="prev" title="安装 k8s 集群 Rancher RKE"><i class="iconfont icon-dajiantou"></i>&nbsp;安装 k8s 集群 Rancher RKE</a>
-         
-        
-        <a href="https://hwholiday.github.io/2021/install_rancher_rke2/" class="next" rel="next" title="安装 Rancher 控制面板到 K8s 集群">安装 Rancher 控制面板到 K8s 集群&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
-        
-    </div>
-
-    <div class="post-comment">
-          
-          
-
- 
-
-          
-    </div>
-</article>
-          </div>
-		   </main>
-      <footer class="footer">
-    <div class="copyright">
-        &copy;
-        
-        <span itemprop="copyrightYear">2016 - 2023</span>
-        
-         
-            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
-         
-
-		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
-    </div>
-</footer>
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    <script src="/js/vendor_no_gallery.min.js" async=""></script>
-    
-  
-
-
-
-
-
-
-
-<script>
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-</script>
-
-
-
-     </div>
-  </body>
-</html>
+</code></pre></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
+<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
+<span>171</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
+<span class=tag><a href=http://hwholiday.github.io/tags/linux/>#linux</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
+<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2021/install_rancher_rke1/ class=prev rel=prev title="安装 k8s 集群 Rancher RKE"><i class="iconfont icon-dajiantou"></i>&nbsp;安装 k8s 集群 Rancher RKE</a>
+<a href=http://hwholiday.github.io/2021/install_rancher_rke2/ class=next rel=next title="安装 Rancher 控制面板到 K8s 集群">安装 Rancher 控制面板到 K8s 集群&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
+<span itemprop=copyrightYear>2016 - 2023</span>
+<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
+<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
+<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>

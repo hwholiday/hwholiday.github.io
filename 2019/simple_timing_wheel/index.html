@@ -1,172 +1,21 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noodp"/>
-  
-  
-  
-  
-  
-  <link rel="prev" href="https://hwholiday.github.io/2019/archive/" />
-  <link rel="next" href="https://hwholiday.github.io/2019/middleware/" />
-  <link rel="canonical" href="https://hwholiday.github.io/2019/simple_timing_wheel/" />
-  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>
-       
-       
-           Golang 实现时间轮 | hwholiday
-       
-  </title>
-  <meta name="title" content="Golang 实现时间轮 | hwholiday">
-    
-  
-  <link rel="stylesheet" href="/font/iconfont.css">
-  <link rel="stylesheet" href="/css/main.min.css">
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Golang 实现时间轮"/>
-<meta name="twitter:description" content="Golang 实现层级时间轮"/>
-
-  <script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Golang 实现时间轮",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https:\/\/hwholiday.github.io\/2019\/simple_timing_wheel\/"
-  },
-  
-  "genre": "posts",
-  "keywords": "golang, 源码",
-  "wordcount":  176 ,
-  "url": "https:\/\/hwholiday.github.io\/2019\/simple_timing_wheel\/",
-  "datePublished": "2019-12-25T00:00:00\u002b00:00",
-  "dateModified": "2019-12-25T00:00:00\u002b00:00",
-  
-  
-  
-  "description": "Golang 实现层级时间轮"
-}
-</script>
-</head>
-
-  
-             
-  
-
-
-
-  <body class="">
-    <div class="wrapper">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-header header-logo">
-        	<a href="https://hwholiday.github.io/">hwholiday</a>
-        </div>
-        <div class="menu navbar-right">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
-        </div>
-    </div>
-</nav>
-<nav class="navbar-mobile" id="nav-mobile" style="display: none">
-     <div class="container">
-        <div class="navbar-header">
-            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
-            <div class="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-     
-          <div class="menu" id="mobile-menu">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-        </div>
-    </div>
-</nav>
-
-    	 <main class="main">
-          <div class="container">
-      		
-<article class="post-warp">
-    <header class="post-header">
-        <h1 class="post-title">Golang 实现时间轮</h1>
-        <div class="post-meta">
-            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
-                <span class="post-time">
-                    on <time datetime=2019-12-25 >25 December 2019</time>
-                </span>
-                in
-                <i class="iconfont icon-folder"></i>
-                <span class="post-category">
-                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
-                        
-                </span>
-                <i class="iconfont icon-timer"></i>
-                1 min
-        </div>
-    </header>
-    <div class="post-content">
-        
-
-        
-
-        
-        
-     
-          
-          
-          
-
-          
-          
-          
-
-          <h3 id="简单时间轮simple_timing_wheel">简单时间轮(simple_timing_wheel)</h3>
-<ul>
-<li>一个 简单时间轮 就是一个循环列表，列表中的每一格包含一个定时任务列表（双向链表）。一个时间单位为 u、大小为 n 的简单时间轮，可以包含的定时任务的最大到期间隔为 n*u。
-以 u 为 1ms、n 为 3 的简单时间轮为例，可以包含的定时任务的最大到期间隔为 3ms。</li>
-<li>初始时，假设当前时间指向第 1 格（此时：到期间隔为 [0ms, 1ms) 的定时任务放第 1 格，[1ms, 2ms) 的放第 2 格，[2ms, 3ms) 的放第 3 格）。</li>
-<li>此时我们创建一个到期间隔为 1ms 的定时任务 task1，按规则该任务会被插入到第 2 格。
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2019/archive/><link rel=next href=http://hwholiday.github.io/2019/middleware/><link rel=canonical href=http://hwholiday.github.io/2019/simple_timing_wheel/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>Golang 实现时间轮 | hwholiday</title><meta name=title content="Golang 实现时间轮 | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="Golang 实现时间轮"><meta name=twitter:description content="Golang 实现层级时间轮"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Golang 实现时间轮","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2019\/simple_timing_wheel\/"},"genre":"posts","keywords":"golang, 源码","wordcount":176,"url":"http:\/\/hwholiday.github.io\/2019\/simple_timing_wheel\/","datePublished":"2019-12-25T00:00:00\u002b00:00","dateModified":"2019-12-25T00:00:00\u002b00:00","description":"Golang 实现层级时间轮"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a>
+<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>Golang 实现时间轮</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
+<span class=post-time>on <time datetime=2019-12-25>25 December 2019</time></span>
+in
+<i class="iconfont icon-folder"></i>
+<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a></span>
+<i class="iconfont icon-timer"></i>
+1 min</div></header><div class=post-content><h3 id=简单时间轮simple_timing_wheel>简单时间轮(simple_timing_wheel)</h3><ul><li>一个 简单时间轮 就是一个循环列表，列表中的每一格包含一个定时任务列表（双向链表）。一个时间单位为 u、大小为 n 的简单时间轮，可以包含的定时任务的最大到期间隔为 n*u。
+以 u 为 1ms、n 为 3 的简单时间轮为例，可以包含的定时任务的最大到期间隔为 3ms。</li><li>初始时，假设当前时间指向第 1 格（此时：到期间隔为 [0ms, 1ms) 的定时任务放第 1 格，[1ms, 2ms) 的放第 2 格，[2ms, 3ms) 的放第 3 格）。</li><li>此时我们创建一个到期间隔为 1ms 的定时任务 task1，按规则该任务会被插入到第 2 格。
 随着时间的流逝，过了 1ms 后当前时间指向第 2 格，这一格包含的定时任务 task1 会被删除并执行。
-当前时间指向第 2 格（此时：到期间隔为 [0ms, 1ms) 的定时任务放第 2 格，[1ms, 2ms) 的放第 3 格，[2ms, 3ms) 的放第 1 格），我们继续创建一个到期间隔为 2ms 的定时任务 task2，按规则该任务被插入到第 1 格。</li>
-</ul>
-<h3 id="简单时间轮的优点是实现简单缺点是">简单时间轮的优点是实现简单，缺点是：</h3>
-<ul>
-<li>选定 n 后，就不能包含到期间隔超过 n*u 的定时任务。
-如果定时任务的到期时间跨度较大，就会选择较大的 n，在定时任务较少时会造成很大的空间浪费。</li>
-<li>变体实现，它们通过在定时任务中增加记录 round 轮次信息，可以有效弥补上述两个缺点。同样以上面 u 为 1ms、n 为 3 的简单时间轮为例，初始时间指向第 1 格；此时如果要创建到期时间为 4ms 的定时任务，可以在该任务中设置 round 为 1（4/3 取整），剩余到期时间用 4ms 减去 round*3ms 等于 1ms，因此放到第 2 格；等到当前时间指向第 2 格时，判断任务中的 round 大于 0，所以不会删除并执行该任务，而是对其 round 减一（于是 round 变为 0）；等到再过 3ms 后，当前时间再次指向第 2 格，判断任务中的 round 为 0，进而删除并执行该任务。</li>
-</ul>
-<pre tabindex="0"><code class="language-base" data-lang="base">func (s *SimpleTimingWheel) getPositionAndCircle(d time.Duration) (pos int, circle int) {
+当前时间指向第 2 格（此时：到期间隔为 [0ms, 1ms) 的定时任务放第 2 格，[1ms, 2ms) 的放第 3 格，[2ms, 3ms) 的放第 1 格），我们继续创建一个到期间隔为 2ms 的定时任务 task2，按规则该任务被插入到第 1 格。</li></ul><h3 id=简单时间轮的优点是实现简单缺点是>简单时间轮的优点是实现简单，缺点是：</h3><ul><li>选定 n 后，就不能包含到期间隔超过 n*u 的定时任务。
+如果定时任务的到期时间跨度较大，就会选择较大的 n，在定时任务较少时会造成很大的空间浪费。</li><li>变体实现，它们通过在定时任务中增加记录 round 轮次信息，可以有效弥补上述两个缺点。同样以上面 u 为 1ms、n 为 3 的简单时间轮为例，初始时间指向第 1 格；此时如果要创建到期时间为 4ms 的定时任务，可以在该任务中设置 round 为 1（4/3 取整），剩余到期时间用 4ms 减去 round*3ms 等于 1ms，因此放到第 2 格；等到当前时间指向第 2 格时，判断任务中的 round 大于 0，所以不会删除并执行该任务，而是对其 round 减一（于是 round 变为 0）；等到再过 3ms 后，当前时间再次指向第 2 格，判断任务中的 round 为 0，进而删除并执行该任务。</li></ul><pre tabindex=0><code class=language-base data-lang=base>func (s *SimpleTimingWheel) getPositionAndCircle(d time.Duration) (pos int, circle int) {
 	delaySeconds := int(d.Seconds())
 	intervalSeconds := int(s.interval.Seconds())
 	circle = int(delaySeconds / intervalSeconds / s.nodeNum) //添加轮数
@@ -175,131 +24,21 @@
 	pos = int(delaySeconds - (intervalSeconds * s.nodeNum * circle) + s.currentNode)
 	return
 }
-</code></pre><ul>
-<li>这些变体实现因为只使用了一个时间轮，所以仍然存在一个缺点：如果定时任务数量很大，分摊到每一格的定时任务列表就会很长</li>
-</ul>
-<h3 id="使用方法">使用方法</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">tw := NewSimpleTimingWheel(SetNodeNum(6))
+</code></pre><ul><li>这些变体实现因为只使用了一个时间轮，所以仍然存在一个缺点：如果定时任务数量很大，分摊到每一格的定时任务列表就会很长</li></ul><h3 id=使用方法>使用方法</h3><pre tabindex=0><code class=language-base data-lang=base>tw := NewSimpleTimingWheel(SetNodeNum(6))
 tw.Start()
 fmt.Println(&#34;开始&#34;, time.Now().Format(&#34;2006-01-02 15:04:05&#34;))
 tw.AddTask(8*time.Second, func() {
 	fmt.Println(&#34;8秒后执行&#34;, time.Now().Format(&#34;2006-01-02 15:04:05&#34;))
 	//tw.Stop()
 })
-</code></pre><h3 id="完整演示代码--点击这里httpsgithubcomhwholidayalgorithm_codingblobmasterwheel_timersimple_timing_wheelgo">完整演示代码  <a href="https://github.com/hwholiday/algorithm_coding/blob/master/wheel_timer/simple_timing_wheel.go">点击这里</a></h3>
-<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
-
-    </div>
-    
-    <div class="post-copyright">
-             
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>hwholiday </span>
-                </p>
-            
-           
-            <p class="copyright-item">
-                    <span>Words:</span>
-                   <span>176</span>
-            </p>
-
-            <p class="copyright-item">
-                
-            </p>
-
-            
-    </div>
-
-  
-    <div class="post-tags">
-        
-            <section>
-            <i class="iconfont icon-icon-tag"></i>Tag: 
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
-                    #golang</a></span>
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/%E6%BA%90%E7%A0%81/">
-                    #源码</a></span>
-            
-            </section>
-        
-        <section>
-                <a href="javascript:window.history.back();">Back</a></span> · 
-                <span><a href="https://hwholiday.github.io/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-        
-        <a href="https://hwholiday.github.io/2019/archive/" class="prev" rel="prev" title="Golang 实践归档"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang 实践归档</a>
-         
-        
-        <a href="https://hwholiday.github.io/2019/middleware/" class="next" rel="next" title="Golang 基于interface 实现中间件(middleware)">Golang 基于interface 实现中间件(middleware)&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
-        
-    </div>
-
-    <div class="post-comment">
-          
-          
-
- 
-
-          
-    </div>
-</article>
-          </div>
-		   </main>
-      <footer class="footer">
-    <div class="copyright">
-        &copy;
-        
-        <span itemprop="copyrightYear">2016 - 2023</span>
-        
-         
-            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
-         
-
-		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
-    </div>
-</footer>
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    <script src="/js/vendor_no_gallery.min.js" async=""></script>
-    
-  
-
-
-
-
-
-
-
-<script>
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-</script>
-
-
-
-     </div>
-  </body>
-</html>
+</code></pre><h3 id=完整演示代码--点击这里httpsgithubcomhwholidayalgorithm_codingblobmasterwheel_timersimple_timing_wheelgo>完整演示代码 <a href=https://github.com/hwholiday/algorithm_coding/blob/master/wheel_timer/simple_timing_wheel.go>点击这里</a></h3><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
+<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
+<span>176</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
+<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#golang</a></span>
+<span class=tag><a href=http://hwholiday.github.io/tags/%E6%BA%90%E7%A0%81/>#源码</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
+<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2019/archive/ class=prev rel=prev title="Golang 实践归档"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang 实践归档</a>
+<a href=http://hwholiday.github.io/2019/middleware/ class=next rel=next title="Golang 基于interface 实现中间件(middleware)">Golang 基于interface 实现中间件(middleware)&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
+<span itemprop=copyrightYear>2016 - 2023</span>
+<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
+<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
+<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>

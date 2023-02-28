@@ -1,95 +1,8 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Docker on hwholiday</title>
-    <link>https://hwholiday.github.io/categories/docker/</link>
-    <description>Recent content in Docker on hwholiday</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Mon, 01 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/categories/docker/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Docker-compose 安装 redis-cluster 集群</title>
-      <link>https://hwholiday.github.io/2021/docker_redis/</link>
-      <pubDate>Mon, 01 Feb 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2021/docker_redis/</guid>
-      <description>安装 redis 集群 172.13.3.160 为宿主机IP redis1.conf 同样的配置只需要改prot
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Docker on hwholiday</title><link>http://hwholiday.github.io/categories/docker/</link><description>Recent content in Docker on hwholiday</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 01 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/categories/docker/index.xml" rel="self" type="application/rss+xml"/><item><title>Docker-compose 安装 redis-cluster 集群</title><link>http://hwholiday.github.io/2021/docker_redis/</link><pubDate>Mon, 01 Feb 2021 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2021/docker_redis/</guid><description>安装 redis 集群 172.13.3.160 为宿主机IP redis1.conf 同样的配置只需要改prot
 port 7001 protected-mode no cluster-enabled yes cluster-config-file nodes.conf cluster-node-timeout 5000 cluster-announce-ip 172.13.3.160 cluster-announce-port 7001 cluster-announce-bus-port 17001 appendonly yes pidfile /var/run/redis_7001.pid redis2.conf 同样的配置只需要改prot
 port 7002 protected-mode no cluster-enabled yes cluster-config-file nodes.conf cluster-node-timeout 5000 cluster-announce-ip 172.13.3.160 cluster-announce-port 7002 cluster-announce-bus-port 17002 appendonly yes pidfile /var/run/redis_7002.pid 生成6份
-docker-compose.yml version: &amp;#39;3.7&amp;#39; x-image: &amp;amp;redis-image redis:5.0.7 services: redis1: image: *redis-image container_name: redis1 command: [&amp;#34;redis-server&amp;#34;, &amp;#34;/home/redis/cluster/redis.conf&amp;#34;] volumes: - ./redis1.conf:/home/redis/cluster/redis.conf - ./7001/data:/data ports: - 7001:7001 - 17001:17001 redis2: image: *redis-image container_name: redis2 command: [&amp;#34;redis-server&amp;#34;, &amp;#34;/home/redis/cluster/redis.</description>
-    </item>
-    
-    <item>
-      <title>Docker 安装(mysql,redis,redis 集群，etcd,zookeeper,kafka,nginx,Jaeger)持续更新</title>
-      <link>https://hwholiday.github.io/2020/docker_install_development_tool/</link>
-      <pubDate>Mon, 18 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/docker_install_development_tool/</guid>
-      <description>$PWD 获取当前路径 安装 mysql docker run --name mysql -p 3306:3306 -v $PWD/docker_data/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=设置密码 -d mysql:latest 安装 redis docker run --name redis -p 6379:6379 -v $PWD/docker_data/redis:/data -d redis redis-server --appendonly yes --requirepass &amp;#34;设置密码&amp;#34; 安装 单点etcd docker run -d \ -p 2379:2379 \ -p 2380:2380 \ --mount type=bind,source=/tmp/etcd-data.tmp,destination=/etcd-data \ --name etcd-gcr-v3.4.14 \ gcr.io/etcd-development/etcd:v3.4.14 \ /usr/local/bin/etcd \ --name s1 \ --data-dir /etcd-data \ --listen-client-urls http://0.0.0.0:2379 \ --advertise-client-urls http://0.0.0.0:2379 \ --listen-peer-urls http://0.0.0.0:2380 \ --initial-advertise-peer-urls http://0.</description>
-    </item>
-    
-    <item>
-      <title>golang 插上docker_compose的翅膀</title>
-      <link>https://hwholiday.github.io/2020/golang_for_docker_compose/</link>
-      <pubDate>Sun, 19 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/golang_for_docker_compose/</guid>
-      <description>为你的golang程序插上docker_compose的翅膀 构建一个简单的http服务,使用redis的get，set方法 使用docker_compose构建一个agent服务，redis服务并使用networks 服务端代码 var rd *redis.Client func main() { InitRedis() http.HandleFunc(&amp;#34;/&amp;#34;, func(writer http.ResponseWriter, request *http.Request) { _, _ = fmt.Fprintf(writer, &amp;#34;hello world&amp;#34;) }) http.HandleFunc(&amp;#34;/set&amp;#34;, func(writer http.ResponseWriter, request *http.Request) { _ = request.ParseForm() key := request.Form.Get(&amp;#34;key&amp;#34;) val := request.Form.Get(&amp;#34;val&amp;#34;) fmt.Println(&amp;#34;set &amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; &amp;#34;, &amp;#34;key&amp;#34;, key, &amp;#34;val&amp;#34;, val) if key == &amp;#34;&amp;#34; { _, _ = writer.Write([]byte(&amp;#34;参数错误&amp;#34;)) return } if err := rd.Set(key, val, time.Second*60).Err(); err != nil { _, _ = writer.</description>
-    </item>
-    
-    <item>
-      <title>docker安装prometheus（普罗米修斯）</title>
-      <link>https://hwholiday.github.io/2019/docker_install_prometheus/</link>
-      <pubDate>Tue, 07 May 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2019/docker_install_prometheus/</guid>
-      <description>Prometheus简介 Prometheus是一个开源监控系统，它前身是SoundCloud的警告工具包 从2012年开始，许多公司和组织开始使用Prometheus。该项目的开发人员和用户社区非常活跃，越来越多的开发人员和用户参与到该项目中。目前它是一个独立的开源项目，且不依赖与任何公司 为了强调这点和明确该项目治理结构，Prometheus在2016年继Kurberntes之后，加入了Cloud Native Computing Foundation。 以下命令都需要管理员权限 sudo 搜索 gitlab Docker镜像 sudo docker search prometheus //输出结果部分截图 NAME DESCRIPTION STARS OFFICIAL AUTOMATED prom/prometheus 726 [OK] infinityworks/prometheus-rancher-exporter Exposes Service/Stack/Host status from the R… 7 [OK] basi/prometheus-swarm A sample image that can be used as a base fo… 7 [OK] linuxtips/prometheus_alpine Image to run Prometheus on Alpine Linux. #VA… 7 [OK] sscaling/jmx-prometheus-exporter A docker image containing a released version… 6 [OK] bitnami/prometheus Bitnami Docker Image for Prometheus 6 [OK] stefanprodan/swarmprom-prometheus Prometheus Docker Swarm 5 functions/prometheus prometheus 5 [OK] 拉取 gitlab Docker镜像 sudo docker pull prom/prometheus 配置 Prometheus使用YAML进行配置(prometheus.</description>
-    </item>
-    
-    <item>
-      <title>构建一个go程序的docker小镜像</title>
-      <link>https://hwholiday.github.io/2018/golang_for_docker/</link>
-      <pubDate>Wed, 07 Nov 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2018/golang_for_docker/</guid>
-      <description>scratch镜像是一个空的镜像文件，特别适合创建超级小的镜像。 生成go可执行程序的方法 go可执行程序生成的时候依赖的一些库如libc还是动态链接的，但是scratch 镜像完全是空的，什么东西也不包含，所以生成go可执行程序时候要按照下面的方式生成，使生成的go可执行程序静态链接所有的库：
-CGO_ENABLED=0 GOOS=linux go build -a -ldflags &amp;#39;-extldflags &amp;#34;-static&amp;#34;&amp;#39; -o howie_tcp . 创建dockerfile FROM scratch ADD howie_tcp /var/howie_tcp WORKDIR /var ENTRYPOINT [&amp;#34;/var/howie_tcp&amp;#34;] build 镜像 docker build -t tcp:v1 . 创建一个带配置文件的dockerfile FROM scratch ADD main /var/main ADD conf /var/conf/ WORKDIR /var ENTRYPOINT [&amp;#34;/var/main&amp;#34;] //项目目录 . ├── conf │ └── app.ini ├── Dockerfile ├── main └── main.go //main.go 代码 package main import ( &amp;#34;os&amp;#34; &amp;#34;path/filepath&amp;#34; &amp;#34;github.com/go-ini/ini&amp;#34; &amp;#34;fmt&amp;#34; ) func main() { checkErr := func(err error) { if err !</description>
-    </item>
-    
-    <item>
-      <title>docker和二进制安装minio单机和集群</title>
-      <link>https://hwholiday.github.io/2018/docker_install_minio/</link>
-      <pubDate>Wed, 24 Oct 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2018/docker_install_minio/</guid>
-      <description>Minio简介 Minio是一款高性能的分布式对象存储服务器，专为大规模私有云基础架构而设计 Minio是一个分布式对象存储服务器，Amazon S3兼容,用Go编写，在Apache License Version 2.0下开源 Minio为加密数据提供机密性，完整性和真实性保证，而性能开销可忽略不计。使用AES-256-GCM，ChaCha20-Poly1305和AES-CBC支持服务器端和客户端加密。加密对象使用AEAD服务器端加密进行防篡改。 详细简介请 点击这里 以下命令都需要管理员权限 sudo 搜索 gitlab Docker镜像 docker search minio //输出结果部分截图 NAME DESCRIPTION STARS OFFICIAL AUTOMATED minio/minio Minio is an Amazon S3 compatible object stor… 175 [OK] minio/mc Minio Client (mc) provides a modern alternat… 8 [OK] webhippie/minio Docker images for minio 3 [OK] pixelchrome/minio-arm This Dockerfile installs Minio on your ARM-P… 3 bbinet/salt-minion 2 [OK] zenithar/minio-server Minio.io Server in Alpine Linux docker 1 [OK] opennms/minion Application container runs Minion by OpenNMS… 1 [OK] jarfil/salt-minion Salt minion only 1 [OK] icereed/openshift-minio Minio packaged and compatible to Openshift a… 1 [OK] webcenter/alpine-minio The Minio Cloud Storage that work on Rancher.</description>
-    </item>
-    
-    <item>
-      <title>docker安装gitlab</title>
-      <link>https://hwholiday.github.io/2017/docker_install_gitlab/</link>
-      <pubDate>Sat, 02 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2017/docker_install_gitlab/</guid>
-      <description>Gitlab简介 GitLab是由GitLab Inc.开发，使用MIT许可证的基于网络的Git仓库管理工具，且具有wiki和issue跟踪功能。 GitLab是一个Git的代码托管工具，有免费的社区版允许我们在本地搭建代码托管网站，也有付费的企业版网站，能够在线托管代码。 搜索 gitlab Docker镜像 sudo docker search gitlab //输出结果部分截图 NAME DESCRIPTION STARS OFFICIAL AUTOMATED gitlab/gitlab-ce GitLab Community Edition docker image based … 2165 [OK] sameersbn/gitlab Dockerized gitlab web server 1067 [OK] gitlab/gitlab-runner GitLab CI Multi Runner used to fetch and run… 409 [OK] twang2218/gitlab-ce-zh 汉化的 GitLab 社区版 Docker Image 149 [OK] gitlab/gitlab-ee GitLab Enterprise Edition docker image based… 115 jangrewe/gitlab-ci-android GitLab CI image for building Android apps 46 [OK] centurylink/gitlab This image uses the image from sameersbn / g… 26 [OK] gitlab/dind 24 [OK] 拉取 gitlab Docker镜像 sudo docker pull gitlab/gitlab-ce 启动Gitlab 启动一个默认配置的Gitlab。在本机测试使用的话，将-h替换为127.</description>
-    </item>
-    
-    <item>
-      <title>使用dockerfile部署你的第一个服务</title>
-      <link>https://hwholiday.github.io/2017/docker_deploy/</link>
-      <pubDate>Sat, 11 Nov 2017 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2017/docker_deploy/</guid>
-      <description>VMware 安装Ubuntu 虚拟机不能联网 首先完全关闭ubuntu 还是找到unbutu，右键“设置”找到“网络适配器” 然后勾选“桥接模式”确定即可 下载openssh-server 使用远程服务 sudo apt-get install openssh-server 如果出现ifconfig命令没有反应的情况使用 sudo apt-get install net-tools 使用xsell登录到服务器 新建连接：输入(luinx)IP 端口为：22 输入用户名，密码 登录成功 安装docker准备(Docker 要求 Ubuntu 系统的内核版本高于 3.10 ) uname -r 查看Ubuntu 系统的内核版本 Dockerfile howie_api 与 Dockerfile同目录 FROM ubuntu ADD howie_api /var/howie_api //可执行程序 ADD conf /var/conf //配置文件 WORKDIR /var ENTRYPOINT [ &amp;#34;/var/howie_api&amp;#34;] build Docker docker build -t howie/api:v1 . 启动images sudo docker run -d -p 8070:8070 howie_api -d 后台运行 -p 输出端口 拷贝文件到docker sudo docker cp howie_api a62d89c48588:/var/howie_api 打开docker到文件 sudo docker exec -it a62d89c48588 &amp;#34;/bin/bash&amp;#34;; 挂载本地目录到容器和其他一些操作 docker run -d -p 8070:8070 -i -t -v /usr/local/howie:/var/howie ubuntu:16.</description>
-    </item>
-    
-    <item>
-      <title>第一次使用docker并安装mysql,redis（使用xshell操作）</title>
-      <link>https://hwholiday.github.io/2017/ubuntu_docker_mysql_redis/</link>
-      <pubDate>Fri, 10 Nov 2017 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2017/ubuntu_docker_mysql_redis/</guid>
-      <description>1:下载openssh-server 使用远程服务
+docker-compose.yml version: &amp;#39;3.7&amp;#39; x-image: &amp;amp;redis-image redis:5.0.7 services: redis1: image: *redis-image container_name: redis1 command: [&amp;#34;redis-server&amp;#34;, &amp;#34;/home/redis/cluster/redis.conf&amp;#34;] volumes: - ./redis1.conf:/home/redis/cluster/redis.conf - ./7001/data:/data ports: - 7001:7001 - 17001:17001 redis2: image: *redis-image container_name: redis2 command: [&amp;#34;redis-server&amp;#34;, &amp;#34;/home/redis/cluster/redis.</description></item><item><title>Docker 安装(mysql,redis,redis 集群，etcd,zookeeper,kafka,nginx,Jaeger)持续更新</title><link>http://hwholiday.github.io/2020/docker_install_development_tool/</link><pubDate>Mon, 18 May 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/docker_install_development_tool/</guid><description>$PWD 获取当前路径 安装 mysql docker run --name mysql -p 3306:3306 -v $PWD/docker_data/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=设置密码 -d mysql:latest 安装 redis docker run --name redis -p 6379:6379 -v $PWD/docker_data/redis:/data -d redis redis-server --appendonly yes --requirepass &amp;#34;设置密码&amp;#34; 安装 单点etcd docker run -d \ -p 2379:2379 \ -p 2380:2380 \ --mount type=bind,source=/tmp/etcd-data.tmp,destination=/etcd-data \ --name etcd-gcr-v3.4.14 \ gcr.io/etcd-development/etcd:v3.4.14 \ /usr/local/bin/etcd \ --name s1 \ --data-dir /etcd-data \ --listen-client-urls http://0.0.0.0:2379 \ --advertise-client-urls http://0.0.0.0:2379 \ --listen-peer-urls http://0.0.0.0:2380 \ --initial-advertise-peer-urls http://0.</description></item><item><title>golang 插上docker_compose的翅膀</title><link>http://hwholiday.github.io/2020/golang_for_docker_compose/</link><pubDate>Sun, 19 Jan 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/golang_for_docker_compose/</guid><description>为你的golang程序插上docker_compose的翅膀 构建一个简单的http服务,使用redis的get，set方法 使用docker_compose构建一个agent服务，redis服务并使用networks 服务端代码 var rd *redis.Client func main() { InitRedis() http.HandleFunc(&amp;#34;/&amp;#34;, func(writer http.ResponseWriter, request *http.Request) { _, _ = fmt.Fprintf(writer, &amp;#34;hello world&amp;#34;) }) http.HandleFunc(&amp;#34;/set&amp;#34;, func(writer http.ResponseWriter, request *http.Request) { _ = request.ParseForm() key := request.Form.Get(&amp;#34;key&amp;#34;) val := request.Form.Get(&amp;#34;val&amp;#34;) fmt.Println(&amp;#34;set &amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; &amp;#34;, &amp;#34;key&amp;#34;, key, &amp;#34;val&amp;#34;, val) if key == &amp;#34;&amp;#34; { _, _ = writer.Write([]byte(&amp;#34;参数错误&amp;#34;)) return } if err := rd.Set(key, val, time.Second*60).Err(); err != nil { _, _ = writer.</description></item><item><title>docker安装prometheus（普罗米修斯）</title><link>http://hwholiday.github.io/2019/docker_install_prometheus/</link><pubDate>Tue, 07 May 2019 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2019/docker_install_prometheus/</guid><description>Prometheus简介 Prometheus是一个开源监控系统，它前身是SoundCloud的警告工具包 从2012年开始，许多公司和组织开始使用Prometheus。该项目的开发人员和用户社区非常活跃，越来越多的开发人员和用户参与到该项目中。目前它是一个独立的开源项目，且不依赖与任何公司 为了强调这点和明确该项目治理结构，Prometheus在2016年继Kurberntes之后，加入了Cloud Native Computing Foundation。 以下命令都需要管理员权限 sudo 搜索 gitlab Docker镜像 sudo docker search prometheus //输出结果部分截图 NAME DESCRIPTION STARS OFFICIAL AUTOMATED prom/prometheus 726 [OK] infinityworks/prometheus-rancher-exporter Exposes Service/Stack/Host status from the R… 7 [OK] basi/prometheus-swarm A sample image that can be used as a base fo… 7 [OK] linuxtips/prometheus_alpine Image to run Prometheus on Alpine Linux. #VA… 7 [OK] sscaling/jmx-prometheus-exporter A docker image containing a released version… 6 [OK] bitnami/prometheus Bitnami Docker Image for Prometheus 6 [OK] stefanprodan/swarmprom-prometheus Prometheus Docker Swarm 5 functions/prometheus prometheus 5 [OK] 拉取 gitlab Docker镜像 sudo docker pull prom/prometheus 配置 Prometheus使用YAML进行配置(prometheus.</description></item><item><title>构建一个go程序的docker小镜像</title><link>http://hwholiday.github.io/2018/golang_for_docker/</link><pubDate>Wed, 07 Nov 2018 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2018/golang_for_docker/</guid><description>scratch镜像是一个空的镜像文件，特别适合创建超级小的镜像。 生成go可执行程序的方法 go可执行程序生成的时候依赖的一些库如libc还是动态链接的，但是scratch 镜像完全是空的，什么东西也不包含，所以生成go可执行程序时候要按照下面的方式生成，使生成的go可执行程序静态链接所有的库：
+CGO_ENABLED=0 GOOS=linux go build -a -ldflags &amp;#39;-extldflags &amp;#34;-static&amp;#34;&amp;#39; -o howie_tcp . 创建dockerfile FROM scratch ADD howie_tcp /var/howie_tcp WORKDIR /var ENTRYPOINT [&amp;#34;/var/howie_tcp&amp;#34;] build 镜像 docker build -t tcp:v1 . 创建一个带配置文件的dockerfile FROM scratch ADD main /var/main ADD conf /var/conf/ WORKDIR /var ENTRYPOINT [&amp;#34;/var/main&amp;#34;] //项目目录 . ├── conf │ └── app.ini ├── Dockerfile ├── main └── main.go //main.go 代码 package main import ( &amp;#34;os&amp;#34; &amp;#34;path/filepath&amp;#34; &amp;#34;github.com/go-ini/ini&amp;#34; &amp;#34;fmt&amp;#34; ) func main() { checkErr := func(err error) { if err !</description></item><item><title>docker和二进制安装minio单机和集群</title><link>http://hwholiday.github.io/2018/docker_install_minio/</link><pubDate>Wed, 24 Oct 2018 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2018/docker_install_minio/</guid><description>Minio简介 Minio是一款高性能的分布式对象存储服务器，专为大规模私有云基础架构而设计 Minio是一个分布式对象存储服务器，Amazon S3兼容,用Go编写，在Apache License Version 2.0下开源 Minio为加密数据提供机密性，完整性和真实性保证，而性能开销可忽略不计。使用AES-256-GCM，ChaCha20-Poly1305和AES-CBC支持服务器端和客户端加密。加密对象使用AEAD服务器端加密进行防篡改。 详细简介请 点击这里 以下命令都需要管理员权限 sudo 搜索 gitlab Docker镜像 docker search minio //输出结果部分截图 NAME DESCRIPTION STARS OFFICIAL AUTOMATED minio/minio Minio is an Amazon S3 compatible object stor… 175 [OK] minio/mc Minio Client (mc) provides a modern alternat… 8 [OK] webhippie/minio Docker images for minio 3 [OK] pixelchrome/minio-arm This Dockerfile installs Minio on your ARM-P… 3 bbinet/salt-minion 2 [OK] zenithar/minio-server Minio.io Server in Alpine Linux docker 1 [OK] opennms/minion Application container runs Minion by OpenNMS… 1 [OK] jarfil/salt-minion Salt minion only 1 [OK] icereed/openshift-minio Minio packaged and compatible to Openshift a… 1 [OK] webcenter/alpine-minio The Minio Cloud Storage that work on Rancher.</description></item><item><title>docker安装gitlab</title><link>http://hwholiday.github.io/2017/docker_install_gitlab/</link><pubDate>Sat, 02 Dec 2017 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2017/docker_install_gitlab/</guid><description>Gitlab简介 GitLab是由GitLab Inc.开发，使用MIT许可证的基于网络的Git仓库管理工具，且具有wiki和issue跟踪功能。 GitLab是一个Git的代码托管工具，有免费的社区版允许我们在本地搭建代码托管网站，也有付费的企业版网站，能够在线托管代码。 搜索 gitlab Docker镜像 sudo docker search gitlab //输出结果部分截图 NAME DESCRIPTION STARS OFFICIAL AUTOMATED gitlab/gitlab-ce GitLab Community Edition docker image based … 2165 [OK] sameersbn/gitlab Dockerized gitlab web server 1067 [OK] gitlab/gitlab-runner GitLab CI Multi Runner used to fetch and run… 409 [OK] twang2218/gitlab-ce-zh 汉化的 GitLab 社区版 Docker Image 149 [OK] gitlab/gitlab-ee GitLab Enterprise Edition docker image based… 115 jangrewe/gitlab-ci-android GitLab CI image for building Android apps 46 [OK] centurylink/gitlab This image uses the image from sameersbn / g… 26 [OK] gitlab/dind 24 [OK] 拉取 gitlab Docker镜像 sudo docker pull gitlab/gitlab-ce 启动Gitlab 启动一个默认配置的Gitlab。在本机测试使用的话，将-h替换为127.</description></item><item><title>使用dockerfile部署你的第一个服务</title><link>http://hwholiday.github.io/2017/docker_deploy/</link><pubDate>Sat, 11 Nov 2017 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2017/docker_deploy/</guid><description>VMware 安装Ubuntu 虚拟机不能联网 首先完全关闭ubuntu 还是找到unbutu，右键“设置”找到“网络适配器” 然后勾选“桥接模式”确定即可 下载openssh-server 使用远程服务 sudo apt-get install openssh-server 如果出现ifconfig命令没有反应的情况使用 sudo apt-get install net-tools 使用xsell登录到服务器 新建连接：输入(luinx)IP 端口为：22 输入用户名，密码 登录成功 安装docker准备(Docker 要求 Ubuntu 系统的内核版本高于 3.10 ) uname -r 查看Ubuntu 系统的内核版本 Dockerfile howie_api 与 Dockerfile同目录 FROM ubuntu ADD howie_api /var/howie_api //可执行程序 ADD conf /var/conf //配置文件 WORKDIR /var ENTRYPOINT [ &amp;#34;/var/howie_api&amp;#34;] build Docker docker build -t howie/api:v1 . 启动images sudo docker run -d -p 8070:8070 howie_api -d 后台运行 -p 输出端口 拷贝文件到docker sudo docker cp howie_api a62d89c48588:/var/howie_api 打开docker到文件 sudo docker exec -it a62d89c48588 &amp;#34;/bin/bash&amp;#34;; 挂载本地目录到容器和其他一些操作 docker run -d -p 8070:8070 -i -t -v /usr/local/howie:/var/howie ubuntu:16.</description></item><item><title>第一次使用docker并安装mysql,redis（使用xshell操作）</title><link>http://hwholiday.github.io/2017/ubuntu_docker_mysql_redis/</link><pubDate>Fri, 10 Nov 2017 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2017/ubuntu_docker_mysql_redis/</guid><description>1:下载openssh-server 使用远程服务
 sudo apt-get install openssh-server 2:如果出现ifconfig命令没有反应的情况使用
 sudo apt-get install net-tools 3:使用xsell登录到服务器
 新建连接：输入(luinx)IP 端口为：22 输入用户名，密码 登录成功
@@ -102,8 +15,4 @@ docker search mysql
 docker pull mysql:5.6 （PS:过程比较漫长~~~）
 3:启动mysql
 docker run --name mymysql -p 3306:3306 -v /home/howie/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.6 //注意，这里的容器名字叫：mymysql ，mysql的root用户密码是：123456 ，映射宿主机子的端口3306到容器的端口3306，本地持久化文件地址/home/howie/mysql/data,仓库名mysql和标签(tag）唯一确定了要指定的镜像，其实如果这里只有一个mysql也有必要要tag，执行该命令返回的结果 4:设置mysql让其可以外部链接
-执行 mysql -uroot -p</description>
-    </item>
-    
-  </channel>
-</rss>
+执行 mysql -uroot -p</description></item></channel></rss>

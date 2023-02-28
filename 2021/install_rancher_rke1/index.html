@@ -1,200 +1,45 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noodp"/>
-  
-  
-  
-  
-  
-  <link rel="prev" href="https://hwholiday.github.io/2021/docker_redis/" />
-  <link rel="next" href="https://hwholiday.github.io/2021/centos7/" />
-  <link rel="canonical" href="https://hwholiday.github.io/2021/install_rancher_rke1/" />
-  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>
-       
-       
-           安装 k8s 集群 Rancher RKE | hwholiday
-       
-  </title>
-  <meta name="title" content="安装 k8s 集群 Rancher RKE | hwholiday">
-    
-  
-  <link rel="stylesheet" href="/font/iconfont.css">
-  <link rel="stylesheet" href="/css/main.min.css">
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="安装 k8s 集群 Rancher RKE"/>
-<meta name="twitter:description" content="安装 k8s 集群 Rancher RKE"/>
-
-  <script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "BlogPosting",
-  "headline": "安装 k8s 集群 Rancher RKE",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https:\/\/hwholiday.github.io\/2021\/install_rancher_rke1\/"
-  },
-  
-  "genre": "posts",
-  "keywords": "k8s, docker",
-  "wordcount":  808 ,
-  "url": "https:\/\/hwholiday.github.io\/2021\/install_rancher_rke1\/",
-  "datePublished": "2021-02-02T00:00:00\u002b00:00",
-  "dateModified": "2021-02-02T00:00:00\u002b00:00",
-  
-  
-  
-  "description": "安装 k8s 集群 Rancher RKE"
-}
-</script>
-</head>
-
-  
-             
-  
-
-
-
-  <body class="">
-    <div class="wrapper">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-header header-logo">
-        	<a href="https://hwholiday.github.io/">hwholiday</a>
-        </div>
-        <div class="menu navbar-right">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
-        </div>
-    </div>
-</nav>
-<nav class="navbar-mobile" id="nav-mobile" style="display: none">
-     <div class="container">
-        <div class="navbar-header">
-            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
-            <div class="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-     
-          <div class="menu" id="mobile-menu">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-        </div>
-    </div>
-</nav>
-
-    	 <main class="main">
-          <div class="container">
-      		
-<article class="post-warp">
-    <header class="post-header">
-        <h1 class="post-title">安装 k8s 集群 Rancher RKE</h1>
-        <div class="post-meta">
-            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
-                <span class="post-time">
-                    on <time datetime=2021-02-02 >2 February 2021</time>
-                </span>
-                in
-                <i class="iconfont icon-folder"></i>
-                <span class="post-category">
-                        <a href="https://hwholiday.github.io/categories/kubernetes/"> Kubernetes </a>
-                        
-                </span>
-                <i class="iconfont icon-timer"></i>
-                4 min
-        </div>
-    </header>
-    <div class="post-content">
-        
-
-        
-
-        
-        
-     
-          
-          
-          
-
-          
-          
-          
-
-          <h2 id="内核">内核</h2>
-<p>K8S 1.18开始使用了IPVS 所以4.x以下的内核无法再运行K8S 网络会有BUG 官方推荐4.19LTS及以上的内核</p>
-<h4 id="查看内核版本">查看内核版本</h4>
-<p>uname -smr   <br>
-建议升级到最新的长期支持版本</p>
-<h2 id="升级内核httpswwwhwholidaycom2021centos7"><a href="https://www.hwholiday.com/2021/centos7/">升级内核</a></h2>
-<h2 id="安装-docker">安装 Docker</h2>
-<pre tabindex="0"><code class="language-base" data-lang="base">yum install -y yum-utils
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2021/docker_redis/><link rel=next href=http://hwholiday.github.io/2021/centos7/><link rel=canonical href=http://hwholiday.github.io/2021/install_rancher_rke1/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>安装 k8s 集群 Rancher RKE | hwholiday</title><meta name=title content="安装 k8s 集群 Rancher RKE | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="安装 k8s 集群 Rancher RKE"><meta name=twitter:description content="安装 k8s 集群 Rancher RKE"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"安装 k8s 集群 Rancher RKE","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2021\/install_rancher_rke1\/"},"genre":"posts","keywords":"k8s, docker","wordcount":808,"url":"http:\/\/hwholiday.github.io\/2021\/install_rancher_rke1\/","datePublished":"2021-02-02T00:00:00\u002b00:00","dateModified":"2021-02-02T00:00:00\u002b00:00","description":"安装 k8s 集群 Rancher RKE"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a>
+<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>安装 k8s 集群 Rancher RKE</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
+<span class=post-time>on <time datetime=2021-02-02>2 February 2021</time></span>
+in
+<i class="iconfont icon-folder"></i>
+<span class=post-category><a href=http://hwholiday.github.io/categories/kubernetes/>Kubernetes</a></span>
+<i class="iconfont icon-timer"></i>
+4 min</div></header><div class=post-content><h2 id=内核>内核</h2><p>K8S 1.18开始使用了IPVS 所以4.x以下的内核无法再运行K8S 网络会有BUG 官方推荐4.19LTS及以上的内核</p><h4 id=查看内核版本>查看内核版本</h4><p>uname -smr<br>建议升级到最新的长期支持版本</p><h2 id=升级内核httpswwwhwholidaycom2021centos7><a href=https://www.hwholiday.com/2021/centos7/>升级内核</a></h2><h2 id=安装-docker>安装 Docker</h2><pre tabindex=0><code class=language-base data-lang=base>yum install -y yum-utils
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 yum install docker-ce-19.03.9 docker-ce-cli-19.03.9 containerd.io
-</code></pre><h4 id="启动-docker">启动 Docker</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">systemctl enable docker
+</code></pre><h4 id=启动-docker>启动 Docker</h4><pre tabindex=0><code class=language-base data-lang=base>systemctl enable docker
 systemctl start docker
-</code></pre><h2 id="安装-rancher-rke">安装 Rancher RKE</h2>
-<h5 id="禁用-selinux">禁用 SELinux</h5>
-<pre tabindex="0"><code class="language-base" data-lang="base">/usr/sbin/sestatus -v |grep &#34;SELinux status&#34;
+</code></pre><h2 id=安装-rancher-rke>安装 Rancher RKE</h2><h5 id=禁用-selinux>禁用 SELinux</h5><pre tabindex=0><code class=language-base data-lang=base>/usr/sbin/sestatus -v |grep &#34;SELinux status&#34;
 #结果为 enabled 为启用状态
 vim /etc/selinux/config
 将SELINUX=enforcing改为SELINUX=disabled
-</code></pre><h5 id="禁用-swap">禁用 swap</h5>
-<pre tabindex="0"><code class="language-base" data-lang="base">free -h
+</code></pre><h5 id=禁用-swap>禁用 swap</h5><pre tabindex=0><code class=language-base data-lang=base>free -h
 #total        used        free      shared  buff/cache   available
 #Mem:           7.8G        205M        6.9G        8.7M        715M        7.3G
 #Swap:          5.0G          0B        5.0G
 #Swap 有值代表启用了swap
 vim /etc/fstab
 使用 # 注释掉有 swap 的一行
-</code></pre><h5 id="关闭防火墙">关闭防火墙</h5>
-<pre tabindex="0"><code class="language-base" data-lang="base">firewall-cmd --state
+</code></pre><h5 id=关闭防火墙>关闭防火墙</h5><pre tabindex=0><code class=language-base data-lang=base>firewall-cmd --state
 systemctl stop firewalld.service
 systemctl disable firewalld.service 
-</code></pre><h5 id="重启查看修改是否生效">重启查看修改是否生效</h5>
-<pre tabindex="0"><code class="language-base" data-lang="base">reboot
+</code></pre><h5 id=重启查看修改是否生效>重启查看修改是否生效</h5><pre tabindex=0><code class=language-base data-lang=base>reboot
 /usr/sbin/sestatus -v |grep &#34;SELinux status&#34;
 free -h
-</code></pre><h5 id="centos7不能使用root用户安装">CentOS7不能使用root用户安装</h5>
-<pre tabindex="0"><code class="language-base" data-lang="base">adduser RKE -G docker
+</code></pre><h5 id=centos7不能使用root用户安装>CentOS7不能使用root用户安装</h5><pre tabindex=0><code class=language-base data-lang=base>adduser RKE -G docker
 #设置 RKE 用户密码
 passwd RKE 
 #尝试使用rancher用户操作docker，观察是否有权限
 su RKE
 docker ps
-</code></pre><h5 id="配置主节点到各个节点rancher用户的免密登录">配置主节点到各个节点rancher用户的免密登录</h5>
-<pre tabindex="0"><code class="language-base" data-lang="base">#一路回车按到底
+</code></pre><h5 id=配置主节点到各个节点rancher用户的免密登录>配置主节点到各个节点rancher用户的免密登录</h5><pre tabindex=0><code class=language-base data-lang=base>#一路回车按到底
 ssh-keygen
 ssh-copy-id RKE@节点IP
 
@@ -215,14 +60,11 @@ ssh-copy-id RKE@172.12.17.167
 #测试 ssh 并执行 docker ps 看是否正常工作
 ssh  RKE@节点IP
 docker ps
-</code></pre><h5 id="下载rancher-rke-文件httpsgithubcomrancherrkereleases"><a href="https://github.com/rancher/rke/releases">下载Rancher RKE 文件</a></h5>
-<pre tabindex="0"><code class="language-base" data-lang="base">cd /home/RKE
+</code></pre><h5 id=下载rancher-rke-文件httpsgithubcomrancherrkereleases><a href=https://github.com/rancher/rke/releases>下载Rancher RKE 文件</a></h5><pre tabindex=0><code class=language-base data-lang=base>cd /home/RKE
 wget https://github.com/rancher/rke/releases/download/v1.2.5/rke_linux-amd64
 chmod +x rke_linux-amd64
-</code></pre><h4 id="配置-rke_linux-amd64">配置 rke_linux-amd64</h4>
-<p>只需要选择一台安装rke_linux-amd64,就可以完成整个集群的安装</p>
-<pre tabindex="0"><code class="language-base" data-lang="base">./rke_linux-amd64 config
-</code></pre><pre tabindex="0"><code class="language-base" data-lang="base">[+] Cluster Level SSH Private Key Path [~/.ssh/id_rsa]: ~/.ssh/id_rsa
+</code></pre><h4 id=配置-rke_linux-amd64>配置 rke_linux-amd64</h4><p>只需要选择一台安装rke_linux-amd64,就可以完成整个集群的安装</p><pre tabindex=0><code class=language-base data-lang=base>./rke_linux-amd64 config
+</code></pre><pre tabindex=0><code class=language-base data-lang=base>[+] Cluster Level SSH Private Key Path [~/.ssh/id_rsa]: ~/.ssh/id_rsa
 [+] Number of Hosts [1]: 2
 [+] SSH Address of host (1) [none]: 172.12.17.167
 [+] SSH Port of host (1) [22]:
@@ -254,11 +96,10 @@ chmod +x rke_linux-amd64
 [+] Cluster Network CIDR [10.42.0.0/16]:
 [+] Cluster DNS Service IP [10.43.0.10]:
 [+] Add addon manifest URLs or YAML files [no]:
-</code></pre><pre tabindex="0"><code class="language-base" data-lang="base">./rke_linux-amd64 up
+</code></pre><pre tabindex=0><code class=language-base data-lang=base>./rke_linux-amd64 up
 当看到 INFO[0294] Finished building Kubernetes cluster successfully
 恭喜你安装集群成功
-</code></pre><h5 id="如要外部通过公网访问请在-clusteryml-修改">如要外部通过公网访问,请在 cluster.yml 修改</h5>
-<pre tabindex="0"><code class="language-base" data-lang="base">之前
+</code></pre><h5 id=如要外部通过公网访问请在-clusteryml-修改>如要外部通过公网访问,请在 cluster.yml 修改</h5><pre tabindex=0><code class=language-base data-lang=base>之前
 
 authentication:
   strategy: x509
@@ -273,15 +114,14 @@ authentication:
       - &#34;外网IP&#34;
       - &#34;外网IP&#34;
   webhook: null
-</code></pre><h5 id="配置使用-kubectl">配置使用 kubectl</h5>
-<pre tabindex="0"><code class="language-base" data-lang="base">mkdir ~/.kube
+</code></pre><h5 id=配置使用-kubectl>配置使用 kubectl</h5><pre tabindex=0><code class=language-base data-lang=base>mkdir ~/.kube
 #kube_config_cluster.yml 集群安装成功后自动生成
 cp kube_config_cluster.yml ~/.kube/config
 
 curl -LO &#34;https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl&#34;
 chmod +x kubectl
 ./kubectl get pod -A
-</code></pre><pre tabindex="0"><code class="language-base" data-lang="base">[RKE@adsl-172-12-17-167 ~]$ ./kubectl get pod -A
+</code></pre><pre tabindex=0><code class=language-base data-lang=base>[RKE@adsl-172-12-17-167 ~]$ ./kubectl get pod -A
 NAMESPACE       NAME                                       READY   STATUS      RESTARTS   AGE
 ingress-nginx   default-http-backend-65dd5949d9-sldzj      1/1     Running     0          23m
 ingress-nginx   nginx-ingress-controller-7np89             1/1     Running     0          7m53s
@@ -295,14 +135,11 @@ kube-system     rke-coredns-addon-deploy-job-lq9fb         0/1     Completed   0
 kube-system     rke-ingress-controller-deploy-job-hhm6c    0/1     Completed   0          23m
 kube-system     rke-metrics-addon-deploy-job-fwhx5         0/1     Completed   0          24m
 kube-system     rke-network-plugin-deploy-job-8pwmh        0/1     Completed   0          25m
-</code></pre><h4 id="查看节点信息">查看节点信息</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">[RKE@adsl-172-12-17-167 ~]$ ./kubectl get node
+</code></pre><h4 id=查看节点信息>查看节点信息</h4><pre tabindex=0><code class=language-base data-lang=base>[RKE@adsl-172-12-17-167 ~]$ ./kubectl get node
 NAME             STATUS   ROLES               AGE   VERSION
 hw-k8s-master    Ready    controlplane,etcd   52m   v1.19.7
 hw-k8s-worker1   Ready    worker              35m   v1.19.7
-</code></pre><h2 id="扩容-rancher-rke">扩容 Rancher RKE</h2>
-<h4 id="配置-新节点-ssh">配置 新节点 ssh</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base"># 添加了一个新节点 172.12.17.165
+</code></pre><h2 id=扩容-rancher-rke>扩容 Rancher RKE</h2><h4 id=配置-新节点-ssh>配置 新节点 ssh</h4><pre tabindex=0><code class=language-base data-lang=base># 添加了一个新节点 172.12.17.165
 #在新节点 172.12.17.165 上执行
 ssh-keygen
 ssh-copy-id RKE@172.12.17.165
@@ -321,9 +158,7 @@ ssh-keygen //已经执行过不必再执行
 ssh-copy-id RKE@172.12.17.165
 ssh-copy-id RKE@172.12.17.167 //已经执行过不必再执行
 ssh-copy-id RKE@172.12.17.166 //已经执行过不必再执行
-</code></pre><h4 id="添加新的-node-信息到安装阶段-rke_linux-amd64-生成的-clusteryml">添加新的 node 信息到安装阶段 rke_linux-amd64 生成的 cluster.yml</h4>
-<h4 id="添加前">添加前</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">#只展示nodes的信息，其他信息忽略
+</code></pre><h4 id=添加新的-node-信息到安装阶段-rke_linux-amd64-生成的-clusteryml>添加新的 node 信息到安装阶段 rke_linux-amd64 生成的 cluster.yml</h4><h4 id=添加前>添加前</h4><pre tabindex=0><code class=language-base data-lang=base>#只展示nodes的信息，其他信息忽略
 nodes:
 - address: 172.12.17.166
   port: &#34;22&#34;
@@ -354,8 +189,7 @@ nodes:
   ssh_cert_path: &#34;&#34;
   labels: {}
   taints: []
-</code></pre><h4 id="添加后">添加后</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">#只展示nodes的信息，其他信息忽略
+</code></pre><h4 id=添加后>添加后</h4><pre tabindex=0><code class=language-base data-lang=base>#只展示nodes的信息，其他信息忽略
 nodes:
 - address: 172.12.17.166
   port: &#34;22&#34;
@@ -400,128 +234,22 @@ nodes:
   ssh_cert_path: &#34;&#34;
   labels: {}
   taints: []
-</code></pre><h4 id="在线扩容">在线扩容</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">./rke_linux-amd64 up --update-only
+</code></pre><h4 id=在线扩容>在线扩容</h4><pre tabindex=0><code class=language-base data-lang=base>./rke_linux-amd64 up --update-only
 当看到 INFO[0294] Finished building Kubernetes cluster successfully
 恭喜你扩容集群成功
-</code></pre><h4 id="查看节点信息-1">查看节点信息</h4>
-<pre tabindex="0"><code class="language-base" data-lang="base">[RKE@adsl-172-12-17-167 ~]$ ./kubectl get node
+</code></pre><h4 id=查看节点信息-1>查看节点信息</h4><pre tabindex=0><code class=language-base data-lang=base>[RKE@adsl-172-12-17-167 ~]$ ./kubectl get node
 NAME             STATUS   ROLES               AGE   VERSION
 hw-k8s-master    Ready    controlplane,etcd   52m   v1.19.7
 hw-k8s-worker1   Ready    worker              35m   v1.19.7
 hw-k8s-worker2   Ready    worker              86s   v1.19.7
-</code></pre>
-    </div>
-    
-    <div class="post-copyright">
-             
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>hwholiday </span>
-                </p>
-            
-           
-            <p class="copyright-item">
-                    <span>Words:</span>
-                   <span>808</span>
-            </p>
-
-            <p class="copyright-item">
-                
-            </p>
-
-            
-    </div>
-
-  
-    <div class="post-tags">
-        
-            <section>
-            <i class="iconfont icon-icon-tag"></i>Tag: 
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/k8s/">
-                    #k8s</a></span>
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/docker/">
-                    #docker</a></span>
-            
-            </section>
-        
-        <section>
-                <a href="javascript:window.history.back();">Back</a></span> · 
-                <span><a href="https://hwholiday.github.io/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-        
-        <a href="https://hwholiday.github.io/2021/docker_redis/" class="prev" rel="prev" title="Docker-compose 安装 redis-cluster 集群"><i class="iconfont icon-dajiantou"></i>&nbsp;Docker-compose 安装 redis-cluster 集群</a>
-         
-        
-        <a href="https://hwholiday.github.io/2021/centos7/" class="next" rel="next" title="centos7 升级内核">centos7 升级内核&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
-        
-    </div>
-
-    <div class="post-comment">
-          
-          
-
- 
-
-          
-    </div>
-</article>
-          </div>
-		   </main>
-      <footer class="footer">
-    <div class="copyright">
-        &copy;
-        
-        <span itemprop="copyrightYear">2016 - 2023</span>
-        
-         
-            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
-         
-
-		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
-    </div>
-</footer>
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    <script src="/js/vendor_no_gallery.min.js" async=""></script>
-    
-  
-
-
-
-
-
-
-
-<script>
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-</script>
-
-
-
-     </div>
-  </body>
-</html>
+</code></pre></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
+<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
+<span>808</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
+<span class=tag><a href=http://hwholiday.github.io/tags/k8s/>#k8s</a></span>
+<span class=tag><a href=http://hwholiday.github.io/tags/docker/>#docker</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
+<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2021/docker_redis/ class=prev rel=prev title="Docker-compose 安装 redis-cluster 集群"><i class="iconfont icon-dajiantou"></i>&nbsp;Docker-compose 安装 redis-cluster 集群</a>
+<a href=http://hwholiday.github.io/2021/centos7/ class=next rel=next title="centos7 升级内核">centos7 升级内核&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
+<span itemprop=copyrightYear>2016 - 2023</span>
+<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
+<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
+<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>

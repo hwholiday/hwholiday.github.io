@@ -1,19 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>mysql on hwholiday</title>
-    <link>https://hwholiday.github.io/tags/mysql/</link>
-    <description>Recent content in mysql on hwholiday</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Fri, 10 Nov 2017 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>第一次使用docker并安装mysql,redis（使用xshell操作）</title>
-      <link>https://hwholiday.github.io/2017/ubuntu_docker_mysql_redis/</link>
-      <pubDate>Fri, 10 Nov 2017 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2017/ubuntu_docker_mysql_redis/</guid>
-      <description>1:下载openssh-server 使用远程服务
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mysql on hwholiday</title><link>http://hwholiday.github.io/tags/mysql/</link><description>Recent content in mysql on hwholiday</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 10 Nov 2017 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/tags/mysql/index.xml" rel="self" type="application/rss+xml"/><item><title>第一次使用docker并安装mysql,redis（使用xshell操作）</title><link>http://hwholiday.github.io/2017/ubuntu_docker_mysql_redis/</link><pubDate>Fri, 10 Nov 2017 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2017/ubuntu_docker_mysql_redis/</guid><description>1:下载openssh-server 使用远程服务
 sudo apt-get install openssh-server 2:如果出现ifconfig命令没有反应的情况使用
 sudo apt-get install net-tools 3:使用xsell登录到服务器
 新建连接：输入(luinx)IP 端口为：22 输入用户名，密码 登录成功
@@ -26,8 +11,4 @@ docker search mysql
 docker pull mysql:5.6 （PS:过程比较漫长~~~）
 3:启动mysql
 docker run --name mymysql -p 3306:3306 -v /home/howie/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.6 //注意，这里的容器名字叫：mymysql ，mysql的root用户密码是：123456 ，映射宿主机子的端口3306到容器的端口3306，本地持久化文件地址/home/howie/mysql/data,仓库名mysql和标签(tag）唯一确定了要指定的镜像，其实如果这里只有一个mysql也有必要要tag，执行该命令返回的结果 4:设置mysql让其可以外部链接
-执行 mysql -uroot -p</description>
-    </item>
-    
-  </channel>
-</rss>
+执行 mysql -uroot -p</description></item></channel></rss>

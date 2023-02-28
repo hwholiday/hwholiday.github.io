@@ -1,41 +1,8 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>文件服务 on hwholiday</title>
-    <link>https://hwholiday.github.io/tags/%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1/</link>
-    <description>Recent content in 文件服务 on hwholiday</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Tue, 18 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/tags/%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Kubernetes 集群挂载高可用 NFS 网络文件存储</title>
-      <link>https://hwholiday.github.io/2021/k8s-nsf/</link>
-      <pubDate>Tue, 18 May 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2021/k8s-nsf/</guid>
-      <description>安装NFS高可用集群 安装 nfs-client-provisioner curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 chmod 700 get_helm.sh ./get_helm.sh helm repo add azure http://mirror.azure.cn/kubernetes/charts/ helm install nfs-storage azure/nfs-client-provisioner --set nfs.server=&amp;#34;172.12.17.200&amp;#34; --set nfs.path=/fs/nsf-data --set storageClass.name=nfs-hw 创建PVC kubectl apply -f nfs-pvc.yaml
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>文件服务 on hwholiday</title><link>http://hwholiday.github.io/tags/%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1/</link><description>Recent content in 文件服务 on hwholiday</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 18 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/tags/%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1/index.xml" rel="self" type="application/rss+xml"/><item><title>Kubernetes 集群挂载高可用 NFS 网络文件存储</title><link>http://hwholiday.github.io/2021/k8s-nsf/</link><pubDate>Tue, 18 May 2021 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2021/k8s-nsf/</guid><description>安装NFS高可用集群 安装 nfs-client-provisioner curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 chmod 700 get_helm.sh ./get_helm.sh helm repo add azure http://mirror.azure.cn/kubernetes/charts/ helm install nfs-storage azure/nfs-client-provisioner --set nfs.server=&amp;#34;172.12.17.200&amp;#34; --set nfs.path=/fs/nsf-data --set storageClass.name=nfs-hw 创建PVC kubectl apply -f nfs-pvc.yaml
 apiVersion: v1 kind: PersistentVolumeClaim metadata: name: nfs-pvc-test spec: storageClassName: &amp;#34;nfs-hw&amp;#34; accessModes: - ReadWriteMany resources: requests: storage: 10Gi 测试 kubectl apply -f nfs-test.yaml
-apiVersion: batch/v1 kind: Job metadata: name: nfsjob spec: template: spec: containers: - name: bbox1 image: busybox args: - /bin/sh - -c - echo &amp;#34;1231231231&amp;#34; &amp;gt; /nfs-data/hello volumeMounts: - mountPath: &amp;#34;/nfs-data&amp;#34; name: nfsdata restartPolicy: Never volumes: - name: nfsdata persistentVolumeClaim: claimName: nfs-pvc-test end 接下来去看看 NFS 服务器上是否有对应文件文件 K8S 集群是 v1.</description>
-    </item>
-    
-    <item>
-      <title>NFS (Kubernetes) 高可用方案（NFS&#43;keepalived&#43;Sersync)</title>
-      <link>https://hwholiday.github.io/2021/nsf/</link>
-      <pubDate>Mon, 17 May 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2021/nsf/</guid>
-      <description>简介 本方案 NFS 的高可用方案，客户端为 k8s集群 ，三台文件服务器分别Master和 Slave，使用 keepalived 生成一个虚拟 IP，使用 Sersync 进行 Master 与 Slave 之间文件相互同步，确保高可用。
+apiVersion: batch/v1 kind: Job metadata: name: nfsjob spec: template: spec: containers: - name: bbox1 image: busybox args: - /bin/sh - -c - echo &amp;#34;1231231231&amp;#34; &amp;gt; /nfs-data/hello volumeMounts: - mountPath: &amp;#34;/nfs-data&amp;#34; name: nfsdata restartPolicy: Never volumes: - name: nfsdata persistentVolumeClaim: claimName: nfs-pvc-test end 接下来去看看 NFS 服务器上是否有对应文件文件 K8S 集群是 v1.</description></item><item><title>NFS (Kubernetes) 高可用方案（NFS+keepalived+Sersync)</title><link>http://hwholiday.github.io/2021/nsf/</link><pubDate>Mon, 17 May 2021 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2021/nsf/</guid><description>简介 本方案 NFS 的高可用方案，客户端为 k8s集群 ，三台文件服务器分别Master和 Slave，使用 keepalived 生成一个虚拟 IP，使用 Sersync 进行 Master 与 Slave 之间文件相互同步，确保高可用。
 角色 系统 IP 虚拟IP 172.12.17.200 Client k8s集群 172.12.17.163,172.12.17.164,172.12.17.165 Master centos 7.5 172.12.17.166 Slave centos 7.5 172.12.17.167 查看内核版本 uname -smr 建议升级到最新的长期支持版本 升级内核
-安装nfs 在master和slave上面创建共享目录 mkdir -p /fs/nsf-data 在master和slave上安装nfs服务 // 下载nfs yum -y install nfs-utils rpcbind //写入配置（配置要改动需要reload nfs 服务） echo &amp;#39;/fs/nsf-data 172.12.17.163 172.12.17.164 172.12.17.165(rw,sync,all_squash)&amp;#39; &amp;gt;&amp;gt; /etc/exports //开启服务 systemctl start rpcbind &amp;amp;&amp;amp; systemctl start nfs //设置开机自启动 systemctl enable rpcbind &amp;amp;&amp;amp; systemctl enable nfs 在k8s集群里面找个node 测试是否能链接上nfs服务 // 下载nfs yum -y install nfs-utils rpcbind // 挂载目录 mkdir /test-nsf-data // 挂载nfs mount -t nfs 172.</description>
-    </item>
-    
-    <item>
-      <title>Golang 文件服务器支持多线程上传下载</title>
-      <link>https://hwholiday.github.io/2020/file_storage/</link>
-      <pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2020/file_storage/</guid>
-      <description>简介 参照 Telegram Uploading and Downloading Files
+安装nfs 在master和slave上面创建共享目录 mkdir -p /fs/nsf-data 在master和slave上安装nfs服务 // 下载nfs yum -y install nfs-utils rpcbind //写入配置（配置要改动需要reload nfs 服务） echo &amp;#39;/fs/nsf-data 172.12.17.163 172.12.17.164 172.12.17.165(rw,sync,all_squash)&amp;#39; &amp;gt;&amp;gt; /etc/exports //开启服务 systemctl start rpcbind &amp;amp;&amp;amp; systemctl start nfs //设置开机自启动 systemctl enable rpcbind &amp;amp;&amp;amp; systemctl enable nfs 在k8s集群里面找个node 测试是否能链接上nfs服务 // 下载nfs yum -y install nfs-utils rpcbind // 挂载目录 mkdir /test-nsf-data // 挂载nfs mount -t nfs 172.</description></item><item><title>Golang 文件服务器支持多线程上传下载</title><link>http://hwholiday.github.io/2020/file_storage/</link><pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2020/file_storage/</guid><description>简介 参照 Telegram Uploading and Downloading Files
 写的文件服务器（断点续传，分片上传下载,自动生成缩略图等）
 申请上传文件 请求
 文件名 文件大小 （字节） 文件扩展名 是否需要缩略图 文件MD5 返回
@@ -47,17 +14,4 @@ apiVersion: batch/v1 kind: Job metadata: name: nfsjob spec: template: spec: cont
 文件ID 文件分片ID file_part 文件MD5 文件内容 part_size 是否是最后一片 所有分片必须具有相同的大小（part_size），并且必须满足以下条件：part_size % 1024 = 0 （可被1KB整除524288 % part_size = 0（512KB必须可以被part_size整除）如果最后一部分的大小小于part_size，则不必满足这些条件。每个部分都应具有序列号file_part，其值的范围为1到3000。 服务器处理
 每个分片接收完毕的时候都检查下服务器接受文件MD5是否相等 检查该分片是否已经上传，是则不做任何处理,不是则把文件存入内存，再将已上传文件大小累加 判断已上传文件大小是否等于文件总大小 （标记文件已经完成） 按照文件分片顺序拼接文件 检查文件MD5是否相等，上传到文件服务器,文件上传结束 返回
 成功 or 失败 下载文件 请求
-文件ID limit 可被1024整除 offset 可被1024整除 offset 不能超过 1048576（1 MB） 服务器处理</description>
-    </item>
-    
-    <item>
-      <title>docker和二进制安装minio单机和集群</title>
-      <link>https://hwholiday.github.io/2018/docker_install_minio/</link>
-      <pubDate>Wed, 24 Oct 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2018/docker_install_minio/</guid>
-      <description>Minio简介 Minio是一款高性能的分布式对象存储服务器，专为大规模私有云基础架构而设计 Minio是一个分布式对象存储服务器，Amazon S3兼容,用Go编写，在Apache License Version 2.0下开源 Minio为加密数据提供机密性，完整性和真实性保证，而性能开销可忽略不计。使用AES-256-GCM，ChaCha20-Poly1305和AES-CBC支持服务器端和客户端加密。加密对象使用AEAD服务器端加密进行防篡改。 详细简介请 点击这里 以下命令都需要管理员权限 sudo 搜索 gitlab Docker镜像 docker search minio //输出结果部分截图 NAME DESCRIPTION STARS OFFICIAL AUTOMATED minio/minio Minio is an Amazon S3 compatible object stor… 175 [OK] minio/mc Minio Client (mc) provides a modern alternat… 8 [OK] webhippie/minio Docker images for minio 3 [OK] pixelchrome/minio-arm This Dockerfile installs Minio on your ARM-P… 3 bbinet/salt-minion 2 [OK] zenithar/minio-server Minio.io Server in Alpine Linux docker 1 [OK] opennms/minion Application container runs Minion by OpenNMS… 1 [OK] jarfil/salt-minion Salt minion only 1 [OK] icereed/openshift-minio Minio packaged and compatible to Openshift a… 1 [OK] webcenter/alpine-minio The Minio Cloud Storage that work on Rancher.</description>
-    </item>
-    
-  </channel>
-</rss>
+文件ID limit 可被1024整除 offset 可被1024整除 offset 不能超过 1048576（1 MB） 服务器处理</description></item><item><title>docker和二进制安装minio单机和集群</title><link>http://hwholiday.github.io/2018/docker_install_minio/</link><pubDate>Wed, 24 Oct 2018 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2018/docker_install_minio/</guid><description>Minio简介 Minio是一款高性能的分布式对象存储服务器，专为大规模私有云基础架构而设计 Minio是一个分布式对象存储服务器，Amazon S3兼容,用Go编写，在Apache License Version 2.0下开源 Minio为加密数据提供机密性，完整性和真实性保证，而性能开销可忽略不计。使用AES-256-GCM，ChaCha20-Poly1305和AES-CBC支持服务器端和客户端加密。加密对象使用AEAD服务器端加密进行防篡改。 详细简介请 点击这里 以下命令都需要管理员权限 sudo 搜索 gitlab Docker镜像 docker search minio //输出结果部分截图 NAME DESCRIPTION STARS OFFICIAL AUTOMATED minio/minio Minio is an Amazon S3 compatible object stor… 175 [OK] minio/mc Minio Client (mc) provides a modern alternat… 8 [OK] webhippie/minio Docker images for minio 3 [OK] pixelchrome/minio-arm This Dockerfile installs Minio on your ARM-P… 3 bbinet/salt-minion 2 [OK] zenithar/minio-server Minio.io Server in Alpine Linux docker 1 [OK] opennms/minion Application container runs Minion by OpenNMS… 1 [OK] jarfil/salt-minion Salt minion only 1 [OK] icereed/openshift-minio Minio packaged and compatible to Openshift a… 1 [OK] webcenter/alpine-minio The Minio Cloud Storage that work on Rancher.</description></item></channel></rss>

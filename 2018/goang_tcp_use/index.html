@@ -1,175 +1,17 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noodp"/>
-  
-  
-  
-  
-  
-  <link rel="prev" href="https://hwholiday.github.io/2018/go_cn_fullname/" />
-  <link rel="next" href="https://hwholiday.github.io/2018/golang_for_docker/" />
-  <link rel="canonical" href="https://hwholiday.github.io/2018/goang_tcp_use/" />
-  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>
-       
-       
-           使用TCP并解决TCP粘包的问题 | hwholiday
-       
-  </title>
-  <meta name="title" content="使用TCP并解决TCP粘包的问题 | hwholiday">
-    
-  
-  <link rel="stylesheet" href="/font/iconfont.css">
-  <link rel="stylesheet" href="/css/main.min.css">
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="使用TCP并解决TCP粘包的问题"/>
-<meta name="twitter:description" content="解决TCP粘包的问题"/>
-
-  <script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "BlogPosting",
-  "headline": "使用TCP并解决TCP粘包的问题",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https:\/\/hwholiday.github.io\/2018\/goang_tcp_use\/"
-  },
-  
-  "genre": "posts",
-  "keywords": "golang, tcp",
-  "wordcount":  851 ,
-  "url": "https:\/\/hwholiday.github.io\/2018\/goang_tcp_use\/",
-  "datePublished": "2018-11-01T00:00:00\u002b00:00",
-  "dateModified": "2018-11-01T00:00:00\u002b00:00",
-  
-  
-  
-  "description": "解决TCP粘包的问题"
-}
-</script>
-</head>
-
-  
-             
-  
-
-
-
-  <body class="">
-    <div class="wrapper">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-header header-logo">
-        	<a href="https://hwholiday.github.io/">hwholiday</a>
-        </div>
-        <div class="menu navbar-right">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
-        </div>
-    </div>
-</nav>
-<nav class="navbar-mobile" id="nav-mobile" style="display: none">
-     <div class="container">
-        <div class="navbar-header">
-            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
-            <div class="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-     
-          <div class="menu" id="mobile-menu">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-        </div>
-    </div>
-</nav>
-
-    	 <main class="main">
-          <div class="container">
-      		
-<article class="post-warp">
-    <header class="post-header">
-        <h1 class="post-title">使用TCP并解决TCP粘包的问题</h1>
-        <div class="post-meta">
-            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
-                <span class="post-time">
-                    on <time datetime=2018-11-01 >1 November 2018</time>
-                </span>
-                in
-                <i class="iconfont icon-folder"></i>
-                <span class="post-category">
-                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
-                        
-                </span>
-                <i class="iconfont icon-timer"></i>
-                4 min
-        </div>
-    </header>
-    <div class="post-content">
-        
-
-        
-
-        
-        
-     
-          
-          
-          
-
-          
-          
-          
-
-          <h2 id="最新代码地址添加headtypedata-解包-并添加心跳-点击这里httpsgithubcomhwholidaylearning_toolstreemastertcp">最新代码地址(添加head+type+data 解包 并添加心跳) <a href="https://github.com/hwholiday/learning_tools/tree/master/tcp">点击这里</a></h2>
-<h2 id="此项目有对应的android端demo有需求请联系下方qq">此项目有对应的Android端demo有需求请联系下方QQ</h2>
-<h2 id="tcp粘包和拆包产生的原因">TCP粘包和拆包产生的原因</h2>
-<ul>
-<li>应用程序写入数据的字节大小大于套接字发送缓冲区的大小</li>
-<li>进行MSS大小的TCP分段。MSS是最大报文段长度的缩写。MSS是TCP报文段中的数据字段的最大长度。数据字段加上TCP首部才等于整个的TCP报文段。所以MSS并不是TCP报文段的最大长度，而是：MSS=TCP报文段长度-TCP首部长度</li>
-<li>以太网的payload大于MTU进行IP分片。MTU指：一种通信协议的某一层上面所能通过的最大数据包大小。如果IP层有一个数据包要传，而且数据的长度比链路层的MTU大，那么IP层就会进行分片，把数据包分成托干片，让每一片都不超过MTU。注意，IP分片可以发生在原始发送端主机上，也可以发生在中间路由器上。</li>
-</ul>
-<h2 id="tcp粘包和拆包的解决策略">TCP粘包和拆包的解决策略</h2>
-<ul>
-<li>消息定长。例如100字节。</li>
-<li>在包尾部增加回车或者空格符等特殊字符进行分割，典型的如FTP协议</li>
-<li>将消息分为消息头和消息尾。(len+data模式)</li>
-<li>其它复杂的协议，如RTMP协议等。</li>
-<li>将消息分为消息头+消息类型+消息体。(len+type+data 模式)</li>
-</ul>
-<h2 id="废话不多说直接上代码">废话不多说直接上代码</h2>
-<h3 id="服务端">服务端</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">package network
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2018/go_cn_fullname/><link rel=next href=http://hwholiday.github.io/2018/golang_for_docker/><link rel=canonical href=http://hwholiday.github.io/2018/goang_tcp_use/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>使用TCP并解决TCP粘包的问题 | hwholiday</title><meta name=title content="使用TCP并解决TCP粘包的问题 | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="使用TCP并解决TCP粘包的问题"><meta name=twitter:description content="解决TCP粘包的问题"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"使用TCP并解决TCP粘包的问题","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2018\/goang_tcp_use\/"},"genre":"posts","keywords":"golang, tcp","wordcount":851,"url":"http:\/\/hwholiday.github.io\/2018\/goang_tcp_use\/","datePublished":"2018-11-01T00:00:00\u002b00:00","dateModified":"2018-11-01T00:00:00\u002b00:00","description":"解决TCP粘包的问题"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a>
+<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>使用TCP并解决TCP粘包的问题</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
+<span class=post-time>on <time datetime=2018-11-01>1 November 2018</time></span>
+in
+<i class="iconfont icon-folder"></i>
+<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a></span>
+<i class="iconfont icon-timer"></i>
+4 min</div></header><div class=post-content><h2 id=最新代码地址添加headtypedata-解包-并添加心跳-点击这里httpsgithubcomhwholidaylearning_toolstreemastertcp>最新代码地址(添加head+type+data 解包 并添加心跳) <a href=https://github.com/hwholiday/learning_tools/tree/master/tcp>点击这里</a></h2><h2 id=此项目有对应的android端demo有需求请联系下方qq>此项目有对应的Android端demo有需求请联系下方QQ</h2><h2 id=tcp粘包和拆包产生的原因>TCP粘包和拆包产生的原因</h2><ul><li>应用程序写入数据的字节大小大于套接字发送缓冲区的大小</li><li>进行MSS大小的TCP分段。MSS是最大报文段长度的缩写。MSS是TCP报文段中的数据字段的最大长度。数据字段加上TCP首部才等于整个的TCP报文段。所以MSS并不是TCP报文段的最大长度，而是：MSS=TCP报文段长度-TCP首部长度</li><li>以太网的payload大于MTU进行IP分片。MTU指：一种通信协议的某一层上面所能通过的最大数据包大小。如果IP层有一个数据包要传，而且数据的长度比链路层的MTU大，那么IP层就会进行分片，把数据包分成托干片，让每一片都不超过MTU。注意，IP分片可以发生在原始发送端主机上，也可以发生在中间路由器上。</li></ul><h2 id=tcp粘包和拆包的解决策略>TCP粘包和拆包的解决策略</h2><ul><li>消息定长。例如100字节。</li><li>在包尾部增加回车或者空格符等特殊字符进行分割，典型的如FTP协议</li><li>将消息分为消息头和消息尾。(len+data模式)</li><li>其它复杂的协议，如RTMP协议等。</li><li>将消息分为消息头+消息类型+消息体。(len+type+data 模式)</li></ul><h2 id=废话不多说直接上代码>废话不多说直接上代码</h2><h3 id=服务端>服务端</h3><pre tabindex=0><code class=language-base data-lang=base>package network
 
 import (
 	&#34;net&#34;
@@ -371,8 +213,7 @@ func (c *TcpClient) Read() (int32, []byte, error) {
 	}
 	return tag, pack[c.head+c.tag:], nil
 }
-</code></pre><h3 id="客户端">客户端</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">package main
+</code></pre><h3 id=客户端>客户端</h3><pre tabindex=0><code class=language-base data-lang=base>package main
 
 import (
 	&#34;testing&#34;
@@ -469,119 +310,14 @@ func Read(c *bufio.Reader) (int32, []byte, error) {
 	}
 	return tag, pack[headLen+tagLen:], nil
 }
-</code></pre><h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
-
-    </div>
-    
-    <div class="post-copyright">
-             
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>hwholiday </span>
-                </p>
-            
-           
-            <p class="copyright-item">
-                    <span>Words:</span>
-                   <span>851</span>
-            </p>
-
-            <p class="copyright-item">
-                
-            </p>
-
-            
-    </div>
-
-  
-    <div class="post-tags">
-        
-            <section>
-            <i class="iconfont icon-icon-tag"></i>Tag: 
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
-                    #golang</a></span>
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/tcp/">
-                    #tcp</a></span>
-            
-            </section>
-        
-        <section>
-                <a href="javascript:window.history.back();">Back</a></span> · 
-                <span><a href="https://hwholiday.github.io/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-        
-        <a href="https://hwholiday.github.io/2018/go_cn_fullname/" class="prev" rel="prev" title="随机生成中国人姓名"><i class="iconfont icon-dajiantou"></i>&nbsp;随机生成中国人姓名</a>
-         
-        
-        <a href="https://hwholiday.github.io/2018/golang_for_docker/" class="next" rel="next" title="构建一个go程序的docker小镜像">构建一个go程序的docker小镜像&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
-        
-    </div>
-
-    <div class="post-comment">
-          
-          
-
- 
-
-          
-    </div>
-</article>
-          </div>
-		   </main>
-      <footer class="footer">
-    <div class="copyright">
-        &copy;
-        
-        <span itemprop="copyrightYear">2016 - 2023</span>
-        
-         
-            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
-         
-
-		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
-    </div>
-</footer>
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    <script src="/js/vendor_no_gallery.min.js" async=""></script>
-    
-  
-
-
-
-
-
-
-
-<script>
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-</script>
-
-
-
-     </div>
-  </body>
-</html>
+</code></pre><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
+<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
+<span>851</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
+<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#golang</a></span>
+<span class=tag><a href=http://hwholiday.github.io/tags/tcp/>#tcp</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
+<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2018/go_cn_fullname/ class=prev rel=prev title=随机生成中国人姓名><i class="iconfont icon-dajiantou"></i>&nbsp;随机生成中国人姓名</a>
+<a href=http://hwholiday.github.io/2018/golang_for_docker/ class=next rel=next title=构建一个go程序的docker小镜像>构建一个go程序的docker小镜像&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
+<span itemprop=copyrightYear>2016 - 2023</span>
+<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
+<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
+<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>

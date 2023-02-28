@@ -1,161 +1,18 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noodp"/>
-  
-  
-  
-  
-  
-  <link rel="prev" href="https://hwholiday.github.io/2019/simple_timing_wheel/" />
-  <link rel="next" href="https://hwholiday.github.io/2019/trie_tree/" />
-  <link rel="canonical" href="https://hwholiday.github.io/2019/middleware/" />
-  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>
-       
-       
-           Golang 基于interface 实现中间件(middleware) | hwholiday
-       
-  </title>
-  <meta name="title" content="Golang 基于interface 实现中间件(middleware) | hwholiday">
-    
-  
-  <link rel="stylesheet" href="/font/iconfont.css">
-  <link rel="stylesheet" href="/css/main.min.css">
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Golang 基于interface 实现中间件(middleware)"/>
-<meta name="twitter:description" content="Golang 基于interface 实现中间件(middleware)"/>
-
-  <script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Golang 基于interface 实现中间件(middleware)",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https:\/\/hwholiday.github.io\/2019\/middleware\/"
-  },
-  
-  "genre": "posts",
-  "keywords": "Golang, 源码",
-  "wordcount":  135 ,
-  "url": "https:\/\/hwholiday.github.io\/2019\/middleware\/",
-  "datePublished": "2019-12-25T00:00:00\u002b00:00",
-  "dateModified": "2019-12-25T00:00:00\u002b00:00",
-  
-  
-  
-  "description": "Golang 基于interface 实现中间件(middleware)"
-}
-</script>
-</head>
-
-  
-             
-  
-
-
-
-  <body class="">
-    <div class="wrapper">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-header header-logo">
-        	<a href="https://hwholiday.github.io/">hwholiday</a>
-        </div>
-        <div class="menu navbar-right">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
-        </div>
-    </div>
-</nav>
-<nav class="navbar-mobile" id="nav-mobile" style="display: none">
-     <div class="container">
-        <div class="navbar-header">
-            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="https://hwholiday.github.io/">hwholiday</a></div>
-            <div class="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-     
-          <div class="menu" id="mobile-menu">
-                
-                
-                <a class="menu-item" href="/posts/" title="">主页</a>
-                
-                <a class="menu-item" href="/categories/" title="">分类</a>
-                
-                <a class="menu-item" href="/tags/" title="">标签</a>
-                
-                <a class="menu-item" href="/about/" title="">关于</a>
-                
-        </div>
-    </div>
-</nav>
-
-    	 <main class="main">
-          <div class="container">
-      		
-<article class="post-warp">
-    <header class="post-header">
-        <h1 class="post-title">Golang 基于interface 实现中间件(middleware)</h1>
-        <div class="post-meta">
-            Written by <a href="https://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
-                <span class="post-time">
-                    on <time datetime=2019-12-25 >25 December 2019</time>
-                </span>
-                in
-                <i class="iconfont icon-folder"></i>
-                <span class="post-category">
-                        <a href="https://hwholiday.github.io/categories/golang/"> Golang </a>
-                        <a href="https://hwholiday.github.io/categories/%E6%BA%90%E7%A0%81/"> 源码 </a>
-                        
-                </span>
-                <i class="iconfont icon-timer"></i>
-                1 min
-        </div>
-    </header>
-    <div class="post-content">
-        
-
-        
-
-        
-        
-     
-          
-          
-          
-
-          
-          
-          
-
-          <h2 id="背景">背景</h2>
-<p>我们在开发接口时会写大量的interface Service,但是有时候需要提供一个功能对已经写好的接口提供一个中间件进行业务处理</p>
-<h3 id="我们已经写好的接口">我们已经写好的接口</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">type Service interface {
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2019/simple_timing_wheel/><link rel=next href=http://hwholiday.github.io/2019/trie_tree/><link rel=canonical href=http://hwholiday.github.io/2019/middleware/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>Golang 基于interface 实现中间件(middleware) | hwholiday</title><meta name=title content="Golang 基于interface 实现中间件(middleware) | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="Golang 基于interface 实现中间件(middleware)"><meta name=twitter:description content="Golang 基于interface 实现中间件(middleware)"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Golang 基于interface 实现中间件(middleware)","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2019\/middleware\/"},"genre":"posts","keywords":"Golang, 源码","wordcount":135,"url":"http:\/\/hwholiday.github.io\/2019\/middleware\/","datePublished":"2019-12-25T00:00:00\u002b00:00","dateModified":"2019-12-25T00:00:00\u002b00:00","description":"Golang 基于interface 实现中间件(middleware)"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a>
+<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
+<a class=menu-item href=/categories/ title>分类</a>
+<a class=menu-item href=/tags/ title>标签</a>
+<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>Golang 基于interface 实现中间件(middleware)</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
+<span class=post-time>on <time datetime=2019-12-25>25 December 2019</time></span>
+in
+<i class="iconfont icon-folder"></i>
+<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a>
+<a href=http://hwholiday.github.io/categories/%E6%BA%90%E7%A0%81/>源码</a></span>
+<i class="iconfont icon-timer"></i>
+1 min</div></header><div class=post-content><h2 id=背景>背景</h2><p>我们在开发接口时会写大量的interface Service,但是有时候需要提供一个功能对已经写好的接口提供一个中间件进行业务处理</p><h3 id=我们已经写好的接口>我们已经写好的接口</h3><pre tabindex=0><code class=language-base data-lang=base>type Service interface {
 	Add(a, b int) int
 }
 type baseServer struct{}
@@ -165,8 +22,7 @@ func NewBaseServer() Service {
 func (s baseServer) Add(a, b int) int {
 	return a + b
 }
-</code></pre><h3 id="添加中间件1">添加中间件1</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">type logServer struct {
+</code></pre><h3 id=添加中间件1>添加中间件1</h3><pre tabindex=0><code class=language-base data-lang=base>type logServer struct {
 	next Service
 	log  string
 }
@@ -179,8 +35,7 @@ func LogMiddleware(name string) ServiceMiddleware {
 		}
 	}
 }
-</code></pre><h3 id="添加中间件2">添加中间件2</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">type logV2Server struct {
+</code></pre><h3 id=添加中间件2>添加中间件2</h3><pre tabindex=0><code class=language-base data-lang=base>type logV2Server struct {
 	next Service
 	log  string
 }
@@ -193,127 +48,20 @@ func LogV2Middleware(name string) ServiceMiddleware {
 		}
 	}
 }
-</code></pre><h3 id="结果">结果</h3>
-<pre tabindex="0"><code class="language-base" data-lang="base">svc := NewService(&#34;&#34;)
+</code></pre><h3 id=结果>结果</h3><pre tabindex=0><code class=language-base data-lang=base>svc := NewService(&#34;&#34;)
 fmt.Println(&#34;结果&#34;, svc.Add(1, 2))
 开始运行
 log 日志中间件V1 a &gt;  1 b &gt;  2 res &gt;  3 time  196ns
 log 日志中间件V2 a &gt;  1 b &gt;  2 res &gt;  3 time  12.223µs
 结果 3
-</code></pre><h3 id="完整演示代码--点击这里httpsgithubcomhwholidaylearning_toolstreemasterinterfacemiddlwware">完整演示代码  <a href="https://github.com/hwholiday/learning_tools/tree/master/interface/middlwware">点击这里</a></h3>
-<h2 id="联系--qq-33551682">联系  QQ: 33551682</h2>
-
-    </div>
-    
-    <div class="post-copyright">
-             
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>hwholiday </span>
-                </p>
-            
-           
-            <p class="copyright-item">
-                    <span>Words:</span>
-                   <span>135</span>
-            </p>
-
-            <p class="copyright-item">
-                
-            </p>
-
-            
-    </div>
-
-  
-    <div class="post-tags">
-        
-            <section>
-            <i class="iconfont icon-icon-tag"></i>Tag: 
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/golang/">
-                    #Golang</a></span>
-            
-            <span class="tag"><a href="https://hwholiday.github.io/tags/%E6%BA%90%E7%A0%81/">
-                    #源码</a></span>
-            
-            </section>
-        
-        <section>
-                <a href="javascript:window.history.back();">Back</a></span> · 
-                <span><a href="https://hwholiday.github.io/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-        
-        <a href="https://hwholiday.github.io/2019/simple_timing_wheel/" class="prev" rel="prev" title="Golang 实现时间轮"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang 实现时间轮</a>
-         
-        
-        <a href="https://hwholiday.github.io/2019/trie_tree/" class="next" rel="next" title="trie_tree原理及Golang实现(模糊查询)">trie_tree原理及Golang实现(模糊查询)&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
-        
-    </div>
-
-    <div class="post-comment">
-          
-          
-
- 
-
-          
-    </div>
-</article>
-          </div>
-		   </main>
-      <footer class="footer">
-    <div class="copyright">
-        &copy;
-        
-        <span itemprop="copyrightYear">2016 - 2023</span>
-        
-         
-            <span class="author" itemprop="copyrightHolder"><a href="https://hwholiday.github.io/">hwholiday</a> | </span>
-         
-
-		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
-    </div>
-</footer>
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    <script src="/js/vendor_no_gallery.min.js" async=""></script>
-    
-  
-
-
-
-
-
-
-
-<script>
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-</script>
-
-
-
-     </div>
-  </body>
-</html>
+</code></pre><h3 id=完整演示代码--点击这里httpsgithubcomhwholidaylearning_toolstreemasterinterfacemiddlwware>完整演示代码 <a href=https://github.com/hwholiday/learning_tools/tree/master/interface/middlwware>点击这里</a></h3><h2 id=联系--qq-33551682>联系 QQ: 33551682</h2></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
+<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
+<span>135</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
+<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#Golang</a></span>
+<span class=tag><a href=http://hwholiday.github.io/tags/%E6%BA%90%E7%A0%81/>#源码</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
+<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2019/simple_timing_wheel/ class=prev rel=prev title="Golang 实现时间轮"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang 实现时间轮</a>
+<a href=http://hwholiday.github.io/2019/trie_tree/ class=next rel=next title=trie_tree原理及Golang实现(模糊查询)>trie_tree原理及Golang实现(模糊查询)&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
+<span itemprop=copyrightYear>2016 - 2023</span>
+<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
+<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
+<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>

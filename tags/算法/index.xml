@@ -1,32 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>算法 on hwholiday</title>
-    <link>https://hwholiday.github.io/tags/%E7%AE%97%E6%B3%95/</link>
-    <description>Recent content in 算法 on hwholiday</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Tue, 03 Dec 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://hwholiday.github.io/tags/%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Golang 实现向量空间余弦相似度(Cosine Similarity)</title>
-      <link>https://hwholiday.github.io/2019/cosine_similarity/</link>
-      <pubDate>Tue, 03 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2019/cosine_similarity/</guid>
-      <description>什么是向量空间余弦相似度 余弦相似性通过测量两个向量的夹角的余弦值来度量它们之间的相似性。0度角的余弦值是1，而其他任何角度的余弦值都不大于1；并且其最小值是-1。从而两个向量之间的角度的余弦值确定两个向量是否大致指向相同的方向。两个向量有相同的指向时，余弦相似度的值为1；两个向量夹角为90°时，余弦相似度的值为0；两个向量指向完全相反的方向时，余弦相似度的值为-1。这结果是与向量的长度无关的，仅仅与向量的指向方向相关。余弦相似度通常用于正空间，因此给出的值为-1到1之间。
-代码实现 func Cosine(a []float64, b []float64) float64 { var ( aLen = len(a) bLen = len(b) s = 0.0 sa = 0.0 sb = 0.0 count = 0 ) if aLen &amp;gt; bLen { count = aLen } else { count = bLen } for i := 0; i &amp;lt; count; i++ { if i &amp;gt;= bLen { sa += math.Pow(a[i], 2) continue } if i &amp;gt;= aLen { sb += math.</description>
-    </item>
-    
-    <item>
-      <title>Golang 实现LRU算法</title>
-      <link>https://hwholiday.github.io/2019/lru/</link>
-      <pubDate>Sun, 01 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://hwholiday.github.io/2019/lru/</guid>
-      <description>缓存文件置换机制是计算机处理缓存存储器的一种机制。 计算机存储器空间的大小固定，无法容纳服务器上所有的文件，所以当有新的文件要被置换入缓存时，必须根据一定的原则来取代掉适当的文件。此原则即所谓缓存文件置换机制。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>算法 on hwholiday</title><link>http://hwholiday.github.io/tags/%E7%AE%97%E6%B3%95/</link><description>Recent content in 算法 on hwholiday</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 03 Dec 2019 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/tags/%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml"/><item><title>Golang 实现向量空间余弦相似度(Cosine Similarity)</title><link>http://hwholiday.github.io/2019/cosine_similarity/</link><pubDate>Tue, 03 Dec 2019 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2019/cosine_similarity/</guid><description>什么是向量空间余弦相似度 余弦相似性通过测量两个向量的夹角的余弦值来度量它们之间的相似性。0度角的余弦值是1，而其他任何角度的余弦值都不大于1；并且其最小值是-1。从而两个向量之间的角度的余弦值确定两个向量是否大致指向相同的方向。两个向量有相同的指向时，余弦相似度的值为1；两个向量夹角为90°时，余弦相似度的值为0；两个向量指向完全相反的方向时，余弦相似度的值为-1。这结果是与向量的长度无关的，仅仅与向量的指向方向相关。余弦相似度通常用于正空间，因此给出的值为-1到1之间。
+代码实现 func Cosine(a []float64, b []float64) float64 { var ( aLen = len(a) bLen = len(b) s = 0.0 sa = 0.0 sb = 0.0 count = 0 ) if aLen &amp;gt; bLen { count = aLen } else { count = bLen } for i := 0; i &amp;lt; count; i++ { if i &amp;gt;= bLen { sa += math.Pow(a[i], 2) continue } if i &amp;gt;= aLen { sb += math.</description></item><item><title>Golang 实现LRU算法</title><link>http://hwholiday.github.io/2019/lru/</link><pubDate>Sun, 01 Dec 2019 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2019/lru/</guid><description>缓存文件置换机制是计算机处理缓存存储器的一种机制。 计算机存储器空间的大小固定，无法容纳服务器上所有的文件，所以当有新的文件要被置换入缓存时，必须根据一定的原则来取代掉适当的文件。此原则即所谓缓存文件置换机制。
 缓存文件置换方法有：
-先进先出算法（FIFO）：最先进入的内容作为替换对象 最近最少使用算法（LFU）：最近最少使用的内容作为替换对象 最久未使用算法（LRU）：最久没有访问的内容作为替换对象 非最近使用算法（NMRU）：在最近没有使用的内容中随机选择一个作为替换对象 代码实现 type Lru struct { max int l *list.List Call func(key interface{}, value interface{}) cache map[interface{}]*list.Element mu *sync.Mutex } type Node struct { Key interface{} Val interface{} } func NewLru(len int) *Lru { return &amp;amp;Lru{ max: len, l: list.New(), cache: make(map[interface{}]*list.Element), mu: new(sync.Mutex), } } func (l *Lru) Add(key interface{}, val interface{}) error { if l.l == nil { return errors.New(&amp;#34;not init NewLru&amp;#34;) } l.</description>
-    </item>
-    
-  </channel>
-</rss>
+先进先出算法（FIFO）：最先进入的内容作为替换对象 最近最少使用算法（LFU）：最近最少使用的内容作为替换对象 最久未使用算法（LRU）：最久没有访问的内容作为替换对象 非最近使用算法（NMRU）：在最近没有使用的内容中随机选择一个作为替换对象 代码实现 type Lru struct { max int l *list.List Call func(key interface{}, value interface{}) cache map[interface{}]*list.Element mu *sync.Mutex } type Node struct { Key interface{} Val interface{} } func NewLru(len int) *Lru { return &amp;amp;Lru{ max: len, l: list.New(), cache: make(map[interface{}]*list.Element), mu: new(sync.Mutex), } } func (l *Lru) Add(key interface{}, val interface{}) error { if l.l == nil { return errors.New(&amp;#34;not init NewLru&amp;#34;) } l.</description></item></channel></rss>

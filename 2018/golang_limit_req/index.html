@@ -1,19 +1,160 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2018/golang_for_docker/><link rel=next href=http://hwholiday.github.io/2018/how_use_mongo-go-driver/><link rel=canonical href=http://hwholiday.github.io/2018/golang_limit_req/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>Golang 中的并发限制与超时控制 | hwholiday</title><meta name=title content="Golang 中的并发限制与超时控制 | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="Golang 中的并发限制与超时控制"><meta name=twitter:description content="Golang 中的并发限制与超时控制"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Golang 中的并发限制与超时控制","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2018\/golang_limit_req\/"},"genre":"posts","keywords":"golang, 并发","wordcount":134,"url":"http:\/\/hwholiday.github.io\/2018\/golang_limit_req\/","datePublished":"2018-12-10T00:00:00\u002b00:00","dateModified":"2018-12-10T00:00:00\u002b00:00","description":"Golang 中的并发限制与超时控制"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a>
-<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>Golang 中的并发限制与超时控制</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
-<span class=post-time>on <time datetime=2018-12-10>10 December 2018</time></span>
-in
-<i class="iconfont icon-folder"></i>
-<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a></span>
-<i class="iconfont icon-timer"></i>
-1 min</div></header><div class=post-content><h2 id=代码地址-点击这里httpsgithubcomhwholidaylearning_toolstreemasterconcurrency_control>代码地址 <a href=https://github.com/hwholiday/learning_tools/tree/master/concurrency_control>点击这里</a></h2><h2 id=并发限制一种常见的做法就是利用-channel-的缓冲机制>并发限制(一种常见的做法就是利用 channel 的缓冲机制)</h2><pre tabindex=0><code class=language-base data-lang=base>var limitChan = make(chan bool, n)
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="http://hwholiday.github.io/2018/golang_for_docker/" />
+  <link rel="next" href="http://hwholiday.github.io/2018/how_use_mongo-go-driver/" />
+  <link rel="canonical" href="http://hwholiday.github.io/2018/golang_limit_req/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Golang 中的并发限制与超时控制 | hwholiday
+       
+  </title>
+  <meta name="title" content="Golang 中的并发限制与超时控制 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Golang 中的并发限制与超时控制"/>
+<meta name="twitter:description" content="Golang 中的并发限制与超时控制"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Golang 中的并发限制与超时控制",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http:\/\/hwholiday.github.io\/2018\/golang_limit_req\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang, 并发",
+  "wordcount":  134 ,
+  "url": "http:\/\/hwholiday.github.io\/2018\/golang_limit_req\/",
+  "datePublished": "2018-12-10T00:00:00\u002b00:00",
+  "dateModified": "2018-12-10T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "Golang 中的并发限制与超时控制"
+}
+</script>
+</head>
+
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="http://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="http://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">Golang 中的并发限制与超时控制</h1>
+        <div class="post-meta">
+            Written by <a href="http://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2018-12-10 >10 December 2018</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="http://hwholiday.github.io/categories/golang/"> Golang </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                1 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="代码地址-点击这里httpsgithubcomhwholidaylearning_toolstreemasterconcurrency_control">代码地址 <a href="https://github.com/hwholiday/learning_tools/tree/master/concurrency_control">点击这里</a></h2>
+<h2 id="并发限制一种常见的做法就是利用-channel-的缓冲机制">并发限制(一种常见的做法就是利用 channel 的缓冲机制)</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">var limitChan = make(chan bool, n)
 如果 channel 没有缓冲，或者缓冲区满了。goroutine 会自动阻塞，直到 channel 里的数据被读走为止
-</code></pre><h2 id=代码演示>代码演示</h2><pre tabindex=0><code class=language-base data-lang=base>var addr = flag.String(&#34;p&#34;, &#34;192.168.2.28:8099&#34;, &#34;port&#34;)
+</code></pre><h2 id="代码演示">代码演示</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">var addr = flag.String(&#34;p&#34;, &#34;192.168.2.28:8099&#34;, &#34;port&#34;)
 func main() {
 	flag.Parse()
 	perf.StartPprof([]string{&#34;192.168.2.28:9022&#34;})
@@ -57,7 +198,8 @@ func limitApi(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(&#34;OK&#34;))
 	return
 }
-</code></pre><h2 id=控制台输出>控制台输出</h2><pre tabindex=0><code class=language-base data-lang=base>server start success pid:19309
+</code></pre><h2 id="控制台输出">控制台输出</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">server start success pid:19309
 服务器限流
 服务器正常访问
 服务器正常访问
@@ -66,14 +208,118 @@ func limitApi(w http.ResponseWriter, r *http.Request) {
 服务器正常访问
 服务器正常访问
 退出程序
-</code></pre><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
-<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
-<span>134</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
-<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#golang</a></span>
-<span class=tag><a href=http://hwholiday.github.io/tags/%E5%B9%B6%E5%8F%91/>#并发</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
-<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2018/golang_for_docker/ class=prev rel=prev title=构建一个go程序的docker小镜像><i class="iconfont icon-dajiantou"></i>&nbsp;构建一个go程序的docker小镜像</a>
-<a href=http://hwholiday.github.io/2018/how_use_mongo-go-driver/ class=next rel=next title=mongodb官方的golang驱动基础使用>mongodb官方的golang驱动基础使用&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
-<span itemprop=copyrightYear>2016 - 2023</span>
-<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
-<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>
+</code></pre><h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>134</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/%E5%B9%B6%E5%8F%91/">
+                    #并发</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="http://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="http://hwholiday.github.io/2018/golang_for_docker/" class="prev" rel="prev" title="构建一个go程序的docker小镜像"><i class="iconfont icon-dajiantou"></i>&nbsp;构建一个go程序的docker小镜像</a>
+         
+        
+        <a href="http://hwholiday.github.io/2018/how_use_mongo-go-driver/" class="next" rel="next" title="mongodb官方的golang驱动基础使用">mongodb官方的golang驱动基础使用&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="http://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

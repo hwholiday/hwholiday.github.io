@@ -1,18 +1,174 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2020/go_kit_v9/><link rel=next href=http://hwholiday.github.io/2020/go_kit_v10/><link rel=canonical href=http://hwholiday.github.io/2020/go_kit_v8/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>go-kit 微服务 服务熔断（hystrix-go 实现） | hwholiday</title><meta name=title content="go-kit 微服务 服务熔断（hystrix-go 实现） | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="go-kit 微服务 服务熔断（hystrix-go 实现）"><meta name=twitter:description content="go-kit 微服务 服务熔断（hystrix-go 实现）"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"go-kit 微服务 服务熔断（hystrix-go 实现）","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2020\/go_kit_v8\/"},"genre":"posts","keywords":"golang, go-kit","wordcount":402,"url":"http:\/\/hwholiday.github.io\/2020\/go_kit_v8\/","datePublished":"2020-01-10T00:00:00\u002b00:00","dateModified":"2020-01-10T00:00:00\u002b00:00","description":"go-kit 微服务 服务熔断（hystrix-go 实现）"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a>
-<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>go-kit 微服务 服务熔断（hystrix-go 实现）</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
-<span class=post-time>on <time datetime=2020-01-10>10 January 2020</time></span>
-in
-<i class="iconfont icon-folder"></i>
-<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a>
-<a href=http://hwholiday.github.io/categories/go-kit/>go-kit</a></span>
-<i class="iconfont icon-timer"></i>
-2 min</div></header><div class=post-content><h2 id=go-kit-微服务-服务熔断hystrix-go-实现>go-kit 微服务 服务熔断（hystrix-go 实现）</h2><ul><li>对客户端请求login方法添加熔断</li></ul><h2 id=hystrix>Hystrix</h2><ul><li>在微服务架构中，每个服务都是相互关联的，比如我们下单服务和扣钱服务是分开的，现在扣钱服务出现的bug不能正常服务</li><li>Hystrix可以让我们在在微服务架构中对服务间的调用进行控制，加入一些调用延迟或者服务降级的容错机制。</li></ul><h2 id=hystrix的设计原则>Hystrix的设计原则</h2><ul><li>对依赖服务调用时出现的调用延迟和调用失败进行控制和容错保护</li><li>在复杂的分布式系统中，阻止某一个依赖服务的故障在整个系统中蔓延</li><li>提供fail-fast（快速失败）和快速恢复的支持</li><li>提供fallback优雅降级的支持</li><li>支持近实时的监控、报警以及运维操作</li></ul><h2 id=编写hystrix类>编写Hystrix类</h2><pre tabindex=0><code class=language-base data-lang=base>import (
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="http://hwholiday.github.io/2020/go_kit_v9/" />
+  <link rel="next" href="http://hwholiday.github.io/2020/go_kit_v10/" />
+  <link rel="canonical" href="http://hwholiday.github.io/2020/go_kit_v8/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           go-kit 微服务 服务熔断（hystrix-go 实现） | hwholiday
+       
+  </title>
+  <meta name="title" content="go-kit 微服务 服务熔断（hystrix-go 实现） | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="go-kit 微服务 服务熔断（hystrix-go 实现）"/>
+<meta name="twitter:description" content="go-kit 微服务 服务熔断（hystrix-go 实现）"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "go-kit 微服务 服务熔断（hystrix-go 实现）",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http:\/\/hwholiday.github.io\/2020\/go_kit_v8\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang, go-kit",
+  "wordcount":  402 ,
+  "url": "http:\/\/hwholiday.github.io\/2020\/go_kit_v8\/",
+  "datePublished": "2020-01-10T00:00:00\u002b00:00",
+  "dateModified": "2020-01-10T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "go-kit 微服务 服务熔断（hystrix-go 实现）"
+}
+</script>
+</head>
+
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="http://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="http://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">go-kit 微服务 服务熔断（hystrix-go 实现）</h1>
+        <div class="post-meta">
+            Written by <a href="http://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2020-01-10 >10 January 2020</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="http://hwholiday.github.io/categories/golang/"> Golang </a>
+                        <a href="http://hwholiday.github.io/categories/go-kit/"> go-kit </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                2 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="go-kit-微服务-服务熔断hystrix-go-实现">go-kit 微服务 服务熔断（hystrix-go 实现）</h2>
+<ul>
+<li>对客户端请求login方法添加熔断</li>
+</ul>
+<h2 id="hystrix">Hystrix</h2>
+<ul>
+<li>在微服务架构中，每个服务都是相互关联的，比如我们下单服务和扣钱服务是分开的，现在扣钱服务出现的bug不能正常服务</li>
+<li>Hystrix可以让我们在在微服务架构中对服务间的调用进行控制，加入一些调用延迟或者服务降级的容错机制。</li>
+</ul>
+<h2 id="hystrix的设计原则">Hystrix的设计原则</h2>
+<ul>
+<li>对依赖服务调用时出现的调用延迟和调用失败进行控制和容错保护</li>
+<li>在复杂的分布式系统中，阻止某一个依赖服务的故障在整个系统中蔓延</li>
+<li>提供fail-fast（快速失败）和快速恢复的支持</li>
+<li>提供fallback优雅降级的支持</li>
+<li>支持近实时的监控、报警以及运维操作</li>
+</ul>
+<h2 id="编写hystrix类">编写Hystrix类</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">import (
 	&#34;errors&#34;
 	&#34;github.com/afex/hystrix-go/hystrix&#34;
 	&#34;sync&#34;
@@ -59,7 +215,11 @@ func (s *Hystrix) Run(name string, run runFunc) error {
 	}
 	return nil
 }
-</code></pre><h2 id=添加hystrix到调用客户端>添加Hystrix到调用客户端</h2><ul><li>这里为了展示Hystrix的状态去掉了一些日志信息</li></ul><pre tabindex=0><code class=language-base data-lang=base>hy := utils.NewHystrix(&#34;调用错误服务降级&#34;)
+</code></pre><h2 id="添加hystrix到调用客户端">添加Hystrix到调用客户端</h2>
+<ul>
+<li>这里为了展示Hystrix的状态去掉了一些日志信息</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">hy := utils.NewHystrix(&#34;调用错误服务降级&#34;)
 cbs, _, _ := hystrix.GetCircuit(&#34;login&#34;)
 for i := 0; i &lt; 100; i++ {
 	time.Sleep(time.Millisecond * 100)
@@ -84,7 +244,8 @@ fmt.Println(&#34;熔断器开启状态:&#34;, cbs.IsOpen(), &#34;请求是否允
 		t.Log(err)
 	}
 }
-</code></pre><h3 id=去掉服务端的请求限制功能>去掉服务端的请求限制功能</h3><pre tabindex=0><code class=language-base data-lang=base>func NewEndPointServer(svc Service, limit *rate.Limiter) EndPointServer {
+</code></pre><h3 id="去掉服务端的请求限制功能">去掉服务端的请求限制功能</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">func NewEndPointServer(svc Service, limit *rate.Limiter) EndPointServer {
 	var loginEndPoint endpoint.Endpoint
 	{
 		loginEndPoint = MakeLoginEndPoint(svc)
@@ -92,7 +253,8 @@ fmt.Println(&#34;熔断器开启状态:&#34;, cbs.IsOpen(), &#34;请求是否允
 	}
 	return EndPointServer{LoginEndPoint: loginEndPoint}
 }
-</code></pre><h3 id=模拟服务器错误功能>模拟服务器错误功能</h3><pre tabindex=0><code class=language-base data-lang=base>if in.Account != &#34;hwholiday&#34; || in.Password != &#34;123456&#34; {
+</code></pre><h3 id="模拟服务器错误功能">模拟服务器错误功能</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">if in.Account != &#34;hwholiday&#34; || in.Password != &#34;123456&#34; {
 	err = errors.New(&#34;用户信息错误&#34;)
 	return
 }
@@ -106,7 +268,11 @@ if rand.Intn(10) &gt; 3 {
 	return
 }
 ack = &amp;pb.LoginAck{}
-</code></pre><h2 id=运行>运行</h2><ul><li>运行 TestNewUserAgentClient 方法 （调用Login接口100次）</li></ul><pre tabindex=0><code class=language-base data-lang=base>熔断器开启状态: true 请求是否允许： false
+</code></pre><h2 id="运行">运行</h2>
+<ul>
+<li>运行 TestNewUserAgentClient 方法 （调用Login接口100次）</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">熔断器开启状态: true 请求是否允许： false
 熔断器开启状态: true 请求是否允许： false
 s.LoginEndPoint rpc error: code = Unknown desc = 服务器运行错误
 s.LoginEndPoint rpc error: code = Unknown desc = 服务器运行错误
@@ -125,15 +291,147 @@ s.LoginEndPoint rpc error: code = Unknown desc = 服务器运行错误 (previous
 熔断器开启状态: false 请求是否允许： true
 s.LoginEndPoint rpc error: code = Unknown desc = 服务器运行错误
 熔断器开启状态: false 请求是否允许： true
-</code></pre><h2 id=结语>结语</h2><ul><li>我们可以看到Hystrix的状态从 打开 ->关闭 -> 打开</li><li>Hystrix的用法还有很多，这里只展示简单的使用，更加高级的功能欢迎大家一起讨论</li><li>欢迎添加QQ一起讨论</li></ul><h3 id=完整代码地址httpsgithubcomhwholidaylearning_toolstreemastergo-kitv8><a href=https://github.com/hwholiday/learning_tools/tree/master/go-kit/v8>完整代码地址</a></h3><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div id=gitalk-container></div><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css><script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
-<script>const gitalk=new Gitalk({clientID:"64d60a02f98e01e31e2f",clientSecret:"b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58",repo:"hwholiday.github.io",owner:"hwholiday",admin:"hwholiday",id:"git_kit_v8",distractionFreeMode:!1});(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("gitalk-container").innerHTML="Gitalk comments not available by default when the website is previewed locally.";return}gitalk.render("gitalk-container")})()</script><div class=post-copyright><p class=copyright-item><span>Author:</span>
-<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
-<span>402</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
-<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#golang</a></span>
-<span class=tag><a href=http://hwholiday.github.io/tags/go-kit/>#go-kit</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
-<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2020/go_kit_v9/ class=prev rel=prev title="go-kit 微服务 服务链路追踪（jaeger 实现）（1）"><i class="iconfont icon-dajiantou"></i>&nbsp;go-kit 微服务 服务链路追踪（jaeger 实现）（1）</a>
-<a href=http://hwholiday.github.io/2020/go_kit_v10/ class=next rel=next title="go-kit 微服务 服务链路追踪（jaeger 实现）（2）">go-kit 微服务 服务链路追踪（jaeger 实现）（2）&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
-<span itemprop=copyrightYear>2016 - 2023</span>
-<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
-<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>
+</code></pre><h2 id="结语">结语</h2>
+<ul>
+<li>我们可以看到Hystrix的状态从 打开 -&gt;关闭 -&gt; 打开</li>
+<li>Hystrix的用法还有很多，这里只展示简单的使用，更加高级的功能欢迎大家一起讨论</li>
+<li>欢迎添加QQ一起讨论</li>
+</ul>
+<h3 id="完整代码地址httpsgithubcomhwholidaylearning_toolstreemastergo-kitv8"><a href="https://github.com/hwholiday/learning_tools/tree/master/go-kit/v8">完整代码地址</a></h3>
+<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        const gitalk = new Gitalk({
+            clientID: '64d60a02f98e01e31e2f',
+            clientSecret: 'b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58',
+            repo: 'hwholiday.github.io',
+            owner: 'hwholiday',
+            admin: 'hwholiday',
+            id: 'git_kit_v8', 
+            distractionFreeMode: false 
+        });
+        (function() {
+            if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+                document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+                return;
+            }
+            gitalk.render('gitalk-container');
+        })();
+    </script>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>402</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/go-kit/">
+                    #go-kit</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="http://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="http://hwholiday.github.io/2020/go_kit_v9/" class="prev" rel="prev" title="go-kit 微服务 服务链路追踪（jaeger 实现）（1）"><i class="iconfont icon-dajiantou"></i>&nbsp;go-kit 微服务 服务链路追踪（jaeger 实现）（1）</a>
+         
+        
+        <a href="http://hwholiday.github.io/2020/go_kit_v10/" class="next" rel="next" title="go-kit 微服务 服务链路追踪（jaeger 实现）（2）">go-kit 微服务 服务链路追踪（jaeger 实现）（2）&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="http://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

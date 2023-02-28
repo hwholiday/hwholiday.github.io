@@ -1,17 +1,175 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2019/google_py/><link rel=next href=http://hwholiday.github.io/2019/lru/><link rel=canonical href=http://hwholiday.github.io/2019/consistency_hash/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>一致性hash算法原理及Golang实现 | hwholiday</title><meta name=title content="一致性hash算法原理及Golang实现 | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="一致性hash算法原理及Golang实现"><meta name=twitter:description content="一致性hash算法原理及Golang实现"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"一致性hash算法原理及Golang实现","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2019\/consistency_hash\/"},"genre":"posts","keywords":"golang","wordcount":146,"url":"http:\/\/hwholiday.github.io\/2019\/consistency_hash\/","datePublished":"2019-11-26T00:00:00\u002b00:00","dateModified":"2019-11-26T00:00:00\u002b00:00","description":"一致性hash算法原理及Golang实现"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a>
-<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>一致性hash算法原理及Golang实现</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
-<span class=post-time>on <time datetime=2019-11-26>26 November 2019</time></span>
-in
-<i class="iconfont icon-folder"></i>
-<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a></span>
-<i class="iconfont icon-timer"></i>
-1 min</div></header><div class=post-content><h2 id=需求>需求</h2><p>当集群提供缓存服务时，key应该路由到哪一个服务.这里假如采用最通用的方式key%N(N为服务器数目)，看上去是没问题的但是一旦服务器数目发生增加或减少时, 分配方式则变为key%(N+1)或key%(N-1).这里将会有大量的key失效, 为了解决类问题,一致性hash算法应运而生.</p><h2 id=一致性hash算法特点>一致性hash算法特点</h2><ul><li>均衡性(Balance)</li><li>单调性(Monotonicity)</li><li>分散性(Spread)</li><li>负载(Load)</li></ul><h2 id=一致性hash详解>一致性hash详解</h2><ul><li>一致哈希 是一种特殊的哈希算法。在使用一致哈希算法后，哈希表槽位数（大小）的改变平均只需要对 K/n个关键字重新映射，其中 K是关键字的数量，n是槽位数量。然而在传统的哈希表中，添加或删除一个槽位的几乎需要对所有关键字进行重新映射。</li><li>一致性哈希算法将整个哈希值空间映射成一个虚拟的圆环，整个哈希空间的取值范围为0~2的32次方-1。整个空间按顺时针方向组织。0~2的32次方-1在零点中方向重合。接下来使用如下算法对服务请求进行映射，将服务请求使用哈希算法算出对应的hash值，然后根据hash值的位置沿圆环顺时针查找，第一台遇到的服务器就是所对应的处理请求服务器。当增加一台新的服务器，受影响的数据仅仅是新添加的服务器到其环空间中前一台的服务器（也就是顺着逆时针方向遇到的第一台服务器）之间的数据，其他都不会受到影响。综上所述，一致性哈希算法对于节点的增减都只需重定位环空间中的一小部分数据，具有较好的容错性和可扩展性<figure><img src=/images/ring.svg data-sizes=auto data-src=https://image-static.segmentfault.com/743/862/743862610-5a9d102879b06_articlex alt class=lazyload><figcaption class=image-caption></figcaption></figure></li></ul><h2 id=改进>改进</h2><p>如果服务器节点较少，存在某些节点所在位置周围有大量的hash点从而导致分配到这些节点到key要比其他节点多的多，这样会导致集群中各节点负载不均衡，为解决这个问题，引入虚拟节点， 即一个实节点对应多个虚拟节点。缓存的key作映射时，先找到对应的虚拟节点，再对应到实节点</p><h2 id=代码实现>代码实现</h2><pre tabindex=0><code class=language-base data-lang=base>type Consistent struct {
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="http://hwholiday.github.io/2019/google_py/" />
+  <link rel="next" href="http://hwholiday.github.io/2019/lru/" />
+  <link rel="canonical" href="http://hwholiday.github.io/2019/consistency_hash/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           一致性hash算法原理及Golang实现 | hwholiday
+       
+  </title>
+  <meta name="title" content="一致性hash算法原理及Golang实现 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="一致性hash算法原理及Golang实现"/>
+<meta name="twitter:description" content="一致性hash算法原理及Golang实现"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "一致性hash算法原理及Golang实现",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http:\/\/hwholiday.github.io\/2019\/consistency_hash\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang",
+  "wordcount":  146 ,
+  "url": "http:\/\/hwholiday.github.io\/2019\/consistency_hash\/",
+  "datePublished": "2019-11-26T00:00:00\u002b00:00",
+  "dateModified": "2019-11-26T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "一致性hash算法原理及Golang实现"
+}
+</script>
+</head>
+
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="http://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="http://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">一致性hash算法原理及Golang实现</h1>
+        <div class="post-meta">
+            Written by <a href="http://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2019-11-26 >26 November 2019</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="http://hwholiday.github.io/categories/golang/"> Golang </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                1 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+            
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="需求">需求</h2>
+<p>当集群提供缓存服务时，key应该路由到哪一个服务.这里假如采用最通用的方式key%N(N为服务器数目)，看上去是没问题的但是一旦服务器数目发生增加或减少时, 分配方式则变为key%(N+1)或key%(N-1).这里将会有大量的key失效, 为了解决类问题,一致性hash算法应运而生.</p>
+<h2 id="一致性hash算法特点">一致性hash算法特点</h2>
+<ul>
+<li>均衡性(Balance)</li>
+<li>单调性(Monotonicity)</li>
+<li>分散性(Spread)</li>
+<li>负载(Load)</li>
+</ul>
+<h2 id="一致性hash详解">一致性hash详解</h2>
+<ul>
+<li>一致哈希 是一种特殊的哈希算法。在使用一致哈希算法后，哈希表槽位数（大小）的改变平均只需要对 K/n个关键字重新映射，其中 K是关键字的数量，n是槽位数量。然而在传统的哈希表中，添加或删除一个槽位的几乎需要对所有关键字进行重新映射。</li>
+<li>一致性哈希算法将整个哈希值空间映射成一个虚拟的圆环，整个哈希空间的取值范围为0~2的32次方-1。整个空间按顺时针方向组织。0~2的32次方-1在零点中方向重合。接下来使用如下算法对服务请求进行映射，将服务请求使用哈希算法算出对应的hash值，然后根据hash值的位置沿圆环顺时针查找，第一台遇到的服务器就是所对应的处理请求服务器。当增加一台新的服务器，受影响的数据仅仅是新添加的服务器到其环空间中前一台的服务器（也就是顺着逆时针方向遇到的第一台服务器）之间的数据，其他都不会受到影响。综上所述，一致性哈希算法对于节点的增减都只需重定位环空间中的一小部分数据，具有较好的容错性和可扩展性
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="https://image-static.segmentfault.com/743/862/743862610-5a9d102879b06_articlex" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></li>
+</ul>
+<h2 id="改进">改进</h2>
+<p>如果服务器节点较少，存在某些节点所在位置周围有大量的hash点从而导致分配到这些节点到key要比其他节点多的多，这样会导致集群中各节点负载不均衡，为解决这个问题，引入虚拟节点， 即一个实节点对应多个虚拟节点。缓存的key作映射时，先找到对应的虚拟节点，再对应到实节点</p>
+<h2 id="代码实现">代码实现</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">type Consistent struct {
 	nodesReplicas int               //添加虚拟节点数量
 	hashSortNodes []uint32          //所有节点的排序数组
 	circle        map[uint32]string //所有节点对应的node
@@ -49,13 +207,117 @@ func (c *Consistent) Get(key string) (string, error) {
 	host := c.circle[c.hashSortNodes[index]]
 	return host, nil
 }
-</code></pre><h2 id=完整代码httpsgithubcomhwholidayalgorithm_codingblobmasterconsistent_hash_codeconsistentgo><a href=https://github.com/hwholiday/algorithm_coding/blob/master/consistent_hash_code/consistent.go>完整代码</a></h2><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
-<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
-<span>146</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
-<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#golang</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
-<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2019/google_py/ class=prev rel=prev title="Golang 实现Google 内购以及订阅代码"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang 实现Google 内购以及订阅代码</a>
-<a href=http://hwholiday.github.io/2019/lru/ class=next rel=next title="Golang 实现LRU算法">Golang 实现LRU算法&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
-<span itemprop=copyrightYear>2016 - 2023</span>
-<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
-<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><link crossorigin=anonymous integrity=sha384-yziQACfvCVwLqVFLqkWBYRO3XeA4EqzfXKGwaWnenYn5XzqfJFlFdKEmvutIQdKb href=https://lib.baomitu.com/lightgallery/1.10.0/css/lightgallery.min.css rel=stylesheet><script src=/js/vendor_gallery.min.js async></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>
+</code></pre><h2 id="完整代码httpsgithubcomhwholidayalgorithm_codingblobmasterconsistent_hash_codeconsistentgo"><a href="https://github.com/hwholiday/algorithm_coding/blob/master/consistent_hash_code/consistent.go">完整代码</a></h2>
+<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>146</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="http://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="http://hwholiday.github.io/2019/google_py/" class="prev" rel="prev" title="Golang 实现Google 内购以及订阅代码"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang 实现Google 内购以及订阅代码</a>
+         
+        
+        <a href="http://hwholiday.github.io/2019/lru/" class="next" rel="next" title="Golang 实现LRU算法">Golang 实现LRU算法&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="http://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    <link crossorigin="anonymous" integrity="sha384-yziQACfvCVwLqVFLqkWBYRO3XeA4EqzfXKGwaWnenYn5XzqfJFlFdKEmvutIQdKb" href="https://lib.baomitu.com/lightgallery/1.10.0/css/lightgallery.min.css" rel="stylesheet">
+      
+     <script src="/js/vendor_gallery.min.js" async="" ></script>
+    
+  
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

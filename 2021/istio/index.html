@@ -1,34 +1,219 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2020/k8s_v1/><link rel=next href=http://hwholiday.github.io/2021/docker_redis/><link rel=canonical href=http://hwholiday.github.io/2021/istio/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>通过 istio 部署ws,grpc服务并链接外部redis集群 | hwholiday</title><meta name=title content="通过 istio 部署ws,grpc服务并链接外部redis集群 | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="通过 istio 部署ws,grpc服务并链接外部redis集群"><meta name=twitter:description content="通过istio部署ws,grpc服务并链接外部redis集群"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"通过 istio 部署ws,grpc服务并链接外部redis集群","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2021\/istio\/"},"genre":"posts","keywords":"k8s, docker","wordcount":274,"url":"http:\/\/hwholiday.github.io\/2021\/istio\/","datePublished":"2021-01-19T00:00:00\u002b00:00","dateModified":"2021-01-19T00:00:00\u002b00:00","description":"通过istio部署ws,grpc服务并链接外部redis集群"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a>
-<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>通过 istio 部署ws,grpc服务并链接外部redis集群</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
-<span class=post-time>on <time datetime=2021-01-19>19 January 2021</time></span>
-in
-<i class="iconfont icon-folder"></i>
-<span class=post-category><a href=http://hwholiday.github.io/categories/kubernetes/>Kubernetes</a>
-<a href=http://hwholiday.github.io/categories/golang/>Golang</a></span>
-<i class="iconfont icon-timer"></i>
-2 min</div></header><div class=post-content><h2 id=安装-docker>安装 docker</h2><ul><li><a href=https://docs.docker.com/engine/install/>https://docs.docker.com/engine/install/</a></li></ul><h2 id=安装单节点-k8s-环境>安装单节点 k8s 环境</h2><pre tabindex=0><code class=language-base data-lang=base>sudo docker run --privileged -d --restart=unless-stopped -p 88:80 -p 433:443 rancher/rancher
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="http://hwholiday.github.io/2020/k8s_v1/" />
+  <link rel="next" href="http://hwholiday.github.io/2021/docker_redis/" />
+  <link rel="canonical" href="http://hwholiday.github.io/2021/istio/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           通过 istio 部署ws,grpc服务并链接外部redis集群 | hwholiday
+       
+  </title>
+  <meta name="title" content="通过 istio 部署ws,grpc服务并链接外部redis集群 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="通过 istio 部署ws,grpc服务并链接外部redis集群"/>
+<meta name="twitter:description" content="通过istio部署ws,grpc服务并链接外部redis集群"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "通过 istio 部署ws,grpc服务并链接外部redis集群",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http:\/\/hwholiday.github.io\/2021\/istio\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "k8s, docker",
+  "wordcount":  274 ,
+  "url": "http:\/\/hwholiday.github.io\/2021\/istio\/",
+  "datePublished": "2021-01-19T00:00:00\u002b00:00",
+  "dateModified": "2021-01-19T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "通过istio部署ws,grpc服务并链接外部redis集群"
+}
+</script>
+</head>
+
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="http://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="http://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">通过 istio 部署ws,grpc服务并链接外部redis集群</h1>
+        <div class="post-meta">
+            Written by <a href="http://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2021-01-19 >19 January 2021</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="http://hwholiday.github.io/categories/kubernetes/"> Kubernetes </a>
+                        <a href="http://hwholiday.github.io/categories/golang/"> Golang </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                2 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+            
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="安装-docker">安装 docker</h2>
+<ul>
+<li><a href="https://docs.docker.com/engine/install/">https://docs.docker.com/engine/install/</a></li>
+</ul>
+<h2 id="安装单节点-k8s-环境">安装单节点 k8s 环境</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">sudo docker run --privileged -d --restart=unless-stopped -p 88:80 -p 433:443 rancher/rancher
 访问 https://宿主机IP:433
 新建集群单结点要把 etcd ， control plane ，worker 都给勾选上
 复制命令启动，等待就好了
-</code></pre><h2 id=软件架构>软件架构</h2><p><figure><img src=/images/ring.svg data-sizes=auto data-src=https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/1cd92e21-a310-4df4-9263-5769e641aa27.png alt=软件架构 class=lazyload><figcaption class=image-caption>软件架构</figcaption></figure></p><h2 id=准备镜像>准备镜像</h2><ul><li>网关：ws 服务<ul><li><a href=https://github.com/hwholiday/learning_tools/tree/master/istio/gateway>在目录 gateway 下</a></li></ul></li><li>服务 V1:grpc 服务<ul><li><a href=https://github.com/hwholiday/learning_tools/tree/master/istio/logic_v1>在目录 logic_v1 下</a></li></ul></li><li>服务 V2:grpc 服务<ul><li><a href=https://github.com/hwholiday/learning_tools/tree/master/istio/logic_v2>在目录 logic_v2 下</a></li></ul></li><li>服务 V3:grpc 服务<ul><li><a href=https://github.com/hwholiday/learning_tools/tree/master/istio/logic_v3>在目录 logic_v3 下</a></li><li>链接了 Reids 集群</li></ul></li><li>关于k8s和istio的配置文件<ul><li><p><a href=https://github.com/hwholiday/learning_tools/tree/master/istio/kube>在目录 kube 下</a></p><pre tabindex=0><code class=language-base data-lang=base>├── gateway.yaml      部署 gateway(Deployment[k8s]) 服务和对应的 Service(k8s)
+</code></pre><h2 id="软件架构">软件架构</h2>
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/1cd92e21-a310-4df4-9263-5769e641aa27.png" alt="软件架构" class="lazyload"><figcaption class="image-caption">软件架构</figcaption></figure></p>
+<h2 id="准备镜像">准备镜像</h2>
+<ul>
+<li>网关：ws 服务
+<ul>
+<li><a href="https://github.com/hwholiday/learning_tools/tree/master/istio/gateway">在目录 gateway 下</a></li>
+</ul>
+</li>
+<li>服务 V1:grpc 服务
+<ul>
+<li><a href="https://github.com/hwholiday/learning_tools/tree/master/istio/logic_v1">在目录 logic_v1 下</a></li>
+</ul>
+</li>
+<li>服务 V2:grpc 服务
+<ul>
+<li><a href="https://github.com/hwholiday/learning_tools/tree/master/istio/logic_v2">在目录 logic_v2 下</a></li>
+</ul>
+</li>
+<li>服务 V3:grpc 服务
+<ul>
+<li><a href="https://github.com/hwholiday/learning_tools/tree/master/istio/logic_v3">在目录 logic_v3 下</a></li>
+<li>链接了 Reids 集群</li>
+</ul>
+</li>
+<li>关于k8s和istio的配置文件
+<ul>
+<li>
+<p><a href="https://github.com/hwholiday/learning_tools/tree/master/istio/kube">在目录 kube 下</a></p>
+<pre tabindex="0"><code class="language-base" data-lang="base">├── gateway.yaml      部署 gateway(Deployment[k8s]) 服务和对应的 Service(k8s)
 ├── logic.yaml        部署 logic(Deployment[k8s]) 服务和对应的 Service(k8s)
 ├── net-gateway.yaml  部署 Gateway(istio) VirtualService(istio) 接受外部请求转发到 gateway 服务
 ├── net-logic.yaml    部署 VirtualService(istio) DestinationRule(istio) 接受 gateway 请求转发到 logic 服务
 └── net-redis.yaml    部署 Service(k8s) Endpoints(k8s) 将外部服务转发到内部
-</code></pre></li></ul></li></ul><h2 id=安装-istio>安装 istio</h2><ul><li><a href=https://istio.io/>https://istio.io/</a> 建议看英文文档，中文的更新不及时可以对照着看</li></ul><pre tabindex=0><code class=language-base data-lang=base>istioctl install 
+</code></pre></li>
+</ul>
+</li>
+</ul>
+<h2 id="安装-istio">安装 istio</h2>
+<ul>
+<li><a href="https://istio.io/">https://istio.io/</a> 建议看英文文档，中文的更新不及时可以对照着看</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">istioctl install 
 
 kubectl create namespace im
 
 kubectl label namespace im istio-injection=enabled //在这个命名空间下的服务都会被自动注入 istio proxy
 
 kubectl apply -f &lt;(istioctl kube-inject -f 你的配置文件.yaml) -n 命令空间   //手动注入
-</code></pre><ul><li>查看是否有 EXTERNA-IP</li></ul><pre tabindex=0><code class=language-base data-lang=base>kubectl get service -n istio-system                                                                                                                                                     
+</code></pre><ul>
+<li>查看是否有 EXTERNA-IP</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">kubectl get service -n istio-system                                                                                                                                                     
 NAME                   TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                                                                      AGE
 istio-ingressgateway   LoadBalancer   10.43.50.213   &lt;pending&gt;     15021:31954/TCP,80:32725/TCP,443:32687/TCP,15012:30629/TCP,15443:32721/TCP   20m
 
@@ -42,10 +227,16 @@ externalIPs:
 kubectl get service -n istio-system                                                                                                                                                     
 NAME                   TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                                                                      AGE
 istio-ingressgateway   LoadBalancer   10.43.50.213   172.13.3.131   15021:31954/TCP,80:32725/TCP,443:32687/TCP,15012:30629/TCP,15443:32721/TCP   26m
-</code></pre><ul><li>安装 kiali</li></ul><pre tabindex=0><code class=language-base data-lang=base>kubectl apply -f samples/addons
+</code></pre><ul>
+<li>安装 kiali</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">kubectl apply -f samples/addons
 kubectl rollout status deployment/kiali -n istio-system
 istioctl dashboard kiali
-</code></pre><ul><li>安装 gateway 切换到learnin_tools/istio/kube目录下</li></ul><pre tabindex=0><code class=language-base data-lang=base>  kubectl apply -f gateway.yaml -n im
+</code></pre><ul>
+<li>安装 gateway 切换到learnin_tools/istio/kube目录下</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">  kubectl apply -f gateway.yaml -n im
   kubectl apply -f net-gateway.yaml -n im
   
   //更新镜像
@@ -54,23 +245,160 @@ istioctl dashboard kiali
   kubectl apply -f logic.yaml -n im
   kubectl apply -f net-logic.yaml -n im
   kubectl apply -f net-redis.yaml -n im
-</code></pre><h3 id=测试-gatewayhttpsgithubcomhwholidaylearning_toolsblobmasteristiogatewayreadmemd><a href=https://github.com/hwholiday/learning_tools/blob/master/istio/gateway/README.md>测试 gateway</a></h3><h2 id=其他>其他</h2><ul><li>Service的DNS(host) 服务名.命名空间.svc.cluster.local</li></ul><pre tabindex=0><code class=language-base data-lang=base>gateway-v3-7d85c6577f-8xgwz 为pod name
+</code></pre><h3 id="测试-gatewayhttpsgithubcomhwholidaylearning_toolsblobmasteristiogatewayreadmemd"><a href="https://github.com/hwholiday/learning_tools/blob/master/istio/gateway/README.md">测试 gateway</a></h3>
+<h2 id="其他">其他</h2>
+<ul>
+<li>Service的DNS(host) 服务名.命名空间.svc.cluster.local</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">gateway-v3-7d85c6577f-8xgwz 为pod name
 
 kubectl describe pod/gateway-v3-7d85c6577f-8xgwz -n im
 
 在 istio-proxy 标签里面能看到
-</code></pre><ul><li>查看 gateway 路由规则</li></ul><pre tabindex=0><code class=language-base data-lang=base>istioctl proxy-config routes istio-ingressgateway-865d46c7f5-2qgdh -n istio-system -o json
-</code></pre><ul><li>部署中的自动缩放</li></ul><pre tabindex=0><code class=language-base data-lang=base>kubectl autoscale deployment logic-v1 --cpu-percent=50 --min=1 --max=10 -n im
+</code></pre><ul>
+<li>查看 gateway 路由规则</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">istioctl proxy-config routes istio-ingressgateway-865d46c7f5-2qgdh -n istio-system -o json
+</code></pre><ul>
+<li>部署中的自动缩放</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">kubectl autoscale deployment logic-v1 --cpu-percent=50 --min=1 --max=10 -n im
 kubectl get hpa -n im
-</code></pre><h3 id=完整代码地址httpsgithubcomhwholidaylearning_toolstreemasteristio><a href=https://github.com/hwholiday/learning_tools/tree/master/istio>完整代码地址</a></h3></div><div id=gitalk-container></div><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css><script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
-<script>const gitalk=new Gitalk({clientID:"64d60a02f98e01e31e2f",clientSecret:"b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58",repo:"hwholiday.github.io",owner:"hwholiday",admin:"hwholiday",id:"istio",distractionFreeMode:!1});(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("gitalk-container").innerHTML="Gitalk comments not available by default when the website is previewed locally.";return}gitalk.render("gitalk-container")})()</script><div class=post-copyright><p class=copyright-item><span>Author:</span>
-<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
-<span>274</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
-<span class=tag><a href=http://hwholiday.github.io/tags/k8s/>#k8s</a></span>
-<span class=tag><a href=http://hwholiday.github.io/tags/docker/>#docker</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
-<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2020/k8s_v1/ class=prev rel=prev title="一键安装 K8s 以及在K8s上部署Go服务"><i class="iconfont icon-dajiantou"></i>&nbsp;一键安装 K8s 以及在K8s上部署Go服务</a>
-<a href=http://hwholiday.github.io/2021/docker_redis/ class=next rel=next title="Docker-compose 安装 redis-cluster 集群">Docker-compose 安装 redis-cluster 集群&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
-<span itemprop=copyrightYear>2016 - 2023</span>
-<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
-<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><link crossorigin=anonymous integrity=sha384-yziQACfvCVwLqVFLqkWBYRO3XeA4EqzfXKGwaWnenYn5XzqfJFlFdKEmvutIQdKb href=https://lib.baomitu.com/lightgallery/1.10.0/css/lightgallery.min.css rel=stylesheet><script src=/js/vendor_gallery.min.js async></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>
+</code></pre><h3 id="完整代码地址httpsgithubcomhwholidaylearning_toolstreemasteristio"><a href="https://github.com/hwholiday/learning_tools/tree/master/istio">完整代码地址</a></h3>
+
+    </div>
+    
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        const gitalk = new Gitalk({
+            clientID: '64d60a02f98e01e31e2f',
+            clientSecret: 'b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58',
+            repo: 'hwholiday.github.io',
+            owner: 'hwholiday',
+            admin: 'hwholiday',
+            id: 'istio', 
+            distractionFreeMode: false 
+        });
+        (function() {
+            if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+                document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+                return;
+            }
+            gitalk.render('gitalk-container');
+        })();
+    </script>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>274</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/k8s/">
+                    #k8s</a></span>
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/docker/">
+                    #docker</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="http://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="http://hwholiday.github.io/2020/k8s_v1/" class="prev" rel="prev" title="一键安装 K8s 以及在K8s上部署Go服务"><i class="iconfont icon-dajiantou"></i>&nbsp;一键安装 K8s 以及在K8s上部署Go服务</a>
+         
+        
+        <a href="http://hwholiday.github.io/2021/docker_redis/" class="next" rel="next" title="Docker-compose 安装 redis-cluster 集群">Docker-compose 安装 redis-cluster 集群&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="http://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    <link crossorigin="anonymous" integrity="sha384-yziQACfvCVwLqVFLqkWBYRO3XeA4EqzfXKGwaWnenYn5XzqfJFlFdKEmvutIQdKb" href="https://lib.baomitu.com/lightgallery/1.10.0/css/lightgallery.min.css" rel="stylesheet">
+      
+     <script src="/js/vendor_gallery.min.js" async="" ></script>
+    
+  
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

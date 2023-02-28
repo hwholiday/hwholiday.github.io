@@ -1,18 +1,178 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2020/git_kit_v2/><link rel=next href=http://hwholiday.github.io/2020/go_kit_v4/><link rel=canonical href=http://hwholiday.github.io/2020/go_kit_v3/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>go-kit 微服务 身份认证 （JWT） | hwholiday</title><meta name=title content="go-kit 微服务 身份认证 （JWT） | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="go-kit 微服务 身份认证 （JWT）"><meta name=twitter:description content="go-kit 微服务 身份认证 （JWT）"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"go-kit 微服务 身份认证 （JWT）","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2020\/go_kit_v3\/"},"genre":"posts","keywords":"golang, go-kit","wordcount":574,"url":"http:\/\/hwholiday.github.io\/2020\/go_kit_v3\/","datePublished":"2020-01-03T00:00:00\u002b00:00","dateModified":"2020-01-03T00:00:00\u002b00:00","description":"go-kit 微服务 身份认证 （JWT）"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a>
-<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>go-kit 微服务 身份认证 （JWT）</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
-<span class=post-time>on <time datetime=2020-01-03>3 January 2020</time></span>
-in
-<i class="iconfont icon-folder"></i>
-<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a>
-<a href=http://hwholiday.github.io/categories/go-kit/>go-kit</a></span>
-<i class="iconfont icon-timer"></i>
-3 min</div></header><div class=post-content><h2 id=go-kit-微服务-身份认证jwt>go-kit 微服务 身份认证（JWT）</h2><h3 id=jwt官网介绍httpsjwtiointroduction><a href=https://jwt.io/introduction/>Jwt官网介绍</a></h3><ul><li>JSON Web令牌（JWT）是一个开放标准（RFC 7519），它定义了一种紧凑且自包含的方式，用于在各方之间作为JSON对象安全地传输信息。由于此信息是经过数字签名的，因此可以被验证和信任。可以使用秘密（使用HMAC算法）或使用RSA或ECDSA的公钥/私钥对对JWT进行签名。</li></ul><h2 id=简介>简介</h2><ul><li>在上篇文章中<a href=https://www.hwholiday.com/2019/go_kit_v2/>go-kit 微服务 添加日志（并为每个请求添加UUID）</a>中我们学会了如何使用中间件</li><li>这次我们在程序中加入jwt身份验证</li><li>使sum接口需要传入token才能实现访问</li></ul><h2 id=开始>开始</h2><p>下载依赖</p><ul><li>jwt库 go get github.com/dgrijalva/jwt-go</li></ul><h2 id=jwt编写>jwt编写</h2><ul><li>jwtSecret 生成token的密钥</li><li>CreateJwtToken 生成token</li><li>ParseToken 解析token</li></ul><pre tabindex=0><code class=language-base data-lang=base>var jwtSecret = []byte(&#34;jwtSecret_v3&#34;)
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="http://hwholiday.github.io/2020/git_kit_v2/" />
+  <link rel="next" href="http://hwholiday.github.io/2020/go_kit_v4/" />
+  <link rel="canonical" href="http://hwholiday.github.io/2020/go_kit_v3/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           go-kit 微服务 身份认证 （JWT） | hwholiday
+       
+  </title>
+  <meta name="title" content="go-kit 微服务 身份认证 （JWT） | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="go-kit 微服务 身份认证 （JWT）"/>
+<meta name="twitter:description" content="go-kit 微服务 身份认证 （JWT）"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "go-kit 微服务 身份认证 （JWT）",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http:\/\/hwholiday.github.io\/2020\/go_kit_v3\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang, go-kit",
+  "wordcount":  574 ,
+  "url": "http:\/\/hwholiday.github.io\/2020\/go_kit_v3\/",
+  "datePublished": "2020-01-03T00:00:00\u002b00:00",
+  "dateModified": "2020-01-03T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "go-kit 微服务 身份认证 （JWT）"
+}
+</script>
+</head>
+
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="http://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="http://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">go-kit 微服务 身份认证 （JWT）</h1>
+        <div class="post-meta">
+            Written by <a href="http://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2020-01-03 >3 January 2020</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="http://hwholiday.github.io/categories/golang/"> Golang </a>
+                        <a href="http://hwholiday.github.io/categories/go-kit/"> go-kit </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                3 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="go-kit-微服务-身份认证jwt">go-kit 微服务 身份认证（JWT）</h2>
+<h3 id="jwt官网介绍httpsjwtiointroduction"><a href="https://jwt.io/introduction/">Jwt官网介绍</a></h3>
+<ul>
+<li>JSON Web令牌（JWT）是一个开放标准（RFC 7519），它定义了一种紧凑且自包含的方式，用于在各方之间作为JSON对象安全地传输信息。由于此信息是经过数字签名的，因此可以被验证和信任。可以使用秘密（使用HMAC算法）或使用RSA或ECDSA的公钥/私钥对对JWT进行签名。</li>
+</ul>
+<h2 id="简介">简介</h2>
+<ul>
+<li>在上篇文章中<a href="https://www.hwholiday.com/2019/go_kit_v2/">go-kit 微服务 添加日志（并为每个请求添加UUID）</a>中我们学会了如何使用中间件</li>
+<li>这次我们在程序中加入jwt身份验证</li>
+<li>使sum接口需要传入token才能实现访问</li>
+</ul>
+<h2 id="开始">开始</h2>
+<p>下载依赖</p>
+<ul>
+<li>jwt库 go get github.com/dgrijalva/jwt-go</li>
+</ul>
+<h2 id="jwt编写">jwt编写</h2>
+<ul>
+<li>jwtSecret 生成token的密钥</li>
+<li>CreateJwtToken 生成token</li>
+<li>ParseToken 解析token</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">var jwtSecret = []byte(&#34;jwtSecret_v3&#34;)
 const JWT_CONTEXT_KEY = &#34;jwt_context_key&#34;
 type Token struct {
 	Name string
@@ -49,9 +209,14 @@ func ParseToken(token string) (jwt.MapClaims, error) {
 		return nil, nil
 	}
 }
-</code></pre><ul><li>测试结果</li></ul><pre tabindex=0><code class=language-base data-lang=base>    jwt_test.go:12: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MiwiZXhwIjoxNTc3OTUwOTQ5LCJpYXQiOjE1Nzc5NTA5MTksImlzcyI6ImtpdF92MyIsIm5iZiI6MTU3Nzk1MDkxOSwic3ViIjoibG9naW4ifQ.w3us4_qpzm_HDPVlwDRSqIfcTT34DpmzD5_X8Z_g-jQ
+</code></pre><ul>
+<li>测试结果</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">    jwt_test.go:12: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MiwiZXhwIjoxNTc3OTUwOTQ5LCJpYXQiOjE1Nzc5NTA5MTksImlzcyI6ImtpdF92MyIsIm5iZiI6MTU3Nzk1MDkxOSwic3ViIjoibG9naW4ifQ.w3us4_qpzm_HDPVlwDRSqIfcTT34DpmzD5_X8Z_g-jQ
     jwt_test.go:17: map[DcId:2 Name:hwholiday exp:1.577950949e+09 iat:1.577950919e+09 iss:kit_v3 nbf:1.577950919e+09 sub:login]
-</code></pre><h2 id=server层修改>Server层修改</h2><h3 id=添加login方法>添加Login方法</h3><pre tabindex=0><code class=language-base data-lang=base>type Service interface {
+</code></pre><h2 id="server层修改">Server层修改</h2>
+<h3 id="添加login方法">添加Login方法</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">type Service interface {
 	TestAdd(ctx context.Context, in Add) AddAck
 	Login(ctx context.Context, in Login) (ack LoginAck, err error)
 }
@@ -66,7 +231,11 @@ func (s baseServer) Login(ctx context.Context, in Login) (ack LoginAck, err erro
 	s.logger.Debug(fmt.Sprint(ctx.Value(ContextReqUUid)), zap.Any(&#34;调用 v3_service Service&#34;, &#34;Login 处理请求&#34;), zap.Any(&#34;处理返回值&#34;, ack))
 	return
 }
-</code></pre><h2 id=endpoint层修改>Endpoint层修改</h2><ul><li>添加jwt鉴权中间件</li></ul><pre tabindex=0><code class=language-base data-lang=base>func AuthMiddleware(logger *zap.Logger) endpoint.Middleware {
+</code></pre><h2 id="endpoint层修改">Endpoint层修改</h2>
+<ul>
+<li>添加jwt鉴权中间件</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">func AuthMiddleware(logger *zap.Logger) endpoint.Middleware {
 	return func(next endpoint.Endpoint) endpoint.Endpoint {
 		return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 			token := fmt.Sprint(ctx.Value(utils.JWT_CONTEXT_KEY))
@@ -87,13 +256,20 @@ func (s baseServer) Login(ctx context.Context, in Login) (ack LoginAck, err erro
 		}
 	}
 }
-</code></pre><ul><li>对于需要鉴权的方法添加jwt鉴权中间件</li></ul><pre tabindex=0><code class=language-base data-lang=base>var addEndPoint endpoint.Endpoint
+</code></pre><ul>
+<li>对于需要鉴权的方法添加jwt鉴权中间件</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">var addEndPoint endpoint.Endpoint
 {
 	addEndPoint = MakeAddEndPoint(svc)
 	addEndPoint = LoggingMiddleware(log)(addEndPoint)
 	addEndPoint = AuthMiddleware(log)(addEndPoint)
 }
-</code></pre><h2 id=transport层修改>Transport层修改</h2><ul><li>将每个Http请求Header中的token传入Context中</li></ul><pre tabindex=0><code class=language-base data-lang=base>httptransport.ServerBefore(func(ctx context.Context, request *http.Request) context.Context {
+</code></pre><h2 id="transport层修改">Transport层修改</h2>
+<ul>
+<li>将每个Http请求Header中的token传入Context中</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">httptransport.ServerBefore(func(ctx context.Context, request *http.Request) context.Context {
 	UUID := uuid.NewV5(uuid.Must(uuid.NewV4()), &#34;req_uuid&#34;).String()
 	log.Debug(&#34;给请求添加uuid&#34;, zap.Any(&#34;UUID&#34;, UUID))
 	ctx = context.WithValue(ctx, v3_service.ContextReqUUid, UUID)
@@ -101,7 +277,16 @@ func (s baseServer) Login(ctx context.Context, in Login) (ack LoginAck, err erro
 	ctx = context.WithValue(ctx, utils.JWT_CONTEXT_KEY, request.Header.Get(&#34;Authorization&#34;))
 	return ctx
 }
-</code></pre><h2 id=激动人心的时刻来了运行main方法>激动人心的时刻来了，运行main方法</h2><ul><li>登录获取Token<ul><li>[Post 方法] http://127.0.0.1:8888/login 内容 {&ldquo;account&rdquo;:&ldquo;hwholiday&rdquo;,&ldquo;password&rdquo;:&ldquo;123456&rdquo;}</li><li>运行日志</li></ul></li></ul><pre tabindex=0><code class=language-base data-lang=base>2020-01-02 15:55:13     DEBUG   v3_transport/transport.go:26    给请求添加uuid  {&#34;UUID&#34;: &#34;9fcc91ac-dd8d-53cb-8c9d-f06561d82c6f&#34;}
+</code></pre><h2 id="激动人心的时刻来了运行main方法">激动人心的时刻来了，运行main方法</h2>
+<ul>
+<li>登录获取Token
+<ul>
+<li>[Post 方法] http://127.0.0.1:8888/login   内容 {&ldquo;account&rdquo;:&ldquo;hwholiday&rdquo;,&ldquo;password&rdquo;:&ldquo;123456&rdquo;}</li>
+<li>运行日志</li>
+</ul>
+</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">2020-01-02 15:55:13     DEBUG   v3_transport/transport.go:26    给请求添加uuid  {&#34;UUID&#34;: &#34;9fcc91ac-dd8d-53cb-8c9d-f06561d82c6f&#34;}
 2020-01-02 15:55:13     DEBUG   v3_transport/transport.go:29    把请求中的token发到Context中    {&#34;Token&#34;: &#34;&#34;}
 2020-01-02 15:55:13     DEBUG   v3_transport/transport.go:56    9fcc91ac-dd8d-53cb-8c9d-f06561d82c6f    {&#34; 开始解析请求数据&#34;unt&#34;:&#34;hwholiday&#34;,&#34;password&#34;:&#34;123456&#34;}}
 2020-01-02 15:55:13     DEBUG   v3_service/service.go:38        9fcc91ac-dd8d-53cb-8c9d-f06561d82c6f    {&#34;调用 v3_service Seice&#34;: &#34;Login 处理请求&#34;}
@@ -109,7 +294,15 @@ func (s baseServer) Login(ctx context.Context, in Login) (ack LoginAck, err erro
 2020-01-02 15:55:13     DEBUG   v3_service/middleware.go:37     9fcc91ac-dd8d-53cb-8c9d-f06561d82c6f    {&#34;调用 Login logMiddwareServer&#34;: &#34;Login&#34;, &#34;req&#34;: {&#34;account&#34;:&#34;hwholiday&#34;,&#34;password&#34;:&#34;123456&#34;}, &#34;res&#34;: {&#34;token&#34;:&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc3OTUxNzQzLCJpYXQiOjE1Nzc5NTE3MTMsImlzcyI6ImtpdF92MyIsIm5iZiI6MTU3Nzk1MTcxMywic3ViIjoibG9naW4ifQ.2s2YzKhMHSXRjzgO4yfHP7gHADeVwpsi9CyXPgAQjmQ&#34;}, &#34;err&#34;: null}
 2020-01-02 15:55:13     DEBUG   v3_endpoint/middleware.go:18    9fcc91ac-dd8d-53cb-8c9d-f06561d82c6f    {&#34;调用 v3_endpoint LgingMiddleware&#34;: &#34;处理完请求&#34;, &#34;耗时毫秒&#34;: 0}
 2020-01-02 15:55:13     DEBUG   v3_transport/transport.go:75    9fcc91ac-dd8d-53cb-8c9d-f06561d82c6f    {&#34;请求结束封装返回值n&#34;:&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc3OTUxNzQzLCJpYXQiOjE1Nzc5NTE3MTMsImlzcyI6ImtpdF92MyIsIm5iZiI6MTU3Nzk1MTcxMywic3ViIjoibG9naW4ifQ.2s2YzKhMHSXRjzgO4yfHP7gHADeVwpsi9CyXPgAQjmQ&#34;}}
-</code></pre><ul><li>调用sum方法<ul><li>[Get 方法] 127.0.0.1:8888/sum?a=1&b=1 添加登录获取到的token放入Header里面（Header的key为Authorization）</li><li>Token没过期的运行日志</li></ul></li></ul><pre tabindex=0><code class=language-base data-lang=base>2020-01-02 15:58:13     DEBUG   v3_transport/transport.go:26    给请求添加uuid  {&#34;UUID&#34;: &#34;4e44ed1f-e424-5313-83e0-b68cf5cce6e1&#34;}
+</code></pre><ul>
+<li>调用sum方法
+<ul>
+<li>[Get 方法] 127.0.0.1:8888/sum?a=1&amp;b=1   添加登录获取到的token放入Header里面（Header的key为Authorization）</li>
+<li>Token没过期的运行日志</li>
+</ul>
+</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">2020-01-02 15:58:13     DEBUG   v3_transport/transport.go:26    给请求添加uuid  {&#34;UUID&#34;: &#34;4e44ed1f-e424-5313-83e0-b68cf5cce6e1&#34;}
 2020-01-02 15:58:13     DEBUG   v3_transport/transport.go:29    把请求中的token发到Context中    {&#34;Token&#34;: &#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc3OTUxOTA2LCJpYXQiOjE1Nzc5NTE4NzYsImlzcyI6ImtpdF92MyIsIm5iZiI6MTU3Nzk1MTg3Niwic3ViIjoibG9naW4ifQ.7kMgtVMAQaJJ92MeFPdO7CWnNwY6cumLjUuvZGAd-Z0&#34;}
 2020-01-02 15:58:13     DEBUG   v3_transport/transport.go:70    4e44ed1f-e424-5313-83e0-b68cf5cce6e1    {&#34; 开始解析请求数据&#34;: {&#34;a&#34;:1,&#34;b&#34;:1}}
 2020-01-02 15:58:13     DEBUG   v3_service/service.go:31        4e44ed1f-e424-5313-83e0-b68cf5cce6e1    {&#34;调用 v3_service Service&#34;: &#34;TestAdd 处理请求&#34;, &#34;请求用户&#34;: &#34;hwholiday&#34;}
@@ -118,20 +311,154 @@ func (s baseServer) Login(ctx context.Context, in Login) (ack LoginAck, err erro
 2020-01-02 15:58:13     DEBUG   v3_endpoint/middleware.go:18    4e44ed1f-e424-5313-83e0-b68cf5cce6e1    {&#34;调用 v3_endpoint LoggingMiddleware&#34;: &#34;处理完请求&#34;, &#34;耗时毫秒&#34;: 2}
 2020-01-02 15:58:13     DEBUG   v3_transport/transport.go:75    4e44ed1f-e424-5313-83e0-b68cf5cce6e1    {&#34;请求结束封装返回值&#34;: {&#34;res&#34;:2}}
   
-</code></pre><ul><li>Token过期的运行日志</li></ul><pre tabindex=0><code class=language-base data-lang=base>2020-01-02 15:59:16     DEBUG   v3_transport/transport.go:26    给请求添加uuid  {&#34;UUID&#34;: &#34;b017a114-9216-5f67-b9bb-a8e378a73828&#34;}
+</code></pre><ul>
+<li>Token过期的运行日志</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">2020-01-02 15:59:16     DEBUG   v3_transport/transport.go:26    给请求添加uuid  {&#34;UUID&#34;: &#34;b017a114-9216-5f67-b9bb-a8e378a73828&#34;}
 2020-01-02 15:59:16     DEBUG   v3_transport/transport.go:29    把请求中的token发到Context中    {&#34;Token&#34;: &#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc3OTUxOTA2LCJpYXQiOjE1Nzc5NTE4NzYsImlzcyI6ImtpdF92MyIsIm5iZiI6MTU3Nzk1MTg3Niwic3ViIjoibG9naW4ifQ.7kMgtVMAQaJJ92MeFPdO7CWnNwY6cumLjUuvZGAd-Z0&#34;}
 2020-01-02 15:59:16     DEBUG   v3_transport/transport.go:70    b017a114-9216-5f67-b9bb-a8e378a73828    {&#34; 开始解析请求数据&#34;: {&#34;a&#34;:1,&#34;b&#34;:1}}
 2020-01-02 15:59:16     DEBUG   v3_endpoint/middleware.go:35    b017a114-9216-5f67-b9bb-a8e378a73828    {&#34;[AuthMiddleware]&#34;: &#34;ParseToken&#34;, &#34;error&#34;: &#34;Token is expired&#34;}
 2020-01-02 15:59:16     WARN    v3_transport/transport.go:20    b017a114-9216-5f67-b9bb-a8e378a73828    {&#34;error&#34;: &#34;Token is expired&#34;}
-</code></pre><h2 id=结语>结语</h2><ul><li>加入JWT机制，我们可以对接口实现只接受我们认证的用户访问</li><li>欢迎添加QQ一起讨论</li></ul><h3 id=完整代码地址httpsgithubcomhwholidaylearning_toolstreemastergo-kitv3><a href=https://github.com/hwholiday/learning_tools/tree/master/go-kit/v3>完整代码地址</a></h3><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div id=gitalk-container></div><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css><script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
-<script>const gitalk=new Gitalk({clientID:"64d60a02f98e01e31e2f",clientSecret:"b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58",repo:"hwholiday.github.io",owner:"hwholiday",admin:"hwholiday",id:"git_kit_v3",distractionFreeMode:!1});(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("gitalk-container").innerHTML="Gitalk comments not available by default when the website is previewed locally.";return}gitalk.render("gitalk-container")})()</script><div class=post-copyright><p class=copyright-item><span>Author:</span>
-<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
-<span>574</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
-<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#golang</a></span>
-<span class=tag><a href=http://hwholiday.github.io/tags/go-kit/>#go-kit</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
-<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2020/git_kit_v2/ class=prev rel=prev title="go-kit 微服务 添加日志（user/zap ,并为每个请求添加UUID） "><i class="iconfont icon-dajiantou"></i>&nbsp;go-kit 微服务 添加日志（user/zap ,并为每个请求添加UUID）</a>
-<a href=http://hwholiday.github.io/2020/go_kit_v4/ class=next rel=next title="go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）">go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
-<span itemprop=copyrightYear>2016 - 2023</span>
-<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
-<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>
+</code></pre><h2 id="结语">结语</h2>
+<ul>
+<li>加入JWT机制，我们可以对接口实现只接受我们认证的用户访问</li>
+<li>欢迎添加QQ一起讨论</li>
+</ul>
+<h3 id="完整代码地址httpsgithubcomhwholidaylearning_toolstreemastergo-kitv3"><a href="https://github.com/hwholiday/learning_tools/tree/master/go-kit/v3">完整代码地址</a></h3>
+<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        const gitalk = new Gitalk({
+            clientID: '64d60a02f98e01e31e2f',
+            clientSecret: 'b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58',
+            repo: 'hwholiday.github.io',
+            owner: 'hwholiday',
+            admin: 'hwholiday',
+            id: 'git_kit_v3', 
+            distractionFreeMode: false 
+        });
+        (function() {
+            if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+                document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+                return;
+            }
+            gitalk.render('gitalk-container');
+        })();
+    </script>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>574</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/go-kit/">
+                    #go-kit</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="http://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="http://hwholiday.github.io/2020/git_kit_v2/" class="prev" rel="prev" title="go-kit 微服务 添加日志（user/zap ,并为每个请求添加UUID） "><i class="iconfont icon-dajiantou"></i>&nbsp;go-kit 微服务 添加日志（user/zap ,并为每个请求添加UUID） </a>
+         
+        
+        <a href="http://hwholiday.github.io/2020/go_kit_v4/" class="next" rel="next" title="go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）">go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="http://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

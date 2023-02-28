@@ -1,17 +1,158 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2021/istio/><link rel=next href=http://hwholiday.github.io/2021/install_rancher_rke1/><link rel=canonical href=http://hwholiday.github.io/2021/docker_redis/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>Docker-compose 安装 redis-cluster 集群 | hwholiday</title><meta name=title content="Docker-compose 安装 redis-cluster 集群 | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="Docker-compose 安装 redis-cluster 集群"><meta name=twitter:description content="Docker-compose 安装 redis-cluster 集群"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Docker-compose 安装 redis-cluster 集群","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2021\/docker_redis\/"},"genre":"posts","keywords":"docker","wordcount":206,"url":"http:\/\/hwholiday.github.io\/2021\/docker_redis\/","datePublished":"2021-02-01T00:00:00\u002b00:00","dateModified":"2021-02-01T00:00:00\u002b00:00","description":"Docker-compose 安装 redis-cluster 集群"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a>
-<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>Docker-compose 安装 redis-cluster 集群</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
-<span class=post-time>on <time datetime=2021-02-01>1 February 2021</time></span>
-in
-<i class="iconfont icon-folder"></i>
-<span class=post-category><a href=http://hwholiday.github.io/categories/docker/>docker</a></span>
-<i class="iconfont icon-timer"></i>
-1 min</div></header><div class=post-content><h2 id=安装-redis-集群>安装 redis 集群</h2><h3 id=172133160-为宿主机ip>172.13.3.160 为宿主机IP</h3><p><strong>redis1.conf 同样的配置只需要改prot</strong></p><pre tabindex=0><code class=language-base data-lang=base>port 7001
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="http://hwholiday.github.io/2021/istio/" />
+  <link rel="next" href="http://hwholiday.github.io/2021/install_rancher_rke1/" />
+  <link rel="canonical" href="http://hwholiday.github.io/2021/docker_redis/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Docker-compose 安装 redis-cluster 集群 | hwholiday
+       
+  </title>
+  <meta name="title" content="Docker-compose 安装 redis-cluster 集群 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Docker-compose 安装 redis-cluster 集群"/>
+<meta name="twitter:description" content="Docker-compose 安装 redis-cluster 集群"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Docker-compose 安装 redis-cluster 集群",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http:\/\/hwholiday.github.io\/2021\/docker_redis\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "docker",
+  "wordcount":  206 ,
+  "url": "http:\/\/hwholiday.github.io\/2021\/docker_redis\/",
+  "datePublished": "2021-02-01T00:00:00\u002b00:00",
+  "dateModified": "2021-02-01T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "Docker-compose 安装 redis-cluster 集群"
+}
+</script>
+</head>
+
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="http://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="http://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">Docker-compose 安装 redis-cluster 集群</h1>
+        <div class="post-meta">
+            Written by <a href="http://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2021-02-01 >1 February 2021</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="http://hwholiday.github.io/categories/docker/"> docker </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                1 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="安装-redis-集群">安装 redis 集群</h2>
+<h3 id="172133160-为宿主机ip">172.13.3.160 为宿主机IP</h3>
+<p><strong>redis1.conf 同样的配置只需要改prot</strong></p>
+<pre tabindex="0"><code class="language-base" data-lang="base">port 7001
 protected-mode no
 cluster-enabled yes
 cluster-config-file nodes.conf
@@ -21,7 +162,8 @@ cluster-announce-port 7001
 cluster-announce-bus-port 17001
 appendonly yes
 pidfile /var/run/redis_7001.pid
-</code></pre><p><strong>redis2.conf 同样的配置只需要改prot</strong></p><pre tabindex=0><code class=language-base data-lang=base>port 7002
+</code></pre><p><strong>redis2.conf 同样的配置只需要改prot</strong></p>
+<pre tabindex="0"><code class="language-base" data-lang="base">port 7002
 protected-mode no
 cluster-enabled yes
 cluster-config-file nodes.conf
@@ -31,7 +173,9 @@ cluster-announce-port 7002
 cluster-announce-bus-port 17002
 appendonly yes
 pidfile /var/run/redis_7002.pid
-</code></pre><p><strong>生成6份</strong></p><h2 id=docker-composeyml>docker-compose.yml</h2><pre tabindex=0><code class=language-base data-lang=base>version: &#39;3.7&#39;
+</code></pre><p><strong>生成6份</strong></p>
+<h2 id="docker-composeyml">docker-compose.yml</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">version: &#39;3.7&#39;
 x-image:
   &amp;redis-image
     redis:5.0.7
@@ -102,7 +246,8 @@ services:
     ports:
       - 7006:7006
       - 17006:17006
-</code></pre><h2 id=执行命令>执行命令</h2><pre tabindex=0><code class=language-base data-lang=base>#关闭防火墙
+</code></pre><h2 id="执行命令">执行命令</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">#关闭防火墙
 firewall-cmd --state
 systemctl stop firewalld.service
 systemctl disable firewalld.service 
@@ -115,13 +260,114 @@ docker-compose stop
 docker exec -it redis1 /bin/bash
 redis-cli --cluster create 172.13.3.160:7001 172.13.3.160:7002 172.13.3.160:7003 172.13.3.160:7004 172.13.3.160:7005 172.13.3.160:7006 --cluster-replicas 1
 redis-cli -c -p 7001
-</code></pre></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
-<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
-<span>206</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
-<span class=tag><a href=http://hwholiday.github.io/tags/docker/>#docker</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
-<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2021/istio/ class=prev rel=prev title="通过 istio 部署ws,grpc服务并链接外部redis集群"><i class="iconfont icon-dajiantou"></i>&nbsp;通过 istio 部署ws,grpc服务并链接外部redis集群</a>
-<a href=http://hwholiday.github.io/2021/install_rancher_rke1/ class=next rel=next title="安装 k8s 集群 Rancher RKE">安装 k8s 集群 Rancher RKE&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
-<span itemprop=copyrightYear>2016 - 2023</span>
-<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
-<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>
+</code></pre>
+    </div>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>206</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/docker/">
+                    #docker</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="http://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="http://hwholiday.github.io/2021/istio/" class="prev" rel="prev" title="通过 istio 部署ws,grpc服务并链接外部redis集群"><i class="iconfont icon-dajiantou"></i>&nbsp;通过 istio 部署ws,grpc服务并链接外部redis集群</a>
+         
+        
+        <a href="http://hwholiday.github.io/2021/install_rancher_rke1/" class="next" rel="next" title="安装 k8s 集群 Rancher RKE">安装 k8s 集群 Rancher RKE&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="http://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

@@ -1,22 +1,167 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2019/how_use_time/><link rel=next href=http://hwholiday.github.io/2019/ecc/><link rel=canonical href=http://hwholiday.github.io/2019/short_url/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>Golang 生成短链接服务 | hwholiday</title><meta name=title content="Golang 生成短链接服务 | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="Golang 生成短链接服务"><meta name=twitter:description content="Golang 生成短链接服务"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Golang 生成短链接服务","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2019\/short_url\/"},"genre":"posts","keywords":"golang","wordcount":130,"url":"http:\/\/hwholiday.github.io\/2019\/short_url\/","datePublished":"2019-07-02T00:00:00\u002b00:00","dateModified":"2019-07-02T00:00:00\u002b00:00","description":"Golang 生成短链接服务"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a>
-<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>Golang 生成短链接服务</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
-<span class=post-time>on <time datetime=2019-07-02>2 July 2019</time></span>
-in
-<i class="iconfont icon-folder"></i>
-<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a></span>
-<i class="iconfont icon-timer"></i>
-1 min</div></header><div class=post-content><h3 id=什么是短链接>什么是短链接</h3><p>就是把普通网址，转换成比较短的网址。比如：https://dwz.cn/XzhYJMkZ</p><h3 id=原理解析>原理解析</h3><p>当我们在浏览器里输入 <a href=https://dwz.cn/XzhYJMkZ>https://dwz.cn/XzhYJMkZ</a>
-DNS首先解析获得 <a href=https://dwz.cn/>https://dwz.cn/</a> 的 IP 地址
-当 DNS 获得 IP 地址以后，会向这个地址发送 HTTP请求，查询短码 XzhYJMkZ
-<a href=https://dwz.cn/>https://dwz.cn/</a> 服务器会通过短码 XzhYJMkZ 获取对应的长 URL
-请求通过 HTTP 301 转到对应的长 URL <a href=http://www.baidu.com>http://www.baidu.com</a></p><h3 id=本文采用--自增序列算法--用户自定义短码>本文采用 自增序列算法 + 用户自定义短码</h3><p>设置 id 自增，一个 10进制 id 对应一个 62进制的数值，1对1，也就不会出现重复的情况。这个利用的就是低进制转化为高进制时，字符数会减少的特性。
-可使用redis Incr 实现id自增。</p><h3 id=数据表设计>数据表设计</h3><pre tabindex=0><code class=language-base data-lang=base>CREATE TABLE `links` (
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="http://hwholiday.github.io/2019/how_use_time/" />
+  <link rel="next" href="http://hwholiday.github.io/2019/ecc/" />
+  <link rel="canonical" href="http://hwholiday.github.io/2019/short_url/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Golang 生成短链接服务 | hwholiday
+       
+  </title>
+  <meta name="title" content="Golang 生成短链接服务 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Golang 生成短链接服务"/>
+<meta name="twitter:description" content="Golang 生成短链接服务"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Golang 生成短链接服务",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http:\/\/hwholiday.github.io\/2019\/short_url\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang",
+  "wordcount":  130 ,
+  "url": "http:\/\/hwholiday.github.io\/2019\/short_url\/",
+  "datePublished": "2019-07-02T00:00:00\u002b00:00",
+  "dateModified": "2019-07-02T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "Golang 生成短链接服务"
+}
+</script>
+</head>
+
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="http://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="http://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">Golang 生成短链接服务</h1>
+        <div class="post-meta">
+            Written by <a href="http://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2019-07-02 >2 July 2019</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="http://hwholiday.github.io/categories/golang/"> Golang </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                1 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h3 id="什么是短链接">什么是短链接</h3>
+<p>就是把普通网址，转换成比较短的网址。比如：https://dwz.cn/XzhYJMkZ</p>
+<h3 id="原理解析">原理解析</h3>
+<p>当我们在浏览器里输入 <a href="https://dwz.cn/XzhYJMkZ">https://dwz.cn/XzhYJMkZ</a><!-- raw HTML omitted -->
+DNS首先解析获得 <a href="https://dwz.cn/">https://dwz.cn/</a> 的 IP 地址<!-- raw HTML omitted -->
+当 DNS 获得 IP 地址以后，会向这个地址发送 HTTP请求，查询短码 XzhYJMkZ<!-- raw HTML omitted -->
+<a href="https://dwz.cn/">https://dwz.cn/</a> 服务器会通过短码 XzhYJMkZ 获取对应的长 URL<!-- raw HTML omitted -->
+请求通过 HTTP 301 转到对应的长 URL <a href="http://www.baidu.com">http://www.baidu.com</a><!-- raw HTML omitted --></p>
+<h3 id="本文采用--自增序列算法--用户自定义短码">本文采用  自增序列算法 + 用户自定义短码</h3>
+<p>设置 id 自增，一个 10进制 id 对应一个 62进制的数值，1对1，也就不会出现重复的情况。<!-- raw HTML omitted -->这个利用的就是低进制转化为高进制时，字符数会减少的特性。<!-- raw HTML omitted -->
+可使用redis Incr 实现id自增。<!-- raw HTML omitted --></p>
+<h3 id="数据表设计">数据表设计</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">CREATE TABLE `links` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `url` varchar(200) COLLATE utf8mb4_bin NOT NULL COMMENT &#39;长连接&#39;,
   `keyword` varchar(50) COLLATE utf8mb4_bin NOT NULL COMMENT &#39;短链接码&#39;,
@@ -27,17 +172,127 @@ DNS首先解析获得 <a href=https://dwz.cn/>https://dwz.cn/</a> 的 IP 地址
   UNIQUE KEY `links_UN` (`url`),
   UNIQUE KEY `links_keyword` (`keyword`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-</code></pre><h3 id=服务使用--生成短链接>服务使用 生成短链接</h3><ul><li>post http://127.0.0.1:8099/v1/create_url</li><li>form-data 参数 url 待转换的地址 ，status （1）自动分配 （2）用户自定义 ，keyword 自定义的短码</li><li>请求值 url：www.google.com status：1 keyword：</li><li>返回值{
+</code></pre><h3 id="服务使用--生成短链接">服务使用  生成短链接</h3>
+<ul>
+<li>post   http://127.0.0.1:8099/v1/create_url <!-- raw HTML omitted --></li>
+<li>form-data 参数   url 待转换的地址 ，status （1）自动分配  （2）用户自定义 ，keyword 自定义的短码<!-- raw HTML omitted --></li>
+<li>请求值  url：www.google.com     status：1     keyword：</li>
+<li>返回值{
 &ldquo;code&rdquo;: 200,
 &ldquo;data&rdquo;: &ldquo;http://127.0.0.1:8099/8kBWU&rdquo;,
 &ldquo;msg&rdquo;: &ldquo;success&rdquo;
-}</li></ul><h3 id=完整演示代码--点击这里httpsgithubcomhwholidayshort_url>完整演示代码 <a href=https://github.com/hwholiday/short_url>点击这里</a></h3><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
-<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
-<span>130</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
-<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#golang</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
-<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2019/how_use_time/ class=prev rel=prev title="Golang Time包的方法解析"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang Time包的方法解析</a>
-<a href=http://hwholiday.github.io/2019/ecc/ class=next rel=next title="Golang 椭圆加密算法实现">Golang 椭圆加密算法实现&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
-<span itemprop=copyrightYear>2016 - 2023</span>
-<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
-<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>
+}</li>
+</ul>
+<h3 id="完整演示代码--点击这里httpsgithubcomhwholidayshort_url">完整演示代码  <a href="https://github.com/hwholiday/short_url">点击这里</a></h3>
+<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>130</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="http://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="http://hwholiday.github.io/2019/how_use_time/" class="prev" rel="prev" title="Golang Time包的方法解析"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang Time包的方法解析</a>
+         
+        
+        <a href="http://hwholiday.github.io/2019/ecc/" class="next" rel="next" title="Golang 椭圆加密算法实现">Golang 椭圆加密算法实现&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="http://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

@@ -1,19 +1,160 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2019/how_user_zap/><link rel=next href=http://hwholiday.github.io/2019/simple_timing_wheel/><link rel=canonical href=http://hwholiday.github.io/2019/archive/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>Golang 实践归档 | hwholiday</title><meta name=title content="Golang 实践归档 | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="Golang 实践归档"><meta name=twitter:description content="代码实践归档"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Golang 实践归档","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2019\/archive\/"},"genre":"posts","keywords":"golang, 源码","wordcount":440,"url":"http:\/\/hwholiday.github.io\/2019\/archive\/","datePublished":"2019-12-24T00:00:00\u002b00:00","dateModified":"2019-12-24T00:00:00\u002b00:00","description":"代码实践归档"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a>
-<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>Golang 实践归档</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
-<span class=post-time>on <time datetime=2019-12-24>24 December 2019</time></span>
-in
-<i class="iconfont icon-folder"></i>
-<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a>
-<a href=http://hwholiday.github.io/categories/%E6%BA%90%E7%A0%81/>源码</a>
-<a href=http://hwholiday.github.io/categories/%E5%BD%92%E6%A1%A3/>归档</a></span>
-<i class="iconfont icon-timer"></i>
-3 min</div></header><div class=post-content><h2 id=learning_tools-源码地址httpsgithubcomhwholidaylearning_tools>learning_tools <a href=https://github.com/hwholiday/learning_tools>源码地址</a></h2><h1 id=go-kit-微服务实践从入门到精通系列>go-kit 微服务实践，从入门到精通系列</h1><h3 id=go-kithttpsgithubcomhwholidaylearning_toolstreemastergo-kit-go-kit微服务><a href=https://github.com/hwholiday/learning_tools/tree/master/go-kit>go-kit</a> (go-kit微服务)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: v1 go-kit 微服务 基础使用 （HTTP）
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="http://hwholiday.github.io/2019/how_user_zap/" />
+  <link rel="next" href="http://hwholiday.github.io/2019/simple_timing_wheel/" />
+  <link rel="canonical" href="http://hwholiday.github.io/2019/archive/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Golang 实践归档 | hwholiday
+       
+  </title>
+  <meta name="title" content="Golang 实践归档 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Golang 实践归档"/>
+<meta name="twitter:description" content="代码实践归档"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Golang 实践归档",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http:\/\/hwholiday.github.io\/2019\/archive\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang, 源码",
+  "wordcount":  440 ,
+  "url": "http:\/\/hwholiday.github.io\/2019\/archive\/",
+  "datePublished": "2019-12-24T00:00:00\u002b00:00",
+  "dateModified": "2019-12-24T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "代码实践归档"
+}
+</script>
+</head>
+
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="http://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="http://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">Golang 实践归档</h1>
+        <div class="post-meta">
+            Written by <a href="http://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2019-12-24 >24 December 2019</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="http://hwholiday.github.io/categories/golang/"> Golang </a>
+                        <a href="http://hwholiday.github.io/categories/%E6%BA%90%E7%A0%81/"> 源码 </a>
+                        <a href="http://hwholiday.github.io/categories/%E5%BD%92%E6%A1%A3/"> 归档 </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                3 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="learning_tools-源码地址httpsgithubcomhwholidaylearning_tools">learning_tools <a href="https://github.com/hwholiday/learning_tools">源码地址</a></h2>
+<h1 id="go-kit-微服务实践从入门到精通系列">go-kit 微服务实践，从入门到精通系列</h1>
+<h3 id="go-kithttpsgithubcomhwholidaylearning_toolstreemastergo-kit-go-kit微服务"><a href="https://github.com/hwholiday/learning_tools/tree/master/go-kit">go-kit</a> (go-kit微服务)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: v1 go-kit 微服务 基础使用 （HTTP）
     2: v2 go-kit 微服务 添加日志（user/zap ,并为每个请求添加UUID） 
     3: v3 go-kit 微服务 身份认证 （JWT）
     4: v4 go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现）
@@ -24,7 +165,9 @@ in
     9: v9 go-kit 微服务 服务链路追踪（jaeger 实现）(1)
     10: v9 go-kit 微服务 服务链路追踪（jaeger 实现）(2)
     11: v11 go-kit 微服务 添加一个简单网关
-</code></pre><h1 id=go_push-一个实用的消息推送服务>go_push 一个实用的消息推送服务</h1><h3 id=go_pushhttpsgithubcomhwholidaylearning_toolstreemastergo_push-推送服务><a href=https://github.com/hwholiday/learning_tools/tree/master/go_push>go_push</a> (推送服务)</h3><pre tabindex=0><code class=language-base data-lang=base>   ├── gateway // 长连接网关服务器
+</code></pre><h1 id="go_push-一个实用的消息推送服务">go_push 一个实用的消息推送服务</h1>
+<h3 id="go_pushhttpsgithubcomhwholidaylearning_toolstreemastergo_push-推送服务"><a href="https://github.com/hwholiday/learning_tools/tree/master/go_push">go_push</a> (推送服务)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">   ├── gateway // 长连接网关服务器
    │   ├── push_job.go    // 分发任务
    │   ├── room.go        // 房间，可作为某一类型的推送管理中心
    │   ├── room_manage.go // 房间管理
@@ -35,12 +178,14 @@ in
    │   ├── http_handle.go // 推送，房间相关
    │   └── http_server.go // http服务
    └── main.go
-</code></pre><h3 id=micro_agenthttpsgithubcomhwholidaylearning_toolstreemastermicro_agent-micro微服务><a href=https://github.com/hwholiday/learning_tools/tree/master/micro_agent>micro_agent</a> (micro微服务)</h3><pre tabindex=0><code class=language-base data-lang=base>   1: base 基础方法
+</code></pre><h3 id="micro_agenthttpsgithubcomhwholidaylearning_toolstreemastermicro_agent-micro微服务"><a href="https://github.com/hwholiday/learning_tools/tree/master/micro_agent">micro_agent</a> (micro微服务)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">   1: base 基础方法
    2: conf 配置文件
    3：handler 对外处理方法
    4：model 数据格式
    5：proto protobuf 文件
-</code></pre><h3 id=project_layouthttpsgithubcomhwholidaylearning_toolstreemasterproject_layout-项目结构><a href=https://github.com/hwholiday/learning_tools/tree/master/project_layout>project_layout</a> (项目结构)</h3><pre tabindex=0><code class=language-base data-lang=base>    详细介绍查看文件夹内README.me内容  
+</code></pre><h3 id="project_layouthttpsgithubcomhwholidaylearning_toolstreemasterproject_layout-项目结构"><a href="https://github.com/hwholiday/learning_tools/tree/master/project_layout">project_layout</a> (项目结构)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    详细介绍查看文件夹内README.me内容  
     ├─api
     ├─build
     ├─cmd
@@ -56,71 +201,213 @@ in
     │  │  └─service
     │  └─pkg
     └─tool
-</code></pre><h3 id=all_packaged_libraryhttpsgithubcomhwholidaylearning_toolstreemasterall_packaged_library-里面封装了一些常用的库有详细的介绍持续更新><a href=https://github.com/hwholiday/learning_tools/tree/master/all_packaged_library>all_packaged_library</a> 里面封装了一些常用的库，有详细的介绍，持续更新</h3><pre tabindex=0><code class=language-base data-lang=base>    1: base 里面封装mysql，redis，mgo，minio文件储存库S3协议，雪花算法，退出程序方法，redis全局锁，日志库等（插件形式可单独引用）
+</code></pre><h3 id="all_packaged_libraryhttpsgithubcomhwholidaylearning_toolstreemasterall_packaged_library-里面封装了一些常用的库有详细的介绍持续更新"><a href="https://github.com/hwholiday/learning_tools/tree/master/all_packaged_library">all_packaged_library</a> 里面封装了一些常用的库，有详细的介绍，持续更新</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: base 里面封装mysql，redis，mgo，minio文件储存库S3协议，雪花算法，退出程序方法，redis全局锁，日志库等（插件形式可单独引用）
     2: logtool uber_zap日志库封装，可自动切分日志文件，压缩文件
     3: perf ppoof小插件
     4: push 集成苹果推送，google推送，华为推送
     5: quit 优雅的退出程序
     6: registrySelector 基于etcd实现的服务注册，发现，负载均衡
-</code></pre><h3 id=nsqhttpsgithubcomhwholidaylearning_toolstreemasterdocker-为你的服务插上docker_compose翅膀><a href=https://github.com/hwholiday/learning_tools/tree/master/docker>nsq</a> (为你的服务插上docker_compose翅膀)</h3><pre tabindex=0><code class=language-base data-lang=base>   1: docker 为你的服务插上docker_compose翅膀   
-</code></pre><h3 id=kafkahttpsgithubcomhwholidaylearning_toolstreemasterkafka-分布式消息发布订阅系统><a href=https://github.com/hwholiday/learning_tools/tree/master/kafka>kafka</a> (分布式消息发布订阅系统)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main 消息队列
-</code></pre><h3 id=nats_streaminghttpsgithubcomhwholidaylearning_toolstreemasternats_streaming分布式消息发布订阅系统--是由nats驱动的数据流系统><a href=https://github.com/hwholiday/learning_tools/tree/master/NATS_streaming>NATS_streaming</a>(分布式消息发布订阅系统&ndash;是由NATS驱动的数据流系统)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main 消息队列
-</code></pre><h3 id=nsqhttpsgithubcomhwholidaylearning_toolstreemasterkafka-分布式实时消息平台><a href=https://github.com/hwholiday/learning_tools/tree/master/kafka>nsq</a> (分布式实时消息平台)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main 消息队列
-</code></pre><h3 id=grpchttpsgithubcomhwholidaylearning_toolstreemastergrpc-grpc学习><a href=https://github.com/hwholiday/learning_tools/tree/master/grpc>grpc</a> (grpc学习)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: bidirectional_streaming_rpc 双向流grpc
+</code></pre><h3 id="nsqhttpsgithubcomhwholidaylearning_toolstreemasterdocker-为你的服务插上docker_compose翅膀"><a href="https://github.com/hwholiday/learning_tools/tree/master/docker">nsq</a> (为你的服务插上docker_compose翅膀)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">   1: docker 为你的服务插上docker_compose翅膀   
+</code></pre><h3 id="kafkahttpsgithubcomhwholidaylearning_toolstreemasterkafka-分布式消息发布订阅系统"><a href="https://github.com/hwholiday/learning_tools/tree/master/kafka">kafka</a> (分布式消息发布订阅系统)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main 消息队列
+</code></pre><h3 id="nats_streaminghttpsgithubcomhwholidaylearning_toolstreemasternats_streaming分布式消息发布订阅系统--是由nats驱动的数据流系统"><a href="https://github.com/hwholiday/learning_tools/tree/master/NATS_streaming">NATS_streaming</a>(分布式消息发布订阅系统&ndash;是由NATS驱动的数据流系统)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main 消息队列
+</code></pre><h3 id="nsqhttpsgithubcomhwholidaylearning_toolstreemasterkafka-分布式实时消息平台"><a href="https://github.com/hwholiday/learning_tools/tree/master/kafka">nsq</a> (分布式实时消息平台)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main 消息队列
+</code></pre><h3 id="grpchttpsgithubcomhwholidaylearning_toolstreemastergrpc-grpc学习"><a href="https://github.com/hwholiday/learning_tools/tree/master/grpc">grpc</a> (grpc学习)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: bidirectional_streaming_rpc 双向流grpc
     2: server_side_streaming_rpc 服务端流grpc，也可以写成客户端流grpc
     3: simple_rpc 简单grpc
-</code></pre><h3 id=rpchttpsgithubcomhwholidaylearning_toolstreemasterrpc-rpc学习><a href=https://github.com/hwholiday/learning_tools/tree/master/rpc>rpc</a> (rpc学习)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main rpc学习
-</code></pre><h3 id=prometheushttpsgithubcomhwholidaylearning_toolstreemasterprometheus-监控报警系统><a href=https://github.com/hwholiday/learning_tools/tree/master/prometheus>prometheus</a> (监控报警系统)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: server Prometheus监控报警系统
-</code></pre><h3 id=jaegerhttpsgithubcomhwholidaylearning_toolstreemasterjaeger-jaeger分布式链路追踪><a href=https://github.com/hwholiday/learning_tools/tree/master/jaeger>jaeger</a> (jaeger分布式链路追踪)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main jaeger分布式链路追踪
-</code></pre><h3 id=service_load_balancinghttpsgithubcomhwholidaylearning_toolstreemasterservice_load_balancing-负载均衡><a href=https://github.com/hwholiday/learning_tools/tree/master/service_load_balancing>service_load_balancing</a> (负载均衡)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: fisher_yates_test  添加fisher-yates算法 负载均衡节点
-</code></pre><h3 id=service_registration_discoveryhttpsgithubcomhwholidaylearning_toolstreemasterservice_registration_discovery-服务注册与发现><a href=https://github.com/hwholiday/learning_tools/tree/master/service_registration_discovery>service_registration_discovery</a> (服务注册与发现)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: etcdv3  通过etcd实现服务注册与发现
-</code></pre><h3 id=service_req_hystrixhttpsgithubcomhwholidaylearning_toolstreemasterservice_req_hystrix-熔断><a href=https://github.com/hwholiday/learning_tools/tree/master/service_req_hystrix>service_req_hystrix</a> (熔断)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: hystrix 学习并使用熔断（Hystrix）
-</code></pre><h3 id=service_req_limithttpsgithubcomhwholidaylearning_toolstreemasterservice_req_limit-限流><a href=https://github.com/hwholiday/learning_tools/tree/master/service_req_limit>service_req_limit</a> (限流)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main 使用带缓存的channel实现限流
+</code></pre><h3 id="rpchttpsgithubcomhwholidaylearning_toolstreemasterrpc-rpc学习"><a href="https://github.com/hwholiday/learning_tools/tree/master/rpc">rpc</a> (rpc学习)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main rpc学习
+</code></pre><h3 id="prometheushttpsgithubcomhwholidaylearning_toolstreemasterprometheus-监控报警系统"><a href="https://github.com/hwholiday/learning_tools/tree/master/prometheus">prometheus</a> (监控报警系统)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: server Prometheus监控报警系统
+</code></pre><h3 id="jaegerhttpsgithubcomhwholidaylearning_toolstreemasterjaeger-jaeger分布式链路追踪"><a href="https://github.com/hwholiday/learning_tools/tree/master/jaeger">jaeger</a> (jaeger分布式链路追踪)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main jaeger分布式链路追踪
+</code></pre><h3 id="service_load_balancinghttpsgithubcomhwholidaylearning_toolstreemasterservice_load_balancing-负载均衡"><a href="https://github.com/hwholiday/learning_tools/tree/master/service_load_balancing">service_load_balancing</a> (负载均衡)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: fisher_yates_test  添加fisher-yates算法 负载均衡节点
+</code></pre><h3 id="service_registration_discoveryhttpsgithubcomhwholidaylearning_toolstreemasterservice_registration_discovery-服务注册与发现"><a href="https://github.com/hwholiday/learning_tools/tree/master/service_registration_discovery">service_registration_discovery</a> (服务注册与发现)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: etcdv3  通过etcd实现服务注册与发现
+</code></pre><h3 id="service_req_hystrixhttpsgithubcomhwholidaylearning_toolstreemasterservice_req_hystrix-熔断"><a href="https://github.com/hwholiday/learning_tools/tree/master/service_req_hystrix">service_req_hystrix</a> (熔断)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: hystrix 学习并使用熔断（Hystrix）
+</code></pre><h3 id="service_req_limithttpsgithubcomhwholidaylearning_toolstreemasterservice_req_limit-限流"><a href="https://github.com/hwholiday/learning_tools/tree/master/service_req_limit">service_req_limit</a> (限流)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main 使用带缓存的channel实现限流
     2: uber_ratelimit 使用uber_ratelimit实现限流       
-</code></pre><h3 id=inihttpsgithubcomhwholidaylearning_toolstreemasterini-配置文件库><a href=https://github.com/hwholiday/learning_tools/tree/master/ini>ini</a> (配置文件库)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main 配置文件ini的读取，以及自动匹配到结构体里面
-</code></pre><h3 id=miniohttpsgithubcomhwholidaylearning_toolstreemasterminio-对象存储服务><a href=https://github.com/hwholiday/learning_tools/tree/master/minio>minio</a> (对象存储服务)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: minio 对象存储服务使用
-</code></pre><h3 id=mysqlhttpsgithubcomhwholidaylearning_toolstreemastermysql-mysql服务器><a href=https://github.com/hwholiday/learning_tools/tree/master/mysql>mysql</a> (mysql服务器)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main 简单的mysql使用
-</code></pre><h3 id=redishttpsgithubcomhwholidaylearning_toolstreemasterredis-redis相关><a href=https://github.com/hwholiday/learning_tools/tree/master/redis>redis</a> (redis相关)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: bloom_filter redis 实现BloomFilter过滤器
+</code></pre><h3 id="inihttpsgithubcomhwholidaylearning_toolstreemasterini-配置文件库"><a href="https://github.com/hwholiday/learning_tools/tree/master/ini">ini</a> (配置文件库)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main 配置文件ini的读取，以及自动匹配到结构体里面
+</code></pre><h3 id="miniohttpsgithubcomhwholidaylearning_toolstreemasterminio-对象存储服务"><a href="https://github.com/hwholiday/learning_tools/tree/master/minio">minio</a> (对象存储服务)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: minio 对象存储服务使用
+</code></pre><h3 id="mysqlhttpsgithubcomhwholidaylearning_toolstreemastermysql-mysql服务器"><a href="https://github.com/hwholiday/learning_tools/tree/master/mysql">mysql</a> (mysql服务器)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main 简单的mysql使用
+</code></pre><h3 id="redishttpsgithubcomhwholidaylearning_toolstreemasterredis-redis相关"><a href="https://github.com/hwholiday/learning_tools/tree/master/redis">redis</a> (redis相关)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: bloom_filter redis 实现BloomFilter过滤器
     2: lock redis实现全局锁
     3: pipeline redis事务
     4: subscription redis发布订阅    
-</code></pre><h3 id=mongodbhttpsgithubcomhwholidaylearning_toolstreemastermongodb-mongodb服务器><a href=https://github.com/hwholiday/learning_tools/tree/master/mongodb>mongodb</a> (mongodb服务器)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: mgo.v2  mgo.v2库的基础使用学习
+</code></pre><h3 id="mongodbhttpsgithubcomhwholidaylearning_toolstreemastermongodb-mongodb服务器"><a href="https://github.com/hwholiday/learning_tools/tree/master/mongodb">mongodb</a> (mongodb服务器)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: mgo.v2  mgo.v2库的基础使用学习
     2: mongo-go-driver  官方库的demo，以及事务提交（不能是单节点）
-</code></pre><h3 id=ginhttpsgithubcomhwholidaylearning_toolstreemastergin-web框架gin学习><a href=https://github.com/hwholiday/learning_tools/tree/master/gin>gin</a> (web框架gin学习)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: mvc 模式，swagger文档 可作为基础学习gin
-</code></pre><h3 id=jwthttpsgithubcomhwholidaylearning_toolstreemasterjwt-json-web-token><a href=https://github.com/hwholiday/learning_tools/tree/master/jwt>jwt</a> (JSON WEB TOKEN)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: jwt 学习使用   
-</code></pre><h3 id=zaploghttpsgithubcomhwholidaylearning_toolstreemasterkafka-uber-zap日志封装><a href=https://github.com/hwholiday/learning_tools/tree/master/kafka>zaplog</a> (uber zap日志封装)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: zap 日志封装    
-</code></pre><h3 id=snow_flakehttpsgithubcomhwholidaylearning_toolstreemastersnow_flake-雪花算法><a href=https://github.com/hwholiday/learning_tools/tree/master/snow_flake>snow_flake</a> (雪花算法)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main 雪花算法    
-</code></pre><h3 id=encryption_algorithmhttpsgithubcomhwholidaylearning_toolstreemasterencryption_algorithm-双棘轮算法-kdf链迪菲-赫尔曼棘轮x3dh><a href=https://github.com/hwholiday/learning_tools/tree/master/encryption_algorithm>encryption_algorithm</a> (双棘轮算法, KDF链,迪菲-赫尔曼棘轮,x3dh)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: aes ase-(cfb,cbc,ecb)-(128,192,256)加解密方法
+</code></pre><h3 id="ginhttpsgithubcomhwholidaylearning_toolstreemastergin-web框架gin学习"><a href="https://github.com/hwholiday/learning_tools/tree/master/gin">gin</a> (web框架gin学习)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: mvc 模式，swagger文档 可作为基础学习gin
+</code></pre><h3 id="jwthttpsgithubcomhwholidaylearning_toolstreemasterjwt-json-web-token"><a href="https://github.com/hwholiday/learning_tools/tree/master/jwt">jwt</a> (JSON WEB TOKEN)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: jwt 学习使用   
+</code></pre><h3 id="zaploghttpsgithubcomhwholidaylearning_toolstreemasterkafka-uber-zap日志封装"><a href="https://github.com/hwholiday/learning_tools/tree/master/kafka">zaplog</a> (uber zap日志封装)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: zap 日志封装    
+</code></pre><h3 id="snow_flakehttpsgithubcomhwholidaylearning_toolstreemastersnow_flake-雪花算法"><a href="https://github.com/hwholiday/learning_tools/tree/master/snow_flake">snow_flake</a> (雪花算法)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main 雪花算法    
+</code></pre><h3 id="encryption_algorithmhttpsgithubcomhwholidaylearning_toolstreemasterencryption_algorithm-双棘轮算法-kdf链迪菲-赫尔曼棘轮x3dh"><a href="https://github.com/hwholiday/learning_tools/tree/master/encryption_algorithm">encryption_algorithm</a> (双棘轮算法, KDF链,迪菲-赫尔曼棘轮,x3dh)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: aes ase-(cfb,cbc,ecb)-(128,192,256)加解密方法
     2: curve25519 椭圆曲线算法
     3: 3curve25519 双棘轮算法,KDF链
-</code></pre><h3 id=lruhttpsgithubcomhwholidaylearning_toolstreemasterlru缓存淘汰算法><a href=https://github.com/hwholiday/learning_tools/tree/master/LRU>LRU</a>(缓存淘汰算法)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: list lru 缓存淘汰算法 
-</code></pre><h3 id=tcphttpsgithubcomhwholidaylearning_toolstreemastertcp-tcp协议实现><a href=https://github.com/hwholiday/learning_tools/tree/master/tcp>tcp</a> (tcp协议实现)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: 实现网络库，封包，解包 len+tag+data 模式
-</code></pre><h3 id=websockethttpsgithubcomhwholidaylearning_toolstreemasterwebsocket-websocket协议实现><a href=https://github.com/hwholiday/learning_tools/tree/master/websocket>websocket</a> (websocket协议实现)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: 实现网络库
-</code></pre><h3 id=binary_conversionhttpsgithubcomhwholidaylearning_toolstreemastertoolbinary_conversion-进制转换><a href=https://github.com/hwholiday/learning_tools/tree/master/tool/binary_conversion>binary_conversion</a> (进制转换)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: 10to36 10进制转36进制
+</code></pre><h3 id="lruhttpsgithubcomhwholidaylearning_toolstreemasterlru缓存淘汰算法"><a href="https://github.com/hwholiday/learning_tools/tree/master/LRU">LRU</a>(缓存淘汰算法)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: list lru 缓存淘汰算法 
+</code></pre><h3 id="tcphttpsgithubcomhwholidaylearning_toolstreemastertcp-tcp协议实现"><a href="https://github.com/hwholiday/learning_tools/tree/master/tcp">tcp</a> (tcp协议实现)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: 实现网络库，封包，解包 len+tag+data 模式
+</code></pre><h3 id="websockethttpsgithubcomhwholidaylearning_toolstreemasterwebsocket-websocket协议实现"><a href="https://github.com/hwholiday/learning_tools/tree/master/websocket">websocket</a> (websocket协议实现)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: 实现网络库
+</code></pre><h3 id="binary_conversionhttpsgithubcomhwholidaylearning_toolstreemastertoolbinary_conversion-进制转换"><a href="https://github.com/hwholiday/learning_tools/tree/master/tool/binary_conversion">binary_conversion</a> (进制转换)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: 10to36 10进制转36进制
     2: 10to62 10进制转62进制
     3: 10to76 10进制转76进制
     4: binary 用一个int64来描述开关（用户设置很多建议使用）       
-</code></pre><h3 id=job_worker_modehttpsgithubcomhwholidaylearning_toolstreemasterjob_worker_mode-job_worker模式><a href=https://github.com/hwholiday/learning_tools/tree/master/job_worker_mode>job_worker_mode</a> (job_worker模式)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: worker job_worker模式，可提高系统吞吐量
-</code></pre><h3 id=filewatchhttpsgithubcomhwholidaylearning_toolstreemasterfilewatch-监控文件变化><a href=https://github.com/hwholiday/learning_tools/tree/master/filewatch>filewatch</a> (监控文件变化)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main 监控文件变化 可实现自动构建
-</code></pre><h3 id=pushhttpsgithubcomhwholidaylearning_toolstreemasterprometheus-一个简单的推送服务><a href=https://github.com/hwholiday/learning_tools/tree/master/prometheus>push</a> (一个简单的推送服务)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main 推送服务    
-</code></pre><h3 id=goqueryhttpsgithubcomhwholidaylearning_toolstreemastergoquery-网页解析工具><a href=https://github.com/hwholiday/learning_tools/tree/master/goquery>goquery</a> (网页解析工具)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main 可以作为爬虫解析网页使用
-</code></pre><h3 id=active_objecthttpsgithubcomhwholidaylearning_toolstreemasteractive_object并发设计模式><a href=https://github.com/hwholiday/learning_tools/tree/master/active_object>active_object</a>(并发设计模式)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: active_object Go并发设计模式之Active Object
-</code></pre><h3 id=heaphttpsgithubcomhwholidaylearning_toolstreemastercontainerheap-优先级队列><a href=https://github.com/hwholiday/learning_tools/tree/master/container/heap>heap</a> (优先级队列)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: heap 利用heap创建一个优先级队列
-</code></pre><h3 id=clihttpsgithubcomhwholidaylearning_toolstreemastercli-go命令行交互><a href=https://github.com/hwholiday/learning_tools/tree/master/cli>cli</a> (go命令行交互)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main go命令行交互
-</code></pre><h3 id=contexthttpsgithubcomhwholidaylearning_toolstreemastercontext-context包学习><a href=https://github.com/hwholiday/learning_tools/tree/master/context>context</a> (context包学习)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main context包学习 
-</code></pre><h3 id=errhttpsgithubcomhwholidaylearning_toolstreemastererr-error-相关><a href=https://github.com/hwholiday/learning_tools/tree/master/err>err</a> (error 相关)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main golang 1.13 error 相关
-</code></pre><h3 id=interfacehttpsgithubcomhwholidaylearning_toolstreemasterinterface-interface包学习><a href=https://github.com/hwholiday/learning_tools/tree/master/interface>interface</a> (interface包学习)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main interface包学习
+</code></pre><h3 id="job_worker_modehttpsgithubcomhwholidaylearning_toolstreemasterjob_worker_mode-job_worker模式"><a href="https://github.com/hwholiday/learning_tools/tree/master/job_worker_mode">job_worker_mode</a> (job_worker模式)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: worker job_worker模式，可提高系统吞吐量
+</code></pre><h3 id="filewatchhttpsgithubcomhwholidaylearning_toolstreemasterfilewatch-监控文件变化"><a href="https://github.com/hwholiday/learning_tools/tree/master/filewatch">filewatch</a> (监控文件变化)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main 监控文件变化 可实现自动构建
+</code></pre><h3 id="pushhttpsgithubcomhwholidaylearning_toolstreemasterprometheus-一个简单的推送服务"><a href="https://github.com/hwholiday/learning_tools/tree/master/prometheus">push</a> (一个简单的推送服务)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main 推送服务    
+</code></pre><h3 id="goqueryhttpsgithubcomhwholidaylearning_toolstreemastergoquery-网页解析工具"><a href="https://github.com/hwholiday/learning_tools/tree/master/goquery">goquery</a> (网页解析工具)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main 可以作为爬虫解析网页使用
+</code></pre><h3 id="active_objecthttpsgithubcomhwholidaylearning_toolstreemasteractive_object并发设计模式"><a href="https://github.com/hwholiday/learning_tools/tree/master/active_object">active_object</a>(并发设计模式)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: active_object Go并发设计模式之Active Object
+</code></pre><h3 id="heaphttpsgithubcomhwholidaylearning_toolstreemastercontainerheap-优先级队列"><a href="https://github.com/hwholiday/learning_tools/tree/master/container/heap">heap</a> (优先级队列)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: heap 利用heap创建一个优先级队列
+</code></pre><h3 id="clihttpsgithubcomhwholidaylearning_toolstreemastercli-go命令行交互"><a href="https://github.com/hwholiday/learning_tools/tree/master/cli">cli</a> (go命令行交互)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main go命令行交互
+</code></pre><h3 id="contexthttpsgithubcomhwholidaylearning_toolstreemastercontext-context包学习"><a href="https://github.com/hwholiday/learning_tools/tree/master/context">context</a> (context包学习)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main context包学习 
+</code></pre><h3 id="errhttpsgithubcomhwholidaylearning_toolstreemastererr-error-相关"><a href="https://github.com/hwholiday/learning_tools/tree/master/err">err</a> (error 相关)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main golang 1.13 error 相关
+</code></pre><h3 id="interfacehttpsgithubcomhwholidaylearning_toolstreemasterinterface-interface包学习"><a href="https://github.com/hwholiday/learning_tools/tree/master/interface">interface</a> (interface包学习)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main interface包学习
     2: middleware Golang 基于interface 实现中间件
-</code></pre><h3 id=syncpoolhttpsgithubcomhwholidaylearning_toolstreemastersyncpool-syncpool包学习><a href=https://github.com/hwholiday/learning_tools/tree/master/syncPool>syncPool</a> (syncPool包学习)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main syncPool包学习
-</code></pre><h3 id=reflecthttpsgithubcomhwholidaylearning_toolstreemasterreflect-reflect包学习><a href=https://github.com/hwholiday/learning_tools/tree/master/reflect>reflect</a> (reflect包学习)</h3><pre tabindex=0><code class=language-base data-lang=base>    1: main reflect包学习## 联系  QQ: 3355168235
-</code></pre></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
-<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
-<span>440</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
-<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#golang</a></span>
-<span class=tag><a href=http://hwholiday.github.io/tags/%E6%BA%90%E7%A0%81/>#源码</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
-<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2019/how_user_zap/ class=prev rel=prev title="Golang 高性能日志库 zap 封装工具类"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang 高性能日志库 zap 封装工具类</a>
-<a href=http://hwholiday.github.io/2019/simple_timing_wheel/ class=next rel=next title="Golang 实现时间轮">Golang 实现时间轮&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
-<span itemprop=copyrightYear>2016 - 2023</span>
-<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
-<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>
+</code></pre><h3 id="syncpoolhttpsgithubcomhwholidaylearning_toolstreemastersyncpool-syncpool包学习"><a href="https://github.com/hwholiday/learning_tools/tree/master/syncPool">syncPool</a> (syncPool包学习)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main syncPool包学习
+</code></pre><h3 id="reflecthttpsgithubcomhwholidaylearning_toolstreemasterreflect-reflect包学习"><a href="https://github.com/hwholiday/learning_tools/tree/master/reflect">reflect</a> (reflect包学习)</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">    1: main reflect包学习## 联系  QQ: 3355168235
+</code></pre>
+    </div>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>440</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/%E6%BA%90%E7%A0%81/">
+                    #源码</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="http://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="http://hwholiday.github.io/2019/how_user_zap/" class="prev" rel="prev" title="Golang 高性能日志库 zap 封装工具类"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang 高性能日志库 zap 封装工具类</a>
+         
+        
+        <a href="http://hwholiday.github.io/2019/simple_timing_wheel/" class="next" rel="next" title="Golang 实现时间轮">Golang 实现时间轮&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="http://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

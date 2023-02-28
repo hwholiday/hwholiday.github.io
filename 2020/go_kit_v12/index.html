@@ -1,26 +1,205 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2020/go_push/><link rel=next href=http://hwholiday.github.io/2020/redis_geo/><link rel=canonical href=http://hwholiday.github.io/2020/go_kit_v12/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>go-kit 微服务 日志分析管理 （ELK + Filebeat） | hwholiday</title><meta name=title content="go-kit 微服务 日志分析管理 （ELK + Filebeat） | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="go-kit 微服务 日志分析管理 （ELK + Filebeat）"><meta name=twitter:description content="go-kit 微服务 日志分析管理 （ELK + Filebeat）"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"go-kit 微服务 日志分析管理 （ELK \u002b Filebeat）","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2020\/go_kit_v12\/"},"genre":"posts","keywords":"golang, go-kit","wordcount":322,"url":"http:\/\/hwholiday.github.io\/2020\/go_kit_v12\/","datePublished":"2020-03-13T00:00:00\u002b00:00","dateModified":"2020-03-13T00:00:00\u002b00:00","description":"go-kit 微服务 日志分析管理 （ELK \u002b Filebeat）"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a>
-<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>go-kit 微服务 日志分析管理 （ELK + Filebeat）</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
-<span class=post-time>on <time datetime=2020-03-13>13 March 2020</time></span>
-in
-<i class="iconfont icon-folder"></i>
-<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a>
-<a href=http://hwholiday.github.io/categories/go-kit/>go-kit</a></span>
-<i class="iconfont icon-timer"></i>
-2 min</div></header><div class=post-content><h2 id=elk>ELK</h2><ul><li>ELK 不是一款软件，而是 Elasticsearch、Logstash 和 Kibana 三种软件产品的首字母缩写<ul><li>Elasticsearch：分布式搜索和分析引擎，具有高可伸缩、高可靠和易管理等特点</li><li>Logstash：数据收集引擎,它支持动态的从各种数据源搜集数据并处理数据</li><li>Kibana：数据分析，可视化平台</li></ul></li></ul><h2 id=filebeat>Filebeat</h2><ul><li>Filebeat 是一个轻量型的服务对服务器压力比较小，用于采集数据，并上报到Logstash或Elasticsearch</li></ul><h2 id=beats>Beats</h2><ul><li>Packetbeat => 搜集网络流量数据</li><li>Topbeat => 搜集系统、进程和文件系统级别的 CPU 和内存使用情况等数据</li><li>Filebeat => 搜集文件数据</li><li>Winlogbeat => 搜集 Windows 事件日志数据</li><li>Metricbeat => Ship and analyze metrics.</li><li>Heartbeat => Ping your Infrastructure.</li><li>Auditbeat => Send audit data to Elasticsearch.</li><li>Functionbeat => Ship cloud data with serverless infrastructure.</li><li>Journalbeat => Analyze Journald logs.</li></ul><h2 id=架构>架构</h2><pre tabindex=0><code class=language-base data-lang=base>
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="http://hwholiday.github.io/2020/go_push/" />
+  <link rel="next" href="http://hwholiday.github.io/2020/redis_geo/" />
+  <link rel="canonical" href="http://hwholiday.github.io/2020/go_kit_v12/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           go-kit 微服务 日志分析管理 （ELK &#43; Filebeat） | hwholiday
+       
+  </title>
+  <meta name="title" content="go-kit 微服务 日志分析管理 （ELK &#43; Filebeat） | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="go-kit 微服务 日志分析管理 （ELK &#43; Filebeat）"/>
+<meta name="twitter:description" content="go-kit 微服务 日志分析管理 （ELK &#43; Filebeat）"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "go-kit 微服务 日志分析管理 （ELK \u002b Filebeat）",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http:\/\/hwholiday.github.io\/2020\/go_kit_v12\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang, go-kit",
+  "wordcount":  322 ,
+  "url": "http:\/\/hwholiday.github.io\/2020\/go_kit_v12\/",
+  "datePublished": "2020-03-13T00:00:00\u002b00:00",
+  "dateModified": "2020-03-13T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "go-kit 微服务 日志分析管理 （ELK \u002b Filebeat）"
+}
+</script>
+</head>
+
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="http://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="http://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">go-kit 微服务 日志分析管理 （ELK &#43; Filebeat）</h1>
+        <div class="post-meta">
+            Written by <a href="http://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2020-03-13 >13 March 2020</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="http://hwholiday.github.io/categories/golang/"> Golang </a>
+                        <a href="http://hwholiday.github.io/categories/go-kit/"> go-kit </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                2 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+            
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="elk">ELK</h2>
+<ul>
+<li>ELK 不是一款软件，而是 Elasticsearch、Logstash 和 Kibana 三种软件产品的首字母缩写
+<ul>
+<li>Elasticsearch：分布式搜索和分析引擎，具有高可伸缩、高可靠和易管理等特点</li>
+<li>Logstash：数据收集引擎,它支持动态的从各种数据源搜集数据并处理数据</li>
+<li>Kibana：数据分析，可视化平台</li>
+</ul>
+</li>
+</ul>
+<h2 id="filebeat">Filebeat</h2>
+<ul>
+<li>Filebeat 是一个轻量型的服务对服务器压力比较小，用于采集数据，并上报到Logstash或Elasticsearch</li>
+</ul>
+<h2 id="beats">Beats</h2>
+<ul>
+<li>Packetbeat   =&gt; 搜集网络流量数据</li>
+<li>Topbeat      =&gt; 搜集系统、进程和文件系统级别的 CPU 和内存使用情况等数据</li>
+<li>Filebeat     =&gt; 搜集文件数据</li>
+<li>Winlogbeat   =&gt; 搜集 Windows 事件日志数据</li>
+<li>Metricbeat   =&gt; Ship and analyze metrics.</li>
+<li>Heartbeat    =&gt; Ping your Infrastructure.</li>
+<li>Auditbeat    =&gt; Send audit data to Elasticsearch.</li>
+<li>Functionbeat =&gt; Ship cloud data with serverless infrastructure.</li>
+<li>Journalbeat  =&gt; Analyze Journald logs.</li>
+</ul>
+<h2 id="架构">架构</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">
  Filebeat -&gt;
              -&gt;
  Filebeat -&gt; -&gt; -&gt; -&gt; Logstash -&gt; Elasticsearch -&gt; Kibana
              -&gt;
  Filebeat -&gt;
-</code></pre><h3 id=安装>安装</h3><ul><li><p>elasticsearch 下载 <a href=https://www.elastic.co/cn/downloads/elasticsearch>地址</a></p><ul><li>启动命令</li></ul></li></ul><pre tabindex=0><code class=language-base data-lang=base>  linux    bin/elasticsearch
+</code></pre><h3 id="安装">安装</h3>
+<ul>
+<li>
+<p>elasticsearch 下载 <a href="https://www.elastic.co/cn/downloads/elasticsearch">地址</a></p>
+<ul>
+<li>启动命令</li>
+</ul>
+</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">  linux    bin/elasticsearch
   Windows  bin\elasticsearch.bat
-</code></pre><ul><li>elasticsearch 默认服务地址 http://localhost:9200/</li></ul><pre tabindex=0><code class=language-base data-lang=base>//访问 http://localhost:9200/ 正确返回数据  
+</code></pre><ul>
+<li>elasticsearch 默认服务地址  http://localhost:9200/</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">//访问 http://localhost:9200/ 正确返回数据  
 {
 &#34;name&#34;: &#34;linux-pc&#34;,
 &#34;cluster_name&#34;: &#34;elasticsearch&#34;,
@@ -38,11 +217,25 @@ in
 },
 &#34;tagline&#34;: &#34;You Know, for Search&#34;
 }
-</code></pre><ul><li><p>kibana 下载 <a href=https://www.elastic.co/cn/downloads/kibana>地址</a></p><ul><li><p>kibana 默认服务地址 http://localhost:5601</p></li><li><p>启动命令</p></li></ul><pre tabindex=0><code class=language-base data-lang=base></code></pre></li></ul><p>//打开 config/kibana.yml文件
+</code></pre><ul>
+<li>
+<p>kibana 下载 <a href="https://www.elastic.co/cn/downloads/kibana">地址</a></p>
+<ul>
+<li>
+<p>kibana 默认服务地址  http://localhost:5601</p>
+</li>
+<li>
+<p>启动命令</p>
+</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base"></code></pre></li>
+</ul>
+<p>//打开 config/kibana.yml文件
 //在elasticsearch.hosts中写上elasticsearch的地址
 //elasticsearch.hosts: [&ldquo;http://localhost:9200&rdquo;]
-linux bin/kibana
-Windows bin\kibana.bat</p><pre tabindex=0><code>
+linux    bin/kibana
+Windows  bin\kibana.bat</p>
+<pre tabindex="0"><code>
 
 - logstash 下载 [地址](https://www.elastic.co/cn/downloads/logstash)
  
@@ -51,7 +244,21 @@ Windows bin\kibana.bat</p><pre tabindex=0><code>
 
 ```base&#39;&#39;&#39;&#39;&#39;
 bin/logstash -f logstash.conf
-</code></pre><ul><li><p>filebeat 下载 <a href=https://www.elastic.co/cn/downloads/beats/filebeat>地址</a></p><ul><li><p>filebeat.yml <a href=http://docs.flycloud.me/docs/ELKStack/beats/file.html>配置文件最佳实践</a></p></li><li><p>启动命令</p></li></ul><pre tabindex=0><code class=language-base data-lang=base></code></pre></li></ul><p>./filebeat -e -c filebeat.yml</p><pre tabindex=0><code>
+</code></pre><ul>
+<li>
+<p>filebeat 下载 <a href="https://www.elastic.co/cn/downloads/beats/filebeat">地址</a></p>
+<ul>
+<li>
+<p>filebeat.yml  <a href="http://docs.flycloud.me/docs/ELKStack/beats/file.html">配置文件最佳实践</a></p>
+</li>
+<li>
+<p>启动命令</p>
+</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base"></code></pre></li>
+</ul>
+<p>./filebeat -e -c filebeat.yml</p>
+<pre tabindex="0"><code>
 
 ## 监控 git-kit 服务
 
@@ -89,7 +296,10 @@ hosts: [&#34;0.0.0.0:5044&#34;]
 //#protocol: &#34;https&#34;
 //#username: &#34;elastic&#34;           
 //#password: &#34;changeme&#34;
-</code></pre><ul><li>logstash.conf 配置 这里只做最基础演示，其他高级功能 <a href=http://docs.flycloud.me/docs/ELKStack/logstash/index.html>点击</a></li></ul><pre tabindex=0><code class=language-base data-lang=base>input  #Input Plugin处理数据输入
+</code></pre><ul>
+<li>logstash.conf 配置 这里只做最基础演示，其他高级功能   <a href="http://docs.flycloud.me/docs/ELKStack/logstash/index.html">点击</a></li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">input  #Input Plugin处理数据输入
 {
   beats
   {
@@ -118,15 +328,166 @@ if [fields][tag] == &#34;kit-client&#34;
   }
    
 ｝
-</code></pre><h2 id=访问-httplocalhost5601-我们就可以通过-kibana-查看日志了>访问 http://localhost:5601 我们就可以通过 kibana 查看日志了</h2><ul><li><p>查看我们建立的文件<figure><img src=/images/ring.svg data-sizes=auto data-src=https://s1.ax1x.com/2020/03/16/8GGjcq.png alt class=lazyload><figcaption class=image-caption></figcaption></figure></p></li><li><p>建立视图<figure><img src=/images/ring.svg data-sizes=auto data-src=https://s1.ax1x.com/2020/03/16/8GJI2R.png alt class=lazyload><figcaption class=image-caption></figcaption></figure></p></li><li><p>查看 kit-client 日志<figure><img src=/images/ring.svg data-sizes=auto data-src=https://s1.ax1x.com/2020/03/16/8GJOaD.png alt class=lazyload><figcaption class=image-caption></figcaption></figure></p></li><li><p>查看 kit-server 日志<figure><img src=/images/ring.svg data-sizes=auto data-src=https://s1.ax1x.com/2020/03/16/8G3SBD.png alt class=lazyload><figcaption class=image-caption></figcaption></figure></p></li></ul><h2 id=结语>结语</h2><ul><li>加入日志分析管理 （ELK + Filebeat）,我们可以更好的监控日志，清洗数据等方便我们处理和定位问题</li><li>欢迎添加QQ一起讨论</li></ul><h3 id=完整代码地址httpsgithubcomhwholidaylearning_toolstreemastergo-kitv3><a href=https://github.com/hwholiday/learning_tools/tree/master/go-kit/v3>完整代码地址</a></h3><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div id=gitalk-container></div><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css><script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
-<script>const gitalk=new Gitalk({clientID:"64d60a02f98e01e31e2f",clientSecret:"b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58",repo:"hwholiday.github.io",owner:"hwholiday",admin:"hwholiday",id:"git_kit_v12",distractionFreeMode:!1});(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("gitalk-container").innerHTML="Gitalk comments not available by default when the website is previewed locally.";return}gitalk.render("gitalk-container")})()</script><div class=post-copyright><p class=copyright-item><span>Author:</span>
-<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
-<span>322</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
-<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#golang</a></span>
-<span class=tag><a href=http://hwholiday.github.io/tags/go-kit/>#go-kit</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
-<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2020/go_push/ class=prev rel=prev title="golang 消息推送系统"><i class="iconfont icon-dajiantou"></i>&nbsp;golang 消息推送系统</a>
-<a href=http://hwholiday.github.io/2020/redis_geo/ class=next rel=next title="golang 通过 Redis GEO 实现 LBS 功能">golang 通过 Redis GEO 实现 LBS 功能&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
-<span itemprop=copyrightYear>2016 - 2023</span>
-<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
-<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><link crossorigin=anonymous integrity=sha384-yziQACfvCVwLqVFLqkWBYRO3XeA4EqzfXKGwaWnenYn5XzqfJFlFdKEmvutIQdKb href=https://lib.baomitu.com/lightgallery/1.10.0/css/lightgallery.min.css rel=stylesheet><script src=/js/vendor_gallery.min.js async></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>
+</code></pre><h2 id="访问-httplocalhost5601-我们就可以通过-kibana-查看日志了">访问 http://localhost:5601 我们就可以通过 kibana 查看日志了</h2>
+<ul>
+<li>
+<p>查看我们建立的文件
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="https://s1.ax1x.com/2020/03/16/8GGjcq.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+</li>
+<li>
+<p>建立视图
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="https://s1.ax1x.com/2020/03/16/8GJI2R.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+</li>
+<li>
+<p>查看 kit-client 日志
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="https://s1.ax1x.com/2020/03/16/8GJOaD.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+</li>
+<li>
+<p>查看 kit-server 日志
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="https://s1.ax1x.com/2020/03/16/8G3SBD.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+</li>
+</ul>
+<h2 id="结语">结语</h2>
+<ul>
+<li>加入日志分析管理 （ELK + Filebeat）,我们可以更好的监控日志，清洗数据等方便我们处理和定位问题</li>
+<li>欢迎添加QQ一起讨论</li>
+</ul>
+<h3 id="完整代码地址httpsgithubcomhwholidaylearning_toolstreemastergo-kitv3"><a href="https://github.com/hwholiday/learning_tools/tree/master/go-kit/v3">完整代码地址</a></h3>
+<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        const gitalk = new Gitalk({
+            clientID: '64d60a02f98e01e31e2f',
+            clientSecret: 'b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58',
+            repo: 'hwholiday.github.io',
+            owner: 'hwholiday',
+            admin: 'hwholiday',
+            id: 'git_kit_v12', 
+            distractionFreeMode: false 
+        });
+        (function() {
+            if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+                document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+                return;
+            }
+            gitalk.render('gitalk-container');
+        })();
+    </script>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>322</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/go-kit/">
+                    #go-kit</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="http://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="http://hwholiday.github.io/2020/go_push/" class="prev" rel="prev" title="golang 消息推送系统"><i class="iconfont icon-dajiantou"></i>&nbsp;golang 消息推送系统</a>
+         
+        
+        <a href="http://hwholiday.github.io/2020/redis_geo/" class="next" rel="next" title="golang 通过 Redis GEO 实现 LBS 功能">golang 通过 Redis GEO 实现 LBS 功能&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="http://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    <link crossorigin="anonymous" integrity="sha384-yziQACfvCVwLqVFLqkWBYRO3XeA4EqzfXKGwaWnenYn5XzqfJFlFdKEmvutIQdKb" href="https://lib.baomitu.com/lightgallery/1.10.0/css/lightgallery.min.css" rel="stylesheet">
+      
+     <script src="/js/vendor_gallery.min.js" async="" ></script>
+    
+  
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

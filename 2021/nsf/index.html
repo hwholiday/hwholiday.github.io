@@ -1,19 +1,196 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2021/gidv2/><link rel=next href=http://hwholiday.github.io/2021/k8s-nsf/><link rel=canonical href=http://hwholiday.github.io/2021/nsf/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>NFS (Kubernetes) 高可用方案（NFS+keepalived+Sersync) | hwholiday</title><meta name=title content="NFS (Kubernetes) 高可用方案（NFS+keepalived+Sersync) | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="NFS (Kubernetes) 高可用方案（NFS+keepalived+Sersync)"><meta name=twitter:description content="Kubernetes NFS 高可用方案（NFS+keepalived+Sersync)"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"NFS (Kubernetes) 高可用方案（NFS\u002bkeepalived\u002bSersync)","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2021\/nsf\/"},"genre":"posts","keywords":"linux, 文件服务","wordcount":863,"url":"http:\/\/hwholiday.github.io\/2021\/nsf\/","datePublished":"2021-05-17T00:00:00\u002b00:00","dateModified":"2021-05-17T00:00:00\u002b00:00","description":"Kubernetes NFS 高可用方案（NFS\u002bkeepalived\u002bSersync)"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a>
-<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>NFS (Kubernetes) 高可用方案（NFS+keepalived+Sersync)</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
-<span class=post-time>on <time datetime=2021-05-17>17 May 2021</time></span>
-in
-<i class="iconfont icon-folder"></i>
-<span class=post-category><a href=http://hwholiday.github.io/categories/linux/>Linux</a>
-<a href=http://hwholiday.github.io/categories/kubernetes/>Kubernetes</a></span>
-<i class="iconfont icon-timer"></i>
-5 min</div></header><div class=post-content><h3 id=简介>简介</h3><p>本方案 NFS 的高可用方案，客户端为 k8s集群 ，三台文件服务器分别Master和 Slave，使用 keepalived 生成一个虚拟 IP，使用 Sersync 进行 Master 与 Slave 之间文件相互同步，确保高可用。</p><table><thead><tr><th>角色</th><th>系统</th><th>IP</th></tr></thead><tbody><tr><td>虚拟IP</td><td></td><td>172.12.17.200</td></tr><tr><td>Client</td><td>k8s集群</td><td>172.12.17.163,172.12.17.164,172.12.17.165</td></tr><tr><td>Master</td><td>centos 7.5</td><td>172.12.17.166</td></tr><tr><td>Slave</td><td>centos 7.5</td><td>172.12.17.167</td></tr></tbody></table><h4 id=查看内核版本>查看内核版本</h4><p>uname -smr<br>建议升级到最新的长期支持版本 <a href=https://www.hwholiday.com/2021/centos7/>升级内核</a></p><h3 id=安装nfs>安装nfs</h3><h4 id=在master和slave上面创建共享目录>在master和slave上面创建共享目录</h4><pre tabindex=0><code class=language-base data-lang=base>mkdir -p /fs/nsf-data
-</code></pre><h4 id=在master和slave上安装nfs服务>在master和slave上安装nfs服务</h4><pre tabindex=0><code class=language-base data-lang=base>// 下载nfs
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="http://hwholiday.github.io/2021/gidv2/" />
+  <link rel="next" href="http://hwholiday.github.io/2021/k8s-nsf/" />
+  <link rel="canonical" href="http://hwholiday.github.io/2021/nsf/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           NFS (Kubernetes) 高可用方案（NFS&#43;keepalived&#43;Sersync) | hwholiday
+       
+  </title>
+  <meta name="title" content="NFS (Kubernetes) 高可用方案（NFS&#43;keepalived&#43;Sersync) | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="NFS (Kubernetes) 高可用方案（NFS&#43;keepalived&#43;Sersync)"/>
+<meta name="twitter:description" content="Kubernetes NFS 高可用方案（NFS&#43;keepalived&#43;Sersync)"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "NFS (Kubernetes) 高可用方案（NFS\u002bkeepalived\u002bSersync)",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http:\/\/hwholiday.github.io\/2021\/nsf\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "linux, 文件服务",
+  "wordcount":  863 ,
+  "url": "http:\/\/hwholiday.github.io\/2021\/nsf\/",
+  "datePublished": "2021-05-17T00:00:00\u002b00:00",
+  "dateModified": "2021-05-17T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "Kubernetes NFS 高可用方案（NFS\u002bkeepalived\u002bSersync)"
+}
+</script>
+</head>
+
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="http://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="http://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">NFS (Kubernetes) 高可用方案（NFS&#43;keepalived&#43;Sersync)</h1>
+        <div class="post-meta">
+            Written by <a href="http://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2021-05-17 >17 May 2021</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="http://hwholiday.github.io/categories/linux/"> Linux </a>
+                        <a href="http://hwholiday.github.io/categories/kubernetes/"> Kubernetes </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                5 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h3 id="简介">简介</h3>
+<p>本方案 NFS 的高可用方案，客户端为 k8s集群 ，三台文件服务器分别Master和 Slave，使用 keepalived 生成一个虚拟 IP，使用 Sersync 进行 Master 与 Slave 之间文件相互同步，确保高可用。</p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>系统</th>
+<th>IP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>虚拟IP</td>
+<td></td>
+<td>172.12.17.200</td>
+</tr>
+<tr>
+<td>Client</td>
+<td>k8s集群</td>
+<td>172.12.17.163,172.12.17.164,172.12.17.165</td>
+</tr>
+<tr>
+<td>Master</td>
+<td>centos 7.5</td>
+<td>172.12.17.166</td>
+</tr>
+<tr>
+<td>Slave</td>
+<td>centos 7.5</td>
+<td>172.12.17.167</td>
+</tr>
+</tbody>
+</table>
+<h4 id="查看内核版本">查看内核版本</h4>
+<p>uname -smr   <br>
+建议升级到最新的长期支持版本  <a href="https://www.hwholiday.com/2021/centos7/">升级内核</a></p>
+<h3 id="安装nfs">安装nfs</h3>
+<h4 id="在master和slave上面创建共享目录">在master和slave上面创建共享目录</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">mkdir -p /fs/nsf-data
+</code></pre><h4 id="在master和slave上安装nfs服务">在master和slave上安装nfs服务</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">// 下载nfs
 yum -y install nfs-utils rpcbind
 //写入配置（配置要改动需要reload nfs 服务）
 echo &#39;/fs/nsf-data 172.12.17.163 172.12.17.164 172.12.17.165(rw,sync,all_squash)&#39; &gt;&gt; /etc/exports
@@ -21,7 +198,8 @@ echo &#39;/fs/nsf-data 172.12.17.163 172.12.17.164 172.12.17.165(rw,sync,all_squ
 systemctl start rpcbind &amp;&amp; systemctl start nfs
 //设置开机自启动
 systemctl enable rpcbind &amp;&amp; systemctl enable nfs
-</code></pre><h4 id=在k8s集群里面找个node-测试是否能链接上nfs服务>在k8s集群里面找个node 测试是否能链接上nfs服务</h4><pre tabindex=0><code class=language-base data-lang=base>// 下载nfs
+</code></pre><h4 id="在k8s集群里面找个node-测试是否能链接上nfs服务">在k8s集群里面找个node 测试是否能链接上nfs服务</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">// 下载nfs
 yum -y install nfs-utils rpcbind
 
 // 挂载目录
@@ -41,7 +219,14 @@ umount /test-nsf-data
 showmount -e 172.12.17.166
 输出 Export list for 172.12.17.166:
 /fs/nsf-data 10.255.22.92,10.255.22.91,10.255.22.90
-</code></pre><h3 id=sersync-在-slave-进行同步-master-数据>Sersync 在 Slave 进行同步 Master 数据</h3><p>Sersync</p><ul><li>提到数据同步就必然会谈到rsync，一般简单的服务器数据传输会使用ftp/sftp等方式，但是这样的方式效率不高，不支持差异化增量同步也不支持实时传输。针对数据实时同步需求大多数人会选择rsync+inotify-tools的解决方案，但是这样的方案也存在一些缺陷，sersync是国人基于前两者开发的工具，不仅保留了优点同时还强化了实时监控，文件过滤，简化配置等功能，帮助用户提高运行效率，节省时间和网络资源。</li></ul><h4 id=在slave上编辑配置文件>在Slave上编辑配置文件</h4><p>vim /etc/rsyncd.conf</p><pre tabindex=0><code class=language-base data-lang=base># 设置rsync运行权限为root
+</code></pre><h3 id="sersync-在-slave-进行同步-master-数据">Sersync 在 Slave 进行同步 Master 数据</h3>
+<p>Sersync</p>
+<ul>
+<li>提到数据同步就必然会谈到rsync，一般简单的服务器数据传输会使用ftp/sftp等方式，但是这样的方式效率不高，不支持差异化增量同步也不支持实时传输。针对数据实时同步需求大多数人会选择rsync+inotify-tools的解决方案，但是这样的方案也存在一些缺陷，sersync是国人基于前两者开发的工具，不仅保留了优点同时还强化了实时监控，文件过滤，简化配置等功能，帮助用户提高运行效率，节省时间和网络资源。</li>
+</ul>
+<h4 id="在slave上编辑配置文件">在Slave上编辑配置文件</h4>
+<p>vim /etc/rsyncd.conf</p>
+<pre tabindex="0"><code class="language-base" data-lang="base"># 设置rsync运行权限为root
 uid = root
 # 设置rsync运行权限为root
 gid = root
@@ -72,12 +257,14 @@ secrets file = /etc/rsync_slave.pass
 hosts allow = 172.12.17.166
 # 禁止数据同步的客户端IP地址，可以设置多个，用英文状态下逗号隔开
 #hosts deny = 192.168.0.1
-</code></pre><h4 id=在slave上安装启动>在Slave上安装启动</h4><pre tabindex=0><code class=language-base data-lang=base>yum install rsync
+</code></pre><h4 id="在slave上安装启动">在Slave上安装启动</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">yum install rsync
 echo &#39;root:123456&#39; &gt; /etc/rsync_slave.pass
 chmod 600 /etc/rsync_slave.pass
 chown -R root:root /fs/nsf-data
 rsync --daemon --config=/etc/rsyncd.conf
-</code></pre><h4 id=在-master-上测试下>在 Master 上测试下</h4><pre tabindex=0><code class=language-base data-lang=base>yum -y install rsync
+</code></pre><h4 id="在-master-上测试下">在 Master 上测试下</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">yum -y install rsync
 chown -R root:root /fs/nsf-data
 echo &#34;123456&#34; &gt; /etc/rsync_slave.pass
 chmod 600 /etc/rsync_slave.pass
@@ -88,13 +275,17 @@ rsync -arv /fs/nsf-data/ root@172.12.17.167::data --password-file=/etc/rsync_sla
 #在 slave 上测试
 ls /fs/nsf-data
 # 出现 slave.txt 即可
-</code></pre><h4 id=在-master-上配置自动同步安装>在 Master 上配置自动同步安装</h4><pre tabindex=0><code class=language-base data-lang=base>// 下载
+</code></pre><h4 id="在-master-上配置自动同步安装">在 Master 上配置自动同步安装</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">// 下载
 wget https://raw.githubusercontent.com/orangle/sersync/master/release/sersync2.5.4_64bit_binary_stable_final.tar.gz
 // 解压
 tar zxvf sersync2.5.4_64bit_binary_stable_final.tar.gz  
 // 移动目录到 /usr/local/sersync
 mv GNU-Linux-x86  /usr/local/sersync   
-</code></pre><h4 id=在-master-上配置自动同步配置>在 Master 上配置自动同步配置</h4><p>cd /usr/local/sersync/ && vim /usr/local/sersync/confxml.xml<br>修改配置文件里面节点数据</p><pre tabindex=0><code class=language-base data-lang=base>&lt;delete start=&#34;flase&#34;/&gt;
+</code></pre><h4 id="在-master-上配置自动同步配置">在 Master 上配置自动同步配置</h4>
+<p>cd /usr/local/sersync/ &amp;&amp; vim /usr/local/sersync/confxml.xml<br>
+修改配置文件里面节点数据</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">&lt;delete start=&#34;flase&#34;/&gt;
 
 #源服务器同步目录
 &lt;localpath watch=&#34;/fs/nsf-data/&#34;&gt;  
@@ -114,12 +305,16 @@ mv GNU-Linux-x86  /usr/local/sersync
 
 #脚本运行失败日志记录
 failLog path=&#34;/tmp/rsync_fail_log.sh&#34;
-</code></pre><p>启动</p><pre tabindex=0><code class=language-base data-lang=base>./sersync2 -r -d -o confxml.xml
+</code></pre><p>启动</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">./sersync2 -r -d -o confxml.xml
 // 测试
 cd /fs/nsf-data
 touch Slave1.txt
 // 在 Slave 里面 /fs/nsf-data 里面去看看数据是否存在
-</code></pre><h3 id=在master上的数据可以同步到slave如何master挂掉后恢复不能同步数据到slave这里也同样配置master到slave的自动同步>在Master上的数据可以同步到Slave，如何Master挂掉后恢复不能同步数据到Slave，这里也同样配置Master到Slave的自动同步</h3><h4 id=在slave上编辑配置文件-1>在Slave上编辑配置文件</h4><p>vim /etc/rsyncd.conf</p><pre tabindex=0><code class=language-base data-lang=base># 设置rsync运行权限为root
+</code></pre><h3 id="在master上的数据可以同步到slave如何master挂掉后恢复不能同步数据到slave这里也同样配置master到slave的自动同步">在Master上的数据可以同步到Slave，如何Master挂掉后恢复不能同步数据到Slave，这里也同样配置Master到Slave的自动同步</h3>
+<h4 id="在slave上编辑配置文件-1">在Slave上编辑配置文件</h4>
+<p>vim /etc/rsyncd.conf</p>
+<pre tabindex="0"><code class="language-base" data-lang="base"># 设置rsync运行权限为root
 uid = root
 # 设置rsync运行权限为root
 gid = root
@@ -150,12 +345,14 @@ secrets file = /etc/rsync_slave.pass
 hosts allow = 172.12.17.167
 # 禁止数据同步的客户端IP地址，可以设置多个，用英文状态下逗号隔开
 #hosts deny = 192.168.0.1
-</code></pre><h4 id=在master上安装启动>在Master上安装启动</h4><pre tabindex=0><code class=language-base data-lang=base>yum install rsync
+</code></pre><h4 id="在master上安装启动">在Master上安装启动</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">yum install rsync
 echo &#39;root:123456&#39; &gt; /etc/rsync_master.pass
 chmod 600 /etc/rsync_master.pass
 chown -R root:root /fs/nsf-data
 rsync --daemon --config=/etc/rsyncd.conf
-</code></pre><h4 id=在-slave-上测试下>在 Slave 上测试下</h4><pre tabindex=0><code class=language-base data-lang=base>yum -y install rsync
+</code></pre><h4 id="在-slave-上测试下">在 Slave 上测试下</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">yum -y install rsync
 chown -R root:root /fs/nsf-data
 echo &#34;123456&#34; &gt; /etc/rsync_master.pass
 chmod 600 /etc/rsync_master.pass
@@ -166,13 +363,17 @@ rsync -arv /fs/nsf-data/ root@172.12.17.166::data --password-file=/etc/rsync_mas
 #在 Master 上测试
 ls /fs/nsf-data
 # 出现 master.txt 即可
-</code></pre><h4 id=在-slave-上配置自动同步安装>在 Slave 上配置自动同步安装</h4><pre tabindex=0><code class=language-base data-lang=base>// 下载
+</code></pre><h4 id="在-slave-上配置自动同步安装">在 Slave 上配置自动同步安装</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">// 下载
 wget https://raw.githubusercontent.com/orangle/sersync/master/release/sersync2.5.4_64bit_binary_stable_final.tar.gz
 // 解压
 tar zxvf sersync2.5.4_64bit_binary_stable_final.tar.gz  
 // 移动目录到 /usr/local/sersync
 mv GNU-Linux-x86  /usr/local/sersync   
-</code></pre><h4 id=在-slave-上配置自动同步配置>在 Slave 上配置自动同步配置</h4><p>cd /usr/local/sersync/ && vim /usr/local/sersync/confxml.xml<br>修改配置文件里面节点数据</p><pre tabindex=0><code class=language-base data-lang=base>&lt;delete start=&#34;flase&#34;/&gt;
+</code></pre><h4 id="在-slave-上配置自动同步配置">在 Slave 上配置自动同步配置</h4>
+<p>cd /usr/local/sersync/ &amp;&amp; vim /usr/local/sersync/confxml.xml<br>
+修改配置文件里面节点数据</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">&lt;delete start=&#34;flase&#34;/&gt;
 
 #源服务器同步目录
 &lt;localpath watch=&#34;/fs/nsf-data/&#34;&gt;  
@@ -192,12 +393,14 @@ mv GNU-Linux-x86  /usr/local/sersync
 
 #脚本运行失败日志记录
 failLog path=&#34;/tmp/rsync_fail_log.sh&#34;
-</code></pre><p>启动</p><pre tabindex=0><code class=language-base data-lang=base>./sersync2 -r -d -o confxml.xml
+</code></pre><p>启动</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">./sersync2 -r -d -o confxml.xml
 // 测试
 cd /fs/nsf-data
 touch Master1.txt
 // 在 Slave 里面 /fs/nsf-data 里面去看看数据是否存在
-</code></pre><h3 id=安装-keepalived在master上执行>安装 Keepalived在Master上执行</h3><pre tabindex=0><code class=language-base data-lang=base>yum -y install keepalived
+</code></pre><h3 id="安装-keepalived在master上执行">安装 Keepalived在Master上执行</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">yum -y install keepalived
 vim /etc/keepalived/keepalived.conf
 # 其中 eth0 为绑定网卡名称，可以使用 ip addr 命令查看
 # 其中 172.12.17.200  为虚拟 ip ，注意不要和其它 ip 冲突
@@ -221,7 +424,8 @@ vrrp_instance VI_1 {
         172.12.17.200/24 brd 172.12.17.255
     }
 }
-</code></pre><h3 id=安装-keepalived在slave上执行>安装 Keepalived在Slave上执行</h3><pre tabindex=0><code class=language-base data-lang=base>yum -y install keepalived
+</code></pre><h3 id="安装-keepalived在slave上执行">安装 Keepalived在Slave上执行</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">yum -y install keepalived
 vim /etc/keepalived/keepalived.conf
 # 其中 eth0 为绑定网卡名称，可以使用 ip addr 命令查看
 # 其中 172.12.17.200  为虚拟 ip ，注意不要和其它 ip 冲突
@@ -244,21 +448,25 @@ vrrp_instance VI_1 {
         172.12.17.200/24 brd 172.12.17.255
     }
 }
-</code></pre><h1 id=启动服务>启动服务</h1><pre tabindex=0><code class=language-base data-lang=base>systemctl start keepalived.service &amp;&amp; systemctl enable keepalived.service
-</code></pre><h1 id=测试>测试</h1><pre tabindex=0><code class=language-base data-lang=base>在 Master上
+</code></pre><h1 id="启动服务">启动服务</h1>
+<pre tabindex="0"><code class="language-base" data-lang="base">systemctl start keepalived.service &amp;&amp; systemctl enable keepalived.service
+</code></pre><h1 id="测试">测试</h1>
+<pre tabindex="0"><code class="language-base" data-lang="base">在 Master上
 ip a | grep  172.12.17.200
 有输出：    inet 172.12.17.200/32 scope global eth0
 在 Slave上
 ip a | grep  172.12.17.200
 无输出：
-</code></pre><h3 id=关闭master上keepalived测试ip是否更换>关闭Master上keepalived测试IP是否更换</h3><pre tabindex=0><code class=language-base data-lang=base>在 Master上
+</code></pre><h3 id="关闭master上keepalived测试ip是否更换">关闭Master上keepalived测试IP是否更换</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">在 Master上
 systemctl stop keeplived
 
 在 Slave上
 ip a | grep  172.12.17.200
 有输出：    inet 172.12.17.200/32 scope global eth0
 自动切换成功
-</code></pre><h4 id=在k8s集群里面找个node-测试是否能链接上nfs服务-1>在k8s集群里面找个node 测试是否能链接上nfs服务</h4><pre tabindex=0><code class=language-base data-lang=base>// 挂载目录
+</code></pre><h4 id="在k8s集群里面找个node-测试是否能链接上nfs服务-1">在k8s集群里面找个node 测试是否能链接上nfs服务</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">// 挂载目录
 mkdir /test-nsf-data-200
 // 挂载nfs
 mount -t nfs 172.12.17.200:/fs/nsf-data /test-nsf-data-200
@@ -267,7 +475,9 @@ df -TH
 输出里面含有  172.12.17.200:/fs/nsf-data nfs4       53G  4.9G   46G  10% /test-nsf-data-200
 //卸载挂载
 umount /test-nsf-data-200
-</code></pre><h4 id=在安装keepalived的机器上设置-keepalived-脚本>在安装Keepalived的机器上设置 Keepalived 脚本</h4><p>ip 的漂移是根据 Keepalived 的存活来判断的，所以在 nfs 挂之后需要停止 keepalived 服务</p><pre tabindex=0><code class=language-base data-lang=base>echo &#39;systemctl status nfs &amp;&gt;/dev/null
+</code></pre><h4 id="在安装keepalived的机器上设置-keepalived-脚本">在安装Keepalived的机器上设置 Keepalived 脚本</h4>
+<p>ip 的漂移是根据 Keepalived 的存活来判断的，所以在 nfs 挂之后需要停止 keepalived 服务</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">echo &#39;systemctl status nfs &amp;&gt;/dev/null
 if [ $? -ne 0 ]; then
   systemctl start nfs
   systemctl status nfs &amp;&gt;/dev/null
@@ -275,18 +485,122 @@ if [ $? -ne 0 ]; then
     systemctl stop keepalived.service
   fi
 fi&#39; &gt;&gt; /usr/local/sbin/task_nfs.sh
-</code></pre><h3 id=加入定时任务>加入定时任务</h3><pre tabindex=0><code class=language-base data-lang=base>chmod 777 /usr/local/sbin/task_nfs.sh
+</code></pre><h3 id="加入定时任务">加入定时任务</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">chmod 777 /usr/local/sbin/task_nfs.sh
 crontab -e
 # 添加定时任务 5秒执行一次
 * * * * * sleep 5;/usr/local/sbin/task_nfs.sh &amp;&gt; /dev/null
-</code></pre></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
-<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
-<span>863</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
-<span class=tag><a href=http://hwholiday.github.io/tags/linux/>#linux</a></span>
-<span class=tag><a href=http://hwholiday.github.io/tags/%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1/>#文件服务</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
-<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2021/gidv2/ class=prev rel=prev title="Golang （V2）分布式ID生成系统，高性能、高可用、易扩展的id生成服务"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang （V2）分布式ID生成系统，高性能、高可用、易扩展的id生成服务</a>
-<a href=http://hwholiday.github.io/2021/k8s-nsf/ class=next rel=next title="Kubernetes 集群挂载高可用 NFS 网络文件存储">Kubernetes 集群挂载高可用 NFS 网络文件存储&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
-<span itemprop=copyrightYear>2016 - 2023</span>
-<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
-<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>
+</code></pre>
+    </div>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>863</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/linux/">
+                    #linux</a></span>
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1/">
+                    #文件服务</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="http://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="http://hwholiday.github.io/2021/gidv2/" class="prev" rel="prev" title="Golang （V2）分布式ID生成系统，高性能、高可用、易扩展的id生成服务"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang （V2）分布式ID生成系统，高性能、高可用、易扩展的id生成服务</a>
+         
+        
+        <a href="http://hwholiday.github.io/2021/k8s-nsf/" class="next" rel="next" title="Kubernetes 集群挂载高可用 NFS 网络文件存储">Kubernetes 集群挂载高可用 NFS 网络文件存储&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="http://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

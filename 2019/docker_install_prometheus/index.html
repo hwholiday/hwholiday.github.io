@@ -1,17 +1,163 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2018/how_use_mongo-go-driver/><link rel=next href=http://hwholiday.github.io/2019/how_use_time/><link rel=canonical href=http://hwholiday.github.io/2019/docker_install_prometheus/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>docker安装prometheus（普罗米修斯） | hwholiday</title><meta name=title content="docker安装prometheus（普罗米修斯） | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="docker安装prometheus（普罗米修斯）"><meta name=twitter:description content="docker安装prometheus（普罗米修斯）"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"docker安装prometheus（普罗米修斯）","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2019\/docker_install_prometheus\/"},"genre":"posts","keywords":"系统监控, docker","wordcount":156,"url":"http:\/\/hwholiday.github.io\/2019\/docker_install_prometheus\/","datePublished":"2019-05-07T00:00:00\u002b00:00","dateModified":"2019-05-07T00:00:00\u002b00:00","description":"docker安装prometheus（普罗米修斯）"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a>
-<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>docker安装prometheus（普罗米修斯）</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
-<span class=post-time>on <time datetime=2019-05-07>7 May 2019</time></span>
-in
-<i class="iconfont icon-folder"></i>
-<span class=post-category><a href=http://hwholiday.github.io/categories/docker/>Docker</a></span>
-<i class="iconfont icon-timer"></i>
-1 min</div></header><div class=post-content><h2 id=prometheus简介>Prometheus简介</h2><ul><li>Prometheus是一个开源监控系统，它前身是SoundCloud的警告工具包</li><li>从2012年开始，许多公司和组织开始使用Prometheus。该项目的开发人员和用户社区非常活跃，越来越多的开发人员和用户参与到该项目中。目前它是一个独立的开源项目，且不依赖与任何公司</li><li>为了强调这点和明确该项目治理结构，Prometheus在2016年继Kurberntes之后，加入了Cloud Native Computing Foundation。</li></ul><h3 id=以下命令都需要管理员权限---sudohttpsbaikebaiducomitemsudo7337623fraladdin>以下命令都需要管理员权限 <a href="https://baike.baidu.com/item/sudo/7337623?fr=aladdin">sudo</a></h3><h2 id=搜索-gitlab-docker镜像>搜索 gitlab Docker镜像</h2><pre tabindex=0><code class=language-base data-lang=base>sudo docker search prometheus
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="http://hwholiday.github.io/2018/how_use_mongo-go-driver/" />
+  <link rel="next" href="http://hwholiday.github.io/2019/how_use_time/" />
+  <link rel="canonical" href="http://hwholiday.github.io/2019/docker_install_prometheus/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           docker安装prometheus（普罗米修斯） | hwholiday
+       
+  </title>
+  <meta name="title" content="docker安装prometheus（普罗米修斯） | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="docker安装prometheus（普罗米修斯）"/>
+<meta name="twitter:description" content="docker安装prometheus（普罗米修斯）"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "docker安装prometheus（普罗米修斯）",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http:\/\/hwholiday.github.io\/2019\/docker_install_prometheus\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "系统监控, docker",
+  "wordcount":  156 ,
+  "url": "http:\/\/hwholiday.github.io\/2019\/docker_install_prometheus\/",
+  "datePublished": "2019-05-07T00:00:00\u002b00:00",
+  "dateModified": "2019-05-07T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "docker安装prometheus（普罗米修斯）"
+}
+</script>
+</head>
+
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="http://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="http://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">docker安装prometheus（普罗米修斯）</h1>
+        <div class="post-meta">
+            Written by <a href="http://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2019-05-07 >7 May 2019</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="http://hwholiday.github.io/categories/docker/"> Docker </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                1 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="prometheus简介">Prometheus简介</h2>
+<ul>
+<li>Prometheus是一个开源监控系统，它前身是SoundCloud的警告工具包</li>
+<li>从2012年开始，许多公司和组织开始使用Prometheus。该项目的开发人员和用户社区非常活跃，越来越多的开发人员和用户参与到该项目中。目前它是一个独立的开源项目，且不依赖与任何公司</li>
+<li>为了强调这点和明确该项目治理结构，Prometheus在2016年继Kurberntes之后，加入了Cloud Native Computing Foundation。</li>
+</ul>
+<h3 id="以下命令都需要管理员权限---sudohttpsbaikebaiducomitemsudo7337623fraladdin">以下命令都需要管理员权限   <a href="https://baike.baidu.com/item/sudo/7337623?fr=aladdin">sudo</a></h3>
+<h2 id="搜索-gitlab-docker镜像">搜索 gitlab Docker镜像</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">sudo docker search prometheus
 
 //输出结果部分截图
 NAME                                          DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED
@@ -23,9 +169,12 @@ sscaling/jmx-prometheus-exporter              A docker image containing a releas
 bitnami/prometheus                            Bitnami Docker Image for Prometheus             6                                       [OK]
 stefanprodan/swarmprom-prometheus             Prometheus Docker Swarm                         5                                       
 functions/prometheus                          prometheus                                      5                                       [OK]
-</code></pre><h3 id=拉取-gitlab-docker镜像>拉取 gitlab Docker镜像</h3><pre tabindex=0><code class=language-base data-lang=base>sudo docker pull prom/prometheus
-</code></pre><h3 id=配置>配置</h3><p>Prometheus使用YAML进行配置(prometheus.yml)。global配置一些全局信息，scrape_configs配置具体想要抓取的目标。
-这段配置的含义是：启动一个叫做go-pro的任务，每隔五秒钟，访问192.168.2.28:8888/metrics获取数据。</p><pre tabindex=0><code class=language-base data-lang=base>global:
+</code></pre><h3 id="拉取-gitlab-docker镜像">拉取 gitlab Docker镜像</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">sudo docker pull prom/prometheus
+</code></pre><h3 id="配置">配置</h3>
+<p>Prometheus使用YAML进行配置(prometheus.yml)。global配置一些全局信息，scrape_configs配置具体想要抓取的目标。
+这段配置的含义是：启动一个叫做go-pro的任务，每隔五秒钟，访问192.168.2.28:8888/metrics获取数据。</p>
+<pre tabindex="0"><code class="language-base" data-lang="base">global:
   scrape_interval:     15s 
 
   external_labels:
@@ -37,20 +186,131 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets: [&#39;192.168.2.28:8888&#39;]
-</code></pre><h3 id=go统计demo-点击这里httpsgithubcomhwholidaylearning_toolstreemasterprometheus>go统计Demo <a href=https://github.com/hwholiday/learning_tools/tree/master/prometheus>点击这里</a></h3><h3 id=启动prometheus>启动Prometheus</h3><pre tabindex=0><code class=language-base data-lang=base>//prometheus.yml放到 data/prometheus内
+</code></pre><h3 id="go统计demo-点击这里httpsgithubcomhwholidaylearning_toolstreemasterprometheus">go统计Demo <a href="https://github.com/hwholiday/learning_tools/tree/master/prometheus">点击这里</a></h3>
+<h3 id="启动prometheus">启动Prometheus</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">//prometheus.yml放到 data/prometheus内
 sudo docker run -d -p 9090:9090 --name prometheus -v /home/ghost/data/prometheus:/data  prom/prometheus --config.file=/data/prometheus.yml
-</code></pre><ul><li>使用sudo docker ps -a 命令查看当前所有Docker容器的状态。当它的状态由starting变为运行时间时，说明成功启动了</li><li>使用上面配置的IP地址（如http://192.168.2.28:9090）访问即可</li></ul><h3 id=prometheus>Prometheus</h3><pre tabindex=0><code class=language-base data-lang=base>
+</code></pre><ul>
+<li>使用sudo docker ps -a 命令查看当前所有Docker容器的状态。当它的状态由starting变为运行时间时，说明成功启动了</li>
+<li>使用上面配置的IP地址（如http://192.168.2.28:9090）访问即可</li>
+</ul>
+<h3 id="prometheus">Prometheus</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">
 sudo docker stop prometheus //停止容器
 sudo docker rm prometheus  //移出容器
 sudo docker pull prom/prometheus //拉取最新的prometheus
-</code></pre><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
-<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
-<span>156</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
-<span class=tag><a href=http://hwholiday.github.io/tags/%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/>#系统监控</a></span>
-<span class=tag><a href=http://hwholiday.github.io/tags/docker/>#docker</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
-<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2018/how_use_mongo-go-driver/ class=prev rel=prev title=mongodb官方的golang驱动基础使用><i class="iconfont icon-dajiantou"></i>&nbsp;mongodb官方的golang驱动基础使用</a>
-<a href=http://hwholiday.github.io/2019/how_use_time/ class=next rel=next title="Golang Time包的方法解析">Golang Time包的方法解析&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
-<span itemprop=copyrightYear>2016 - 2023</span>
-<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
-<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>
+</code></pre><h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>156</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/">
+                    #系统监控</a></span>
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/docker/">
+                    #docker</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="http://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="http://hwholiday.github.io/2018/how_use_mongo-go-driver/" class="prev" rel="prev" title="mongodb官方的golang驱动基础使用"><i class="iconfont icon-dajiantou"></i>&nbsp;mongodb官方的golang驱动基础使用</a>
+         
+        
+        <a href="http://hwholiday.github.io/2019/how_use_time/" class="next" rel="next" title="Golang Time包的方法解析">Golang Time包的方法解析&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="http://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

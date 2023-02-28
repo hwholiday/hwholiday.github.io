@@ -1,1 +1,20 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>归档 on hwholiday</title><link>http://hwholiday.github.io/categories/%E5%BD%92%E6%A1%A3/</link><description>Recent content in 归档 on hwholiday</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 24 Dec 2019 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/categories/%E5%BD%92%E6%A1%A3/index.xml" rel="self" type="application/rss+xml"/><item><title>Golang 实践归档</title><link>http://hwholiday.github.io/2019/archive/</link><pubDate>Tue, 24 Dec 2019 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2019/archive/</guid><description>learning_tools 源码地址 go-kit 微服务实践，从入门到精通系列 go-kit (go-kit微服务) 1: v1 go-kit 微服务 基础使用 （HTTP） 2: v2 go-kit 微服务 添加日志（user/zap ,并为每个请求添加UUID） 3: v3 go-kit 微服务 身份认证 （JWT） 4: v4 go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现） 5: v5 go-kit 微服务 使用GRPC（并为每个请求添加UUID） 6: v6 go-kit 微服务 服务注册与发现（etcd实现） 7: v7 go-kit 微服务 服务监控（prometheus 实现） 8: v8 go-kit 微服务 服务熔断（hystrix-go 实现） 9: v9 go-kit 微服务 服务链路追踪（jaeger 实现）(1) 10: v9 go-kit 微服务 服务链路追踪（jaeger 实现）(2) 11: v11 go-kit 微服务 添加一个简单网关 go_push 一个实用的消息推送服务 go_push (推送服务) ├── gateway // 长连接网关服务器 │ ├── push_job.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>归档 on hwholiday</title>
+    <link>http://hwholiday.github.io/categories/%E5%BD%92%E6%A1%A3/</link>
+    <description>Recent content in 归档 on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 24 Dec 2019 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/categories/%E5%BD%92%E6%A1%A3/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Golang 实践归档</title>
+      <link>http://hwholiday.github.io/2019/archive/</link>
+      <pubDate>Tue, 24 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://hwholiday.github.io/2019/archive/</guid>
+      <description>learning_tools 源码地址 go-kit 微服务实践，从入门到精通系列 go-kit (go-kit微服务) 1: v1 go-kit 微服务 基础使用 （HTTP） 2: v2 go-kit 微服务 添加日志（user/zap ,并为每个请求添加UUID） 3: v3 go-kit 微服务 身份认证 （JWT） 4: v4 go-kit 微服务 限流 （uber/ratelimit 和 golang/rate 实现） 5: v5 go-kit 微服务 使用GRPC（并为每个请求添加UUID） 6: v6 go-kit 微服务 服务注册与发现（etcd实现） 7: v7 go-kit 微服务 服务监控（prometheus 实现） 8: v8 go-kit 微服务 服务熔断（hystrix-go 实现） 9: v9 go-kit 微服务 服务链路追踪（jaeger 实现）(1) 10: v9 go-kit 微服务 服务链路追踪（jaeger 实现）(2) 11: v11 go-kit 微服务 添加一个简单网关 go_push 一个实用的消息推送服务 go_push (推送服务) ├── gateway // 长连接网关服务器 │ ├── push_job.</description>
+    </item>
+    
+  </channel>
+</rss>

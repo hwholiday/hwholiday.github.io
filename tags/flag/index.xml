@@ -1,1 +1,20 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>flag on hwholiday</title><link>http://hwholiday.github.io/tags/flag/</link><description>Recent content in flag on hwholiday</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 01 Jan 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/tags/flag/index.xml" rel="self" type="application/rss+xml"/><item><title>2022 你好 2021 再见</title><link>http://hwholiday.github.io/2022/2022/</link><pubDate>Sat, 01 Jan 2022 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2022/2022/</guid><description>2021 再见 不知不觉一年的时间又过去了，今年又水了一年 瞄了一眼博客，就发布了11篇文章，然后闭眼5分钟使劲想想我这一年到底干了多少事情终于灵光一现想起一些琐事 learning_tools 项目从几百star到了1.6K kubernetes 学习使用并写了一些插件 DDD（领域驱动设计-使用并落地） 对插拔式组件开发有了新的认识并写了一些组件（hconfig , hgrpc） 看了几本书（代码简洁之道 , 领域驱动设计 , 人类起源） 2022 你好 新的一年开始了，flag 这个东西真的每年都立每年都摸瞎，不过这个东西感觉不立一个对不起这一年的开始，哈哈哈 所以我希望（flag）在2022里面 为新家庭保驾护航 对云原生的技术加深一些 每周产出一篇博客 搞一个自己的公众号 ghost-im 这个项目在新的一年内完成 不立了不立了，立太多等到来年再写这个的时候，又是摸瞎</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>flag on hwholiday</title>
+    <link>http://hwholiday.github.io/tags/flag/</link>
+    <description>Recent content in flag on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 01 Jan 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/tags/flag/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2022 你好 2021 再见</title>
+      <link>http://hwholiday.github.io/2022/2022/</link>
+      <pubDate>Sat, 01 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>http://hwholiday.github.io/2022/2022/</guid>
+      <description>2021 再见 不知不觉一年的时间又过去了，今年又水了一年 瞄了一眼博客，就发布了11篇文章，然后闭眼5分钟使劲想想我这一年到底干了多少事情终于灵光一现想起一些琐事 learning_tools 项目从几百star到了1.6K kubernetes 学习使用并写了一些插件 DDD（领域驱动设计-使用并落地） 对插拔式组件开发有了新的认识并写了一些组件（hconfig , hgrpc） 看了几本书（代码简洁之道 , 领域驱动设计 , 人类起源） 2022 你好 新的一年开始了，flag 这个东西真的每年都立每年都摸瞎，不过这个东西感觉不立一个对不起这一年的开始，哈哈哈 所以我希望（flag）在2022里面 为新家庭保驾护航 对云原生的技术加深一些 每周产出一篇博客 搞一个自己的公众号 ghost-im 这个项目在新的一年内完成 不立了不立了，立太多等到来年再写这个的时候，又是摸瞎 </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,18 +1,176 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2020/redis_geo/><link rel=next href=http://hwholiday.github.io/2020/makefile/><link rel=canonical href=http://hwholiday.github.io/2020/go_protoc_gen_go/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>golang 解决 protobuf 因为 XXX 插入数据库报错的情况 | hwholiday</title><meta name=title content="golang 解决 protobuf 因为 XXX 插入数据库报错的情况 | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="golang 解决 protobuf 因为 XXX 插入数据库报错的情况"><meta name=twitter:description content="golang 解决 protobuf 因为 XXX 插入数据库报错的情况"><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"golang 解决 protobuf 因为 XXX 插入数据库报错的情况","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2020\/go_protoc_gen_go\/"},"genre":"posts","keywords":"golang","wordcount":164,"url":"http:\/\/hwholiday.github.io\/2020\/go_protoc_gen_go\/","datePublished":"2020-03-17T00:00:00\u002b00:00","dateModified":"2020-03-17T00:00:00\u002b00:00","description":"golang 解决 protobuf 因为 XXX 插入数据库报错的情况"}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a>
-<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>golang 解决 protobuf 因为 XXX 插入数据库报错的情况</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
-<span class=post-time>on <time datetime=2020-03-17>17 March 2020</time></span>
-in
-<i class="iconfont icon-folder"></i>
-<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a></span>
-<i class="iconfont icon-timer"></i>
-1 min</div></header><div class=post-content><h2 id=起因>起因</h2><ul><li>在一个老项目里面直接用的 protobuf 生成的结构体与数据库交互</li><li>在 protoc 2 生成的 protobuf 没有 XXX 这些东西生成故能正常运行</li><li>因为版本升级到 protoc 3 后编译的 protobuf 就不能正常运行了，会出现数据库找不到 XXX_ 这些字段的情况</li></ul><h2 id=解决方案>解决方案</h2><ul><li>把每张表单独生成 struct 放在 models 层里面，这样的话老服务改动太大我肯定是不能接受的</li><li>因为我们使用的 orm ,在xorm 中如果 struct 某个字段不需要映射的话就可以用 xorm:"-"</li><li>gorm 也可以这样操作 gorm:"-"</li><li>那我们就可以在 XXX_ 这些字段后面的 tag 中添加忽略，就可以实现我们的目表</li></ul><h2 id=开始搞事情>开始搞事情</h2><h4 id=获取代码>获取代码</h4><pre tabindex=0><code class=language-base data-lang=base>go get github.com/golang/protobuf/protoc-gen-go
-</code></pre><h4 id=修改代码>修改代码</h4><ul><li>在路径 github.com/golang/protobuf/protoc-gen-go/generator/generator.go 下找到 generateInternalStructFields 方法</li><li>在XXX_ 后添加 xorm:"-" or gorm:"-"</li></ul><pre tabindex=0><code class=language-base data-lang=base>// generateInternalStructFields just adds the XXX_&lt;something&gt; fields to the message struct.
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="http://hwholiday.github.io/2020/redis_geo/" />
+  <link rel="next" href="http://hwholiday.github.io/2020/makefile/" />
+  <link rel="canonical" href="http://hwholiday.github.io/2020/go_protoc_gen_go/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           golang 解决 protobuf 因为 XXX 插入数据库报错的情况 | hwholiday
+       
+  </title>
+  <meta name="title" content="golang 解决 protobuf 因为 XXX 插入数据库报错的情况 | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="golang 解决 protobuf 因为 XXX 插入数据库报错的情况"/>
+<meta name="twitter:description" content="golang 解决 protobuf 因为 XXX 插入数据库报错的情况"/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "golang 解决 protobuf 因为 XXX 插入数据库报错的情况",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http:\/\/hwholiday.github.io\/2020\/go_protoc_gen_go\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang",
+  "wordcount":  164 ,
+  "url": "http:\/\/hwholiday.github.io\/2020\/go_protoc_gen_go\/",
+  "datePublished": "2020-03-17T00:00:00\u002b00:00",
+  "dateModified": "2020-03-17T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "golang 解决 protobuf 因为 XXX 插入数据库报错的情况"
+}
+</script>
+</head>
+
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="http://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="http://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">golang 解决 protobuf 因为 XXX 插入数据库报错的情况</h1>
+        <div class="post-meta">
+            Written by <a href="http://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2020-03-17 >17 March 2020</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="http://hwholiday.github.io/categories/golang/"> Golang </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                1 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="起因">起因</h2>
+<ul>
+<li>在一个老项目里面直接用的 protobuf 生成的结构体与数据库交互</li>
+<li>在 protoc 2 生成的 protobuf 没有 XXX 这些东西生成故能正常运行</li>
+<li>因为版本升级到 protoc 3 后编译的 protobuf 就不能正常运行了，会出现数据库找不到 XXX_ 这些字段的情况</li>
+</ul>
+<h2 id="解决方案">解决方案</h2>
+<ul>
+<li>把每张表单独生成 struct 放在 models 层里面，这样的话老服务改动太大我肯定是不能接受的</li>
+<li>因为我们使用的 orm ,在xorm 中如果 struct 某个字段不需要映射的话就可以用  xorm:&quot;-&quot;</li>
+<li>gorm 也可以这样操作  gorm:&quot;-&quot;</li>
+<li>那我们就可以在 XXX_ 这些字段后面的 tag 中添加忽略，就可以实现我们的目表</li>
+</ul>
+<h2 id="开始搞事情">开始搞事情</h2>
+<h4 id="获取代码">获取代码</h4>
+<pre tabindex="0"><code class="language-base" data-lang="base">go get github.com/golang/protobuf/protoc-gen-go
+</code></pre><h4 id="修改代码">修改代码</h4>
+<ul>
+<li>在路径 github.com/golang/protobuf/protoc-gen-go/generator/generator.go 下找到 generateInternalStructFields 方法</li>
+<li>在XXX_ 后添加 xorm:&quot;-&quot; or gorm:&quot;-&quot;</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">// generateInternalStructFields just adds the XXX_&lt;something&gt; fields to the message struct.
 func (g *Generator) generateInternalStructFields(mc *msgCtx, topLevelFields []topLevelField) {
 	g.P(&#34;XXX_NoUnkeyedLiteral\tstruct{} `json:\&#34;-\&#34; xorm:\&#34;-\&#34;`&#34;) // prevent unkeyed struct literals
 	if len(mc.message.ExtensionRange) &gt; 0 {
@@ -26,20 +184,133 @@ func (g *Generator) generateInternalStructFields(mc *msgCtx, topLevelFields []to
 	g.P(&#34;XXX_sizecache\tint32 `json:\&#34;-\&#34; xorm:\&#34;-\&#34;`&#34;)
 
 }
-</code></pre><h4 id=编译代码得到-protoc-gen-go-并放到-gobin-下>编译代码得到 protoc-gen-go 并放到 /go/bin/ 下</h4><ul><li>编译 proto</li></ul><pre tabindex=0><code class=language-base data-lang=base>protoc  --go_out=. *.proto
-</code></pre><h2 id=成果>成果</h2><pre tabindex=0><code class=language-base data-lang=base>type BoolValue struct {
+</code></pre><h4 id="编译代码得到-protoc-gen-go-并放到-gobin-下">编译代码得到 protoc-gen-go 并放到 /go/bin/ 下</h4>
+<ul>
+<li>编译 proto</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">protoc  --go_out=. *.proto
+</code></pre><h2 id="成果">成果</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">type BoolValue struct {
 	Value                bool     `protobuf:&#34;varint,1,opt,name=value,proto3&#34; json:&#34;value,omitempty&#34;`
 	XXX_NoUnkeyedLiteral struct{} `json:&#34;-&#34; xorm:&#34;-&#34;`
 	XXX_unrecognized     []byte   `json:&#34;-&#34; xorm:&#34;-&#34;`
 	XXX_sizecache        int32    `json:&#34;-&#34; xorm:&#34;-&#34;`
 }
-</code></pre><h2 id=结语>结语</h2><ul><li>通过这样的方法我们就可以实现我们想要的样子了</li><li>不过还是建议一个表对应一个 struct 放在 models 里面</li><li>欢迎添加QQ一起讨论</li></ul><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div class=post-copyright><p class=copyright-item><span>Author:</span>
-<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
-<span>164</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
-<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#golang</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
-<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2020/redis_geo/ class=prev rel=prev title="golang 通过 Redis GEO 实现 LBS 功能"><i class="iconfont icon-dajiantou"></i>&nbsp;golang 通过 Redis GEO 实现 LBS 功能</a>
-<a href=http://hwholiday.github.io/2020/makefile/ class=next rel=next title="学习并使用 MakeFile">学习并使用 MakeFile&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
-<span itemprop=copyrightYear>2016 - 2023</span>
-<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
-<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>
+</code></pre><h2 id="结语">结语</h2>
+<ul>
+<li>通过这样的方法我们就可以实现我们想要的样子了</li>
+<li>不过还是建议一个表对应一个 struct 放在 models 里面</li>
+<li>欢迎添加QQ一起讨论</li>
+</ul>
+<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>164</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="http://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="http://hwholiday.github.io/2020/redis_geo/" class="prev" rel="prev" title="golang 通过 Redis GEO 实现 LBS 功能"><i class="iconfont icon-dajiantou"></i>&nbsp;golang 通过 Redis GEO 实现 LBS 功能</a>
+         
+        
+        <a href="http://hwholiday.github.io/2020/makefile/" class="next" rel="next" title="学习并使用 MakeFile">学习并使用 MakeFile&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="http://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

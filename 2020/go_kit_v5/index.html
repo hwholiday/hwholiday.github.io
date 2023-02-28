@@ -1,18 +1,168 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><link rel=prev href=http://hwholiday.github.io/2020/etcd_registry_selector/><link rel=next href=http://hwholiday.github.io/2020/go_kit_v6/><link rel=canonical href=http://hwholiday.github.io/2020/go_kit_v5/><link rel='shortcut icon' type=image/x-icon href=/favicon.ico><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>go-kit 微服务 使用GRPC（并为每个请求添加UUID） | hwholiday</title><meta name=title content="go-kit 微服务 使用GRPC（并为每个请求添加UUID）  | hwholiday"><link rel=stylesheet href=/font/iconfont.css><link rel=stylesheet href=/css/main.min.css><meta name=twitter:card content="summary"><meta name=twitter:title content="go-kit 微服务 使用GRPC（并为每个请求添加UUID） "><meta name=twitter:description content="go-kit 微服务 使用GRPC（并为每个请求添加UUID） "><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"go-kit 微服务 使用GRPC（并为每个请求添加UUID） ","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/hwholiday.github.io\/2020\/go_kit_v5\/"},"genre":"posts","keywords":"golang, go-kit","wordcount":497,"url":"http:\/\/hwholiday.github.io\/2020\/go_kit_v5\/","datePublished":"2020-01-07T00:00:00\u002b00:00","dateModified":"2020-01-07T00:00:00\u002b00:00","description":"go-kit 微服务 使用GRPC（并为每个请求添加UUID） "}</script></head><body><div class=wrapper><nav class=navbar><div class=container><div class="navbar-header header-logo"><a href=http://hwholiday.github.io/>hwholiday</a></div><div class="menu navbar-right"><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a>
-<a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;</div></div></nav><nav class=navbar-mobile id=nav-mobile style=display:none><div class=container><div class=navbar-header><div><a href=javascript:void(0); class=theme-switch><i class="iconfont icon-sun"></i></a>&nbsp;<a href=http://hwholiday.github.io/>hwholiday</a></div><div class=menu-toggle><span></span><span></span><span></span></div></div><div class=menu id=mobile-menu><a class=menu-item href=/posts/ title>主页</a>
-<a class=menu-item href=/categories/ title>分类</a>
-<a class=menu-item href=/tags/ title>标签</a>
-<a class=menu-item href=/about/ title>关于</a></div></div></nav><main class=main><div class=container><article class=post-warp><header class=post-header><h1 class=post-title>go-kit 微服务 使用GRPC（并为每个请求添加UUID）</h1><div class=post-meta>Written by <a href=http://hwholiday.github.io/ rel=author>hwholiday</a> with ♥
-<span class=post-time>on <time datetime=2020-01-07>7 January 2020</time></span>
-in
-<i class="iconfont icon-folder"></i>
-<span class=post-category><a href=http://hwholiday.github.io/categories/golang/>Golang</a>
-<a href=http://hwholiday.github.io/categories/go-kit/>go-kit</a></span>
-<i class="iconfont icon-timer"></i>
-3 min</div></header><div class=post-content><h2 id=go-kit-微服务-使用grpc并传递请求id>go-kit 微服务 使用Grpc（并传递请求ID）</h2><h3 id=grpc>grpc</h3><ul><li>gRPC是一个高性能、通用的开源RPC框架，其由Google主要面向移动应用开发并基于HTTP/2协议标准而设计，基于ProtoBuf(Protocol Buffers)序列化协议开发</li><li>grpc使用 <a href=https://github.com/hwholiday/learning_tools/tree/master/grpc>案例</a></li></ul><h3 id=简介>简介</h3><ul><li>通过grpc实现一个用户中心实现简单的鉴权中心并返回用户token</li><li>上篇文章<a href=https://www.hwholiday.com/2020/go_kit_v3/>《go-kit 微服务 身份认证（JWT）》</a>已经实现的一个http的鉴权中心，所以我们只需要改变transport层逻辑</li><li>编写ProtoBuf</li></ul><pre tabindex=0><code class=language-base data-lang=base>//service.proto
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  
+  
+  
+  
+  
+  <link rel="prev" href="http://hwholiday.github.io/2020/etcd_registry_selector/" />
+  <link rel="next" href="http://hwholiday.github.io/2020/go_kit_v6/" />
+  <link rel="canonical" href="http://hwholiday.github.io/2020/go_kit_v5/" />
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           go-kit 微服务 使用GRPC（并为每个请求添加UUID）  | hwholiday
+       
+  </title>
+  <meta name="title" content="go-kit 微服务 使用GRPC（并为每个请求添加UUID）  | hwholiday">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="go-kit 微服务 使用GRPC（并为每个请求添加UUID） "/>
+<meta name="twitter:description" content="go-kit 微服务 使用GRPC（并为每个请求添加UUID） "/>
+
+  <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "go-kit 微服务 使用GRPC（并为每个请求添加UUID） ",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http:\/\/hwholiday.github.io\/2020\/go_kit_v5\/"
+  },
+  
+  "genre": "posts",
+  "keywords": "golang, go-kit",
+  "wordcount":  497 ,
+  "url": "http:\/\/hwholiday.github.io\/2020\/go_kit_v5\/",
+  "datePublished": "2020-01-07T00:00:00\u002b00:00",
+  "dateModified": "2020-01-07T00:00:00\u002b00:00",
+  
+  
+  
+  "description": "go-kit 微服务 使用GRPC（并为每个请求添加UUID） "
+}
+</script>
+</head>
+
+  
+
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="http://hwholiday.github.io/">hwholiday</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-sun"></i></a>&nbsp;<a href="http://hwholiday.github.io/">hwholiday</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">主页</a>
+                
+                <a class="menu-item" href="/categories/" title="">分类</a>
+                
+                <a class="menu-item" href="/tags/" title="">标签</a>
+                
+                <a class="menu-item" href="/about/" title="">关于</a>
+                
+        </div>
+    </div>
+</nav>
+
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp">
+    <header class="post-header">
+        <h1 class="post-title">go-kit 微服务 使用GRPC（并为每个请求添加UUID） </h1>
+        <div class="post-meta">
+            Written by <a href="http://hwholiday.github.io/" rel="author">hwholiday</a> with ♥ 
+                <span class="post-time">
+                    on <time datetime=2020-01-07 >7 January 2020</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="http://hwholiday.github.io/categories/golang/"> Golang </a>
+                        <a href="http://hwholiday.github.io/categories/go-kit/"> go-kit </a>
+                        
+                </span>
+                <i class="iconfont icon-timer"></i>
+                3 min
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <h2 id="go-kit-微服务-使用grpc并传递请求id">go-kit 微服务 使用Grpc（并传递请求ID）</h2>
+<h3 id="grpc">grpc</h3>
+<ul>
+<li>gRPC是一个高性能、通用的开源RPC框架，其由Google主要面向移动应用开发并基于HTTP/2协议标准而设计，基于ProtoBuf(Protocol Buffers)序列化协议开发</li>
+<li>grpc使用 <a href="https://github.com/hwholiday/learning_tools/tree/master/grpc">案例</a></li>
+</ul>
+<h3 id="简介">简介</h3>
+<ul>
+<li>通过grpc实现一个用户中心实现简单的鉴权中心并返回用户token</li>
+<li>上篇文章<a href="https://www.hwholiday.com/2020/go_kit_v3/">《go-kit 微服务 身份认证（JWT）》</a>已经实现的一个http的鉴权中心，所以我们只需要改变transport层逻辑</li>
+<li>编写ProtoBuf</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">//service.proto
 syntax = &#34;proto3&#34;;
 package pb;
 import &#34;user.proto&#34;;
@@ -28,18 +178,31 @@ message Login {
 message LoginAck {
     string Token = 1;
 }
-</code></pre><ul><li>编译ProtoBuf</li></ul><pre tabindex=0><code class=language-base data-lang=base>protoc --go_out=plugins=grpc:. *.proto
-</code></pre><h3 id=transport层修改>transport层修改</h3><ul><li>定义grpcServer结构体</li></ul><pre tabindex=0><code class=language-base data-lang=base>type grpcServer struct {
+</code></pre><ul>
+<li>编译ProtoBuf</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">protoc --go_out=plugins=grpc:. *.proto
+</code></pre><h3 id="transport层修改">transport层修改</h3>
+<ul>
+<li>定义grpcServer结构体</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">type grpcServer struct {
 	login grpctransport.Handler
 }
-</code></pre><ul><li>实现RpcUserLogin接口</li></ul><pre tabindex=0><code class=language-base data-lang=base>func (s *grpcServer) RpcUserLogin(ctx context.Context, req *pb.Login) (*pb.LoginAck, error) {
+</code></pre><ul>
+<li>实现RpcUserLogin接口</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">func (s *grpcServer) RpcUserLogin(ctx context.Context, req *pb.Login) (*pb.LoginAck, error) {
 	_, rep, err := s.login.ServeGRPC(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	return rep.(*pb.LoginAck), nil
 }
-</code></pre><ul><li>将endpoint的方法加载到grpcServer对象中</li></ul><pre tabindex=0><code class=language-base data-lang=base>func NewGRPCServer(endpoint v5_endpoint.EndPointServer, log *zap.Logger) pb.UserServer {
+</code></pre><ul>
+<li>将endpoint的方法加载到grpcServer对象中</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">func NewGRPCServer(endpoint v5_endpoint.EndPointServer, log *zap.Logger) pb.UserServer {
 	options := []grpctransport.ServerOption{
 		grpctransport.ServerBefore(func(ctx context.Context, md metadata.MD) context.Context {
 			ctx = context.WithValue(ctx, v5_service.ContextReqUUid, md.Get(v5_service.ContextReqUUid))
@@ -54,7 +217,8 @@ message LoginAck {
 		options...,
 	)}
 }
-</code></pre><h3 id=修改main方法>修改main方法</h3><pre tabindex=0><code class=language-base data-lang=base>	utils.NewLoggerServer()
+</code></pre><h3 id="修改main方法">修改main方法</h3>
+<pre tabindex="0"><code class="language-base" data-lang="base">	utils.NewLoggerServer()
 	golangLimit := rate.NewLimiter(10, 1)
 	server := v5_service.NewService(utils.GetLogger())
 	endpoints := v5_endpoint.NewEndPointServer(server, utils.GetLogger(), golangLimit)
@@ -71,7 +235,11 @@ message LoginAck {
 		utils.GetLogger().Warn(&#34;Serve&#34;, zap.Error(err))
 		os.Exit(0)
 	}
-</code></pre><h2 id=编写客户端>编写客户端</h2><ul><li>go-kit 客户端</li></ul><pre tabindex=0><code class=language-base data-lang=base>func NewGRPCClient(conn *grpc.ClientConn, log *zap.Logger) v5_service.Service {
+</code></pre><h2 id="编写客户端">编写客户端</h2>
+<ul>
+<li>go-kit 客户端</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">func NewGRPCClient(conn *grpc.ClientConn, log *zap.Logger) v5_service.Service {
 	options := []grpctransport.ClientOption{
 		grpctransport.ClientBefore(func(ctx context.Context, md *metadata.MD) context.Context {
 			UUID := uuid.NewV5(uuid.Must(uuid.NewV4()), &#34;req_uuid&#34;).String()
@@ -104,7 +272,10 @@ func ResponseLogin(_ context.Context, response interface{}) (interface{}, error)
 	resp := response.(*pb.LoginAck)
 	return &amp;pb.LoginAck{Token: resp.Token}, nil
 }
-</code></pre><ul><li>go-kit 客户端 调用方法</li></ul><pre tabindex=0><code class=language-base data-lang=base>logger := logtool.NewLogger(
+</code></pre><ul>
+<li>go-kit 客户端 调用方法</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">logger := logtool.NewLogger(
 		logtool.SetAppName(&#34;go-kit&#34;),
 		logtool.SetDevelopment(true),
 		logtool.SetLevel(zap.DebugLevel),
@@ -125,7 +296,10 @@ func ResponseLogin(_ context.Context, response interface{}) (interface{}, error)
 		return
 	}
 	t.Log(ack.Token)
-</code></pre><ul><li>grpc原生客户端</li></ul><pre tabindex=0><code class=language-base data-lang=base>	serviceAddress := &#34;127.0.0.1:8881&#34;
+</code></pre><ul>
+<li>grpc原生客户端</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">	serviceAddress := &#34;127.0.0.1:8881&#34;
 	conn, err := grpc.Dial(serviceAddress, grpc.WithInsecure())
 	if err != nil {
 		panic(&#34;connect error&#34;)
@@ -144,16 +318,24 @@ func ResponseLogin(_ context.Context, response interface{}) (interface{}, error)
 		return
 	}
 	t.Log(res.Token)
-</code></pre><h3 id=传递客户端请求id到服务端代码>传递客户端请求ID到服务端代码</h3><ul><li>客户端</li></ul><pre tabindex=0><code class=language-base data-lang=base>......
+</code></pre><h3 id="传递客户端请求id到服务端代码">传递客户端请求ID到服务端代码</h3>
+<ul>
+<li>客户端</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">......
 UUID := uuid.NewV5(uuid.Must(uuid.NewV4()), &#34;req_uuid&#34;).String()
 log.Debug(&#34;给请求添加uuid&#34;, zap.Any(&#34;UUID&#34;, UUID))
 md.Set(v5_service.ContextReqUUid, UUID)
 ctx = metadata.NewOutgoingContext(context.Background(), *md)
 ......
-</code></pre><ul><li>服务端</li></ul><pre tabindex=0><code class=language-base data-lang=base>......
+</code></pre><ul>
+<li>服务端</li>
+</ul>
+<pre tabindex="0"><code class="language-base" data-lang="base">......
 ctx = context.WithValue(ctx, v5_service.ContextReqUUid, md.Get(v5_service.ContextReqUUid))
 ......
-</code></pre><h2 id=运行日志>运行日志</h2><pre tabindex=0><code class=language-base data-lang=base>
+</code></pre><h2 id="运行日志">运行日志</h2>
+<pre tabindex="0"><code class="language-base" data-lang="base">
 //客户端
 2020-01-07 15:42:24	INFO	logtool/log.go:89	[NewLogger] success
 2020-01-07 15:42:24	DEBUG	client/client.go:20	给请求添加uuid	{&#34;UUID&#34;: &#34;a8360f58-6f0d-588f-83c9-b3dc00fe60f6&#34;}
@@ -169,15 +351,146 @@ PASS
 2020-01-07 15:42:24     DEBUG   v5_service/service.go:35        [a8360f58-6f0d-588f-83c9-b3dc00fe60f6]  {&#34;调用 v5_service rvice&#34;: &#34;Login 处理请求&#34;, &#34;处理返回值&#34;: &#34;Token:\&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoiaHdob2xpZGF5IiwiRGNJZCI6joxNTc4MzgyOTc0LCJpYXQiOjE1NzgzODI5NDQsImlzcyI6ImtpdF92NCIsIm5iZiI6MTU3ODM4Mjk0NCwic3ViIjoibG9naW4ifQ.PSd1mWjfePR0IP3cw8gF9yN3IaNQDt9TaDpSk4QzUDc\&#34; &#34;}
 2020-01-07 15:42:24     DEBUG   v5_service/middleware.go:31     [a8360f58-6f0d-588f-83c9-b3dc00fe60f6]  {&#34;调用 Login logMilewareServer&#34;: &#34;Login&#34;, &#34;req&#34;: &#34;Account:\&#34;hwholiday\&#34; Password:\&#34;123456\&#34; &#34;, &#34;res&#34;: &#34;Token:\&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoiaHdob2xpZGF5IiwiRGNJZCI6MSwiZXhwIjoxNTc4MzgyOTc0LCJpYXQiOjE1NzgzODI5NDQsImlzcyI6ImtpdF92NCIsIm5iZiI6MTU3ODM4Mjk0NCwic3ViIjoibG9naW4ifQ.PSd1mWjfePR0IP3cw8gF9yN3IaNQDt9TaDpSk4QzUDc\&#34; &#34;, &#34;err&#34;: null}
 2020-01-07 15:42:24     DEBUG   v5_endpoint/middleware.go:18    [a8360f58-6f0d-588f-83c9-b3dc00fe60f6]  {&#34;调用 v4_endpointoggingMiddleware&#34;: &#34;处理完请求&#34;, &#34;耗时毫秒&#34;: 0}
-</code></pre><h2 id=结语>结语</h2><ul><li>这里只实现了一个煎蛋的grpc在go-kit的使用场景</li><li>欢迎添加QQ一起讨论</li></ul><h3 id=完整代码地址httpsgithubcomhwholidaylearning_toolstreemastergo-kitv5><a href=https://github.com/hwholiday/learning_tools/tree/master/go-kit/v5>完整代码地址</a></h3><h2 id=联系--qq-3355168235>联系 QQ: 3355168235</h2></div><div id=gitalk-container></div><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css><script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
-<script>const gitalk=new Gitalk({clientID:"64d60a02f98e01e31e2f",clientSecret:"b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58",repo:"hwholiday.github.io",owner:"hwholiday",admin:"hwholiday",id:"git_kit_v5",distractionFreeMode:!1});(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("gitalk-container").innerHTML="Gitalk comments not available by default when the website is previewed locally.";return}gitalk.render("gitalk-container")})()</script><div class=post-copyright><p class=copyright-item><span>Author:</span>
-<span>hwholiday</span></p><p class=copyright-item><span>Words:</span>
-<span>497</span></p><p class=copyright-item></p></div><div class=post-tags><section><i class="iconfont icon-icon-tag"></i>Tag:
-<span class=tag><a href=http://hwholiday.github.io/tags/golang/>#golang</a></span>
-<span class=tag><a href=http://hwholiday.github.io/tags/go-kit/>#go-kit</a></span></section><section><a href=javascript:window.history.back();>Back</a></span> ·
-<span><a href=http://hwholiday.github.io/>Home</a></span></section></div><div class=post-nav><a href=http://hwholiday.github.io/2020/etcd_registry_selector/ class=prev rel=prev title="Golang etcd 服务发现与负载均衡"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang etcd 服务发现与负载均衡</a>
-<a href=http://hwholiday.github.io/2020/go_kit_v6/ class=next rel=next title="go-kit 微服务 服务注册与发现（etcd实现）">go-kit 微服务 服务注册与发现（etcd实现）&nbsp;<i class="iconfont icon-xiaojiantou"></i></a></div><div class=post-comment></div></article></div></main><footer class=footer><div class=copyright>&copy;
-<span itemprop=copyrightYear>2016 - 2023</span>
-<span class=author itemprop=copyrightHolder><a href=http://hwholiday.github.io/>hwholiday</a> |</span>
-<span>Crafted with ❤️ by <a href=https://github.com/Fastbyte01/KeepIt target=_blank rel="external nofollow noopener noreffer">KeepIt</a> & <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreffer">Hugo</a></span></div></footer><script src=/js/vendor_no_gallery.min.js async></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>
+</code></pre><h2 id="结语">结语</h2>
+<ul>
+<li>这里只实现了一个煎蛋的grpc在go-kit的使用场景</li>
+<li>欢迎添加QQ一起讨论</li>
+</ul>
+<h3 id="完整代码地址httpsgithubcomhwholidaylearning_toolstreemastergo-kitv5"><a href="https://github.com/hwholiday/learning_tools/tree/master/go-kit/v5">完整代码地址</a></h3>
+<h2 id="联系--qq-3355168235">联系  QQ: 3355168235</h2>
+
+    </div>
+    
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        const gitalk = new Gitalk({
+            clientID: '64d60a02f98e01e31e2f',
+            clientSecret: 'b4912d0dfa1f146f2b9fe93e28dd7f9acc09ec58',
+            repo: 'hwholiday.github.io',
+            owner: 'hwholiday',
+            admin: 'hwholiday',
+            id: 'git_kit_v5', 
+            distractionFreeMode: false 
+        });
+        (function() {
+            if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+                document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+                return;
+            }
+            gitalk.render('gitalk-container');
+        })();
+    </script>
+    
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>hwholiday </span>
+                </p>
+            
+           
+            <p class="copyright-item">
+                    <span>Words:</span>
+                   <span>497</span>
+            </p>
+
+            <p class="copyright-item">
+                
+            </p>
+
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-icon-tag"></i>Tag: 
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/golang/">
+                    #golang</a></span>
+            
+            <span class="tag"><a href="http://hwholiday.github.io/tags/go-kit/">
+                    #go-kit</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">Back</a></span> · 
+                <span><a href="http://hwholiday.github.io/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="http://hwholiday.github.io/2020/etcd_registry_selector/" class="prev" rel="prev" title="Golang etcd 服务发现与负载均衡"><i class="iconfont icon-dajiantou"></i>&nbsp;Golang etcd 服务发现与负载均衡</a>
+         
+        
+        <a href="http://hwholiday.github.io/2020/go_kit_v6/" class="next" rel="next" title="go-kit 微服务 服务注册与发现（etcd实现）">go-kit 微服务 服务注册与发现（etcd实现）&nbsp;<i class="iconfont icon-xiaojiantou"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+          
+
+ 
+
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2023</span>
+        
+         
+            <span class="author" itemprop="copyrightHolder"><a href="http://hwholiday.github.io/">hwholiday</a> | </span>
+         
+
+		  <span>Crafted with ❤️ by <a href="https://github.com/Fastbyte01/KeepIt" target="_blank" rel="external nofollow noopener noreffer">KeepIt</a> & <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a></span>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?e5e09b18459f68f994cc9a0f5eb3a417";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+     </div>
+  </body>
+</html>

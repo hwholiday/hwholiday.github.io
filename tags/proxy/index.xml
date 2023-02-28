@@ -1,2 +1,21 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>proxy on hwholiday</title><link>http://hwholiday.github.io/tags/proxy/</link><description>Recent content in proxy on hwholiday</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 07 Apr 2017 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/tags/proxy/index.xml" rel="self" type="application/rss+xml"/><item><title>ubuntu使用shadowsocks</title><link>http://hwholiday.github.io/2017/ubuntu_use_shadowsocks/</link><pubDate>Fri, 07 Apr 2017 00:00:00 +0000</pubDate><guid>http://hwholiday.github.io/2017/ubuntu_use_shadowsocks/</guid><description>安装shadowsocks 用PIP安装 sudo apt-get update sudo apt-get install python-pip sudo apt-get install python-setuptools m2crypto pip install shadowsocks 如果是ubuntu16.04 直接 (16.04 里可以直接用apt 而不用 apt-get 这是一项改进） sudo apt install shadowsocks shadowsock使用 推荐在/etc/shadowsocks下 新建config.json { &amp;#34;server&amp;#34;:&amp;#34;118.193.178.111&amp;#34;,//你的服务器IP &amp;#34;server_port&amp;#34;:60010,//服务器端口 &amp;#34;local_address&amp;#34;: &amp;#34;127.0.0.1&amp;#34;,//本地代理IP &amp;#34;local_port&amp;#34;:1080,//本地代理端口 &amp;#34;password&amp;#34;:&amp;#34;123qeq&amp;#34;,//密码 &amp;#34;timeout&amp;#34;:300,//过期时间 &amp;#34;method&amp;#34;:&amp;#34;aes-256-cfb&amp;#34;,//加密方式 &amp;#34;fast_open&amp;#34;: false, //默认 &amp;#34;workers&amp;#34;: 1//默认 } 使用命令:nohup sslocal -c /etc/shadowsocks/config.json &amp;gt;/dev/null 2&amp;gt;&amp;amp;1 &amp;amp; 启动代理 如果使用supervosor控制程序可参考如下配置
-[program:shadowsocks] command=sslocal -c /etc/shadowsocks.json autorestart=true user=nobody google浏览器配置 下载 https://github.com/FelisCatus/SwitchyOmega/releases 后缀为crx 打开chrome的设置&amp;gt;扩展程序，然后把插件拖进来安装 切换到switchyOmega主界面 &amp;gt; 新建情景模式 &amp;gt; 选择代理服务器 &amp;gt; 名称自己定义(shadowcocks) &amp;gt; 创建 &amp;gt; 应用选项 选择新建的情景模式 &amp;gt; 代理协议选择为SOCKS5 &amp;gt; 代理服务器输入127.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>proxy on hwholiday</title>
+    <link>http://hwholiday.github.io/tags/proxy/</link>
+    <description>Recent content in proxy on hwholiday</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 07 Apr 2017 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/tags/proxy/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ubuntu使用shadowsocks</title>
+      <link>http://hwholiday.github.io/2017/ubuntu_use_shadowsocks/</link>
+      <pubDate>Fri, 07 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://hwholiday.github.io/2017/ubuntu_use_shadowsocks/</guid>
+      <description>安装shadowsocks 用PIP安装 sudo apt-get update sudo apt-get install python-pip sudo apt-get install python-setuptools m2crypto pip install shadowsocks 如果是ubuntu16.04 直接 (16.04 里可以直接用apt 而不用 apt-get 这是一项改进） sudo apt install shadowsocks shadowsock使用 推荐在/etc/shadowsocks下 新建config.json { &amp;#34;server&amp;#34;:&amp;#34;118.193.178.111&amp;#34;,//你的服务器IP &amp;#34;server_port&amp;#34;:60010,//服务器端口 &amp;#34;local_address&amp;#34;: &amp;#34;127.0.0.1&amp;#34;,//本地代理IP &amp;#34;local_port&amp;#34;:1080,//本地代理端口 &amp;#34;password&amp;#34;:&amp;#34;123qeq&amp;#34;,//密码 &amp;#34;timeout&amp;#34;:300,//过期时间 &amp;#34;method&amp;#34;:&amp;#34;aes-256-cfb&amp;#34;,//加密方式 &amp;#34;fast_open&amp;#34;: false, //默认 &amp;#34;workers&amp;#34;: 1//默认 } 使用命令:nohup sslocal -c /etc/shadowsocks/config.json &amp;gt;/dev/null 2&amp;gt;&amp;amp;1 &amp;amp; 启动代理 如果使用supervosor控制程序可参考如下配置
+[program:shadowsocks] command=sslocal -c /etc/shadowsocks.json autorestart=true user=nobody google浏览器配置 下载 https://github.com/FelisCatus/SwitchyOmega/releases 后缀为crx 打开chrome的设置&amp;gt;扩展程序，然后把插件拖进来安装 切换到switchyOmega主界面 &amp;gt; 新建情景模式 &amp;gt; 选择代理服务器 &amp;gt; 名称自己定义(shadowcocks) &amp;gt; 创建 &amp;gt; 应用选项 选择新建的情景模式 &amp;gt; 代理协议选择为SOCKS5 &amp;gt; 代理服务器输入127.</description>
+    </item>
+    
+  </channel>
+</rss>

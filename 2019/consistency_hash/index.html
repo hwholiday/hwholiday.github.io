@@ -150,7 +150,6 @@
           
           
           
-
           <h2 id="需求">需求</h2>
 <p>当集群提供缓存服务时，key应该路由到哪一个服务.这里假如采用最通用的方式key%N(N为服务器数目)，看上去是没问题的但是一旦服务器数目发生增加或减少时, 分配方式则变为key%(N+1)或key%(N-1).这里将会有大量的key失效, 为了解决类问题,一致性hash算法应运而生.</p>
 <h2 id="一致性hash算法特点">一致性hash算法特点</h2>
@@ -232,7 +231,7 @@ func (c *Consistent) Get(key string) (string, error) {
             
     </div>
 
-  
+
     <div class="post-tags">
         
             <section>

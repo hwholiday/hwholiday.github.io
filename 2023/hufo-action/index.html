@@ -184,10 +184,10 @@ jobs:
       - name: Build
         run: hugo --buildDrafts
         
-     - uses: &#34;finnp/create-file-action@master&#34; #如果你不需要自定义域名直接删除
+     - uses: finnp/create-file-action@master #如果你不需要自定义域名直接删除
         env:
-          FILE_NAME: &#34;./public/CNAME&#34;
-          FILE_DATA: &#34;hwholiday.com&#34;
+          FILE_NAME: ./public/CNAME
+          FILE_DATA: hwholiday.com
           
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

@@ -6,7 +6,17 @@
     <description>Recent content in Posts on hwholiday</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 28 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>无脑式 hugo 博客通过 github actions 自动发布</title>
+      <link>http://hwholiday.github.io/2023/hufo-action/</link>
+      <pubDate>Tue, 28 Feb 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://hwholiday.github.io/2023/hufo-action/</guid>
+      <description>github actions 简介 Github Actions 是GitHub的持续集成服务。持续集成由很多操作组成，比如登录远程服务器，发布内容到第三方服务等等，GitHub把这些操作称为actions。 流程 本文适用为，一个github仓库为博客源码存放地址，一个github仓库为博客发布
+在你的github账户里面创建 token https://github.com/settings/tokens 将生成的token放在你的 https://github.com/你的博客源码仓库名/settings/secrets/actions 中设置变量名为 ACTION_ACCESS_TOKENS 在你的博客源码仓库中新建 目录 .github/workflows 文件 ci.yaml 推送代码，等待构建，几分钟后就可以在你的 github 仓库为博客发布中找到你的发布内容了 构建过程可以在 https://github.com/你的博客源码仓库名/actions 中查看 ci.yaml 代码 name: hugo blog github pages on: push: branches: - main jobs: deploy: runs-on: ubuntu-latest steps: - uses: actions/checkout@v3 with: submodules: true fetch-depth: 0 - name: Setup Hugo uses: peaceiris/actions-hugo@v2 with: hugo-version: &amp;#39;latest&amp;#39; - name: Build run: hugo --buildDrafts - name: Deploy uses: peaceiris/actions-gh-pages@v3 with: external_repository: hwholiday/hwholiday.</description>
+    </item>
+    
     <item>
       <title>用golang实现一个timewheel时间轮</title>
       <link>http://hwholiday.github.io/2023/timewheel/</link>

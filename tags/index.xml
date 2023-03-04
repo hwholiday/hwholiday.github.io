@@ -6,7 +6,16 @@
     <description>Recent content in Tags on hwholiday</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 28 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://hwholiday.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>git</title>
+      <link>http://hwholiday.github.io/tags/git/</link>
+      <pubDate>Tue, 28 Feb 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://hwholiday.github.io/tags/git/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Golang</title>
       <link>http://hwholiday.github.io/tags/golang/</link>
@@ -193,15 +202,6 @@
       <pubDate>Mon, 22 Oct 2018 00:00:00 +0000</pubDate>
       
       <guid>http://hwholiday.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>git</title>
-      <link>http://hwholiday.github.io/tags/git/</link>
-      <pubDate>Sat, 02 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://hwholiday.github.io/tags/git/</guid>
       <description></description>
     </item>
     

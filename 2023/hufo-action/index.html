@@ -50,7 +50,7 @@
   
   "genre": "posts",
   "keywords": "git",
-  "wordcount":  83 ,
+  "wordcount":  92 ,
   "url": "http:\/\/hwholiday.github.io\/2023\/hufo-action\/",
   "datePublished": "2023-02-28T00:00:00\u002b00:00",
   "dateModified": "2023-02-28T00:00:00\u002b00:00",
@@ -183,7 +183,12 @@ jobs:
 
       - name: Build
         run: hugo --buildDrafts
-
+        
+     - uses: &#34;finnp/create-file-action@master&#34; #如果你不需要自定义域名直接删除
+        env:
+          FILE_NAME: &#34;./public/CNAME&#34;
+          FILE_DATA: &#34;hwholiday.com&#34;
+          
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -204,7 +209,7 @@ jobs:
            
             <p class="copyright-item">
                     <span>Words:</span>
-                   <span>83</span>
+                   <span>92</span>
             </p>
 
             <p class="copyright-item">
